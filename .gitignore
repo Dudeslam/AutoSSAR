@@ -2,4 +2,6 @@
 /Gazebo/models
 /Gazebo/src
 /Gazebo/world
+/Gazebo/catkin_ws/devel
+/Gazebo/catkin_ws/build
 Gazebo/LICENSE
