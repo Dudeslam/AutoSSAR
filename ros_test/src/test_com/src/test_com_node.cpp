@@ -53,7 +53,6 @@
 #include <move_base_msgs/MoveBaseAction.h>
 #include <actionlib/client/simple_action_client.h>
 #include <iostream>
-#include <ncurses.h>	// for getch()
 
 //using namespace std;
  
@@ -71,7 +70,6 @@ int main(int argc, char** argv){
   // Wait for the action server to come up so that we can begin processing goals.
   while(!ac.waitForServer(ros::Duration(5.0))){
     ROS_INFO("Waiting for the move_base action server to come up");
-	if(getch()){return 0;}
   }
  
   int user_choice = 6;
