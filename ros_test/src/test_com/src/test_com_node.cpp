@@ -22,8 +22,7 @@ int main(int argc, char* argv[])
 	double z = 2;
 	double theta = 0.2;
 
-	std::string frame_id_;// = "/world";		//context_->getFixedFrame().toStdString();
-	tf::Stamped() :frame_id_ ("NO_ID_STAMPED_DEFAULT_CONSTRUCTION"){}; //Default constructor used only for preallocation
+	std::string frame_id_ = "frameName";// = "/world";		//context_->getFixedFrame().toStdString();
 
 	tf::Quaternion quat;
 	quat.setRPY(0.0, 0.0, theta);
@@ -31,7 +30,7 @@ int main(int argc, char* argv[])
 	geometry_msgs::PoseStamped goal;
 	tf::poseStampedTFToMsg(p, goal);
 	
-	ROS_INFO("Setting goal: Frame:%s, Position(%.3f, %.3f, %.3f), Orientation(%.3f, %.3f, %.3f, %.3f) = Angle: %.3f\n", fixed_frame.c_str(),
+	ROS_INFO("Setting goal: Frame:%s, Position(%.3f, %.3f, %.3f), Orientation(%.3f, %.3f, %.3f, %.3f) = Angle: %.3f\n", frame_id_.c_str(),
 		goal.pose.position.x, goal.pose.position.y, goal.pose.position.z,
 		goal.pose.orientation.x, goal.pose.orientation.y, goal.pose.orientation.z, goal.pose.orientation.w, theta);
 	
