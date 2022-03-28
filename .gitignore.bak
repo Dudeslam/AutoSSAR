@@ -11,3 +11,5 @@
 /VNC_setup/devel
 /VNC_setup/build
 /VNC_setup/logs
+/VNC_setup/src/Fast-planner/files
+/VNC_setup/src/Fast-planner/README.md
