@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
 	double z = 2;
 	double theta = 0.2;
 
-	std::string frame_id_ = "frameName";// = "/world";		//context_->getFixedFrame().toStdString();
+	std::string frame_id_ = "/simulator";// = "/world";		//context_->getFixedFrame().toStdString();
 
 	tf::Quaternion quat;
 	quat.setRPY(0.0, 0.0, theta);
