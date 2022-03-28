@@ -11,8 +11,11 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
-  octomap
 )
+
+find_package(octomap REQUIRED)
+include_directories(${OCTOMAP_INCLUDE_DIRS})
+link_libraries(${OCTOMAP_LIBRARIES})
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -54,9 +57,7 @@ find_package(catkin REQUIRED COMPONENTS
 #   Message2.msg
 # )
 
-link_directories(
-  ${OCTOMAP_LIBRARY_DIRS}
-)
+
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -123,7 +124,6 @@ catkin_package(
 include_directories(
 # include
   ${catkin_INCLUDE_DIRS}
-  ${OCTOMAP_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -154,7 +154,6 @@ include_directories(
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME}_node
   ${catkin_LIBRARIES}
-  ${OCTOMAP_LIBRARIES}
 )
 
 #############
@@ -197,6 +196,10 @@ target_link_libraries(${PROJECT_NAME}_node
 #   # myfile1
 #   # myfile2
 #   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+# )
+
+# link_directories(
+#   ${OCTOMAP_LIBRARY_DIRS}
 # )
 
 #############
