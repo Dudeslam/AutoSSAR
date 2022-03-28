@@ -36,6 +36,8 @@ int main(int argc, char* argv[])
 	
 	pub_.publish(goal);
 
+//Comment to test push
+
 	
 
 /*
