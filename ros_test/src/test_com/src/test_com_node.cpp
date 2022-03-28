@@ -1,43 +1,45 @@
 /**
 **  Attempt 1)
 **/
-// #include <ros/ros.h>
-// #include <geometry_msgs/PoseStamped.h>
-// #include <tf/transform_listener.h>
+#include <ros/ros.h>
+#include <geometry_msgs/PoseStamped.h>
+#include <tf/transform_listener.h>
 
-// int main(int argc, char* argv[])
-// {
-// 	// This must be called before anything else ROS-related
-// 	ros::init(argc, argv, "ros_com_test");
+int main(int argc, char* argv[])
+{
+	// This must be called before anything else ROS-related
+	ros::init(argc, argv, "ros_com_test");
 
-// 	ROS_INFO("Hello, World!");
+	ROS_INFO("Hello, World!");
 
 
-// 	// Create a ROS node handle
-// 	ros::NodeHandle nh_;
-// 	ros::Publisher pub_;
+	// Create a ROS node handle
+	ros::NodeHandle nh_;
+	ros::Publisher pub_;
 
-// 	double x = 2;
-// 	double y = 2;
-// 	double z = 2;
-// 	double theta = 0.2;
+	double x = 2;
+	double y = 2;
+	double z = 2;
+	double theta = 0.2;
 
-// 	std::string fixed_frame = "/world";//context_->getFixedFrame().toStdString();
-// 	tf::Quaternion quat;
-// 	quat.setRPY(0.0, 0.0, theta);
-// 	tf::Stamped<tf::Pose> p = tf::Stamped<tf::Pose>(tf::Pose(quat, tf::Point(x, y, z)), ros::Time::now(), fixed_frame);
-// 	geometry_msgs::PoseStamped goal;
-// 	tf::poseStampedTFToMsg(p, goal);
+	std::string frame_id_;// = "/world";		//context_->getFixedFrame().toStdString();
+	tf::Stamped() :frame_id_ ("NO_ID_STAMPED_DEFAULT_CONSTRUCTION"){}; //Default constructor used only for preallocation
+
+	tf::Quaternion quat;
+	quat.setRPY(0.0, 0.0, theta);
+	tf::Stamped<tf::Pose> p = tf::Stamped<tf::Pose>(tf::Pose(quat, tf::Point(x, y, z)), ros::Time::now(), frame_id_);
+	geometry_msgs::PoseStamped goal;
+	tf::poseStampedTFToMsg(p, goal);
 	
-// 	ROS_INFO("Setting goal: Frame:%s, Position(%.3f, %.3f, %.3f), Orientation(%.3f, %.3f, %.3f, %.3f) = Angle: %.3f\n", fixed_frame.c_str(),
-// 		goal.pose.position.x, goal.pose.position.y, goal.pose.position.z,
-// 		goal.pose.orientation.x, goal.pose.orientation.y, goal.pose.orientation.z, goal.pose.orientation.w, theta);
+	ROS_INFO("Setting goal: Frame:%s, Position(%.3f, %.3f, %.3f), Orientation(%.3f, %.3f, %.3f, %.3f) = Angle: %.3f\n", fixed_frame.c_str(),
+		goal.pose.position.x, goal.pose.position.y, goal.pose.position.z,
+		goal.pose.orientation.x, goal.pose.orientation.y, goal.pose.orientation.z, goal.pose.orientation.w, theta);
 	
-// 	pub_.publish(goal);
+	pub_.publish(goal);
 
 	// Don't exit the program.
-// 	ros::spin();
-// }
+	ros::spin();
+}
 
 
 
@@ -178,52 +180,52 @@
 
 
 
-/**
-**  Attempt 3)		http://wiki.ros.org/tf/Tutorials/Writing%20a%20tf%20broadcaster%20%28C%2B%2B%29
-**/
-#include <ros/ros.h>
-#include <tf/transform_broadcaster.h>
-#include <geometry_msgs/PoseStamped.h>
+// /**
+// **  Attempt 3)		http://wiki.ros.org/tf/Tutorials/Writing%20a%20tf%20broadcaster%20%28C%2B%2B%29
+// **/
+// #include <ros/ros.h>
+// #include <tf/transform_broadcaster.h>
+// #include <geometry_msgs/PoseStamped.h>
 
-int main(int argc, char* argv[])
-{
-	// This must be called before anything else ROS-related
-	ros::init(argc, argv, "ros_com_test");
-	ROS_INFO("Hello, World!");
-
-
+// int main(int argc, char* argv[])
+// {
+// 	// This must be called before anything else ROS-related
+// 	ros::init(argc, argv, "ros_com_test");
+// 	ROS_INFO("Hello, World!");
 
 
 
-	// Create a ROS node handle
-	ros::NodeHandle nh_;
-	ros::Publisher pub_ = nh_.advertise<geometry_msgs/PoseStamped>(
-		{header: {stamp: now, frame_id: "map"}, pose: {position: {x: 1.0, y: 0.0, z: 0.0}, orientation: {w: 1.0}}}
-	)
-
-	ros::Rate loop_rate(10);
-
-	int count = 0;
-	while (ros::ok())
-	{
-		std_msgs::String msg;
-
-		std::stringstream ss;
-		ss << "hello world " << count;
-		msg.data = ss.str();
-
-		ROS_INFO("%s", msg.data.c_str());
-
-		chatter_pub.publish(msg);
-
-		ros::spinOnce();
-
-		loop_rate.sleep();
-		++count;
-	}
-
-	return 0;
-}
 
 
-// rostopic pub /move_base_simple/goal geometry_msgs/PoseStamped '{header: {stamp: now, frame_id: "map"}, pose: {position: {x: 1.0, y: 0.0, z: 0.0}, orientation: {w: 1.0}}}'
+// 	// Create a ROS node handle
+// 	ros::NodeHandle nh_;
+// 	ros::Publisher pub_ = nh_.advertise<geometry_msgs/PoseStamped>(
+// 		{header: {stamp: now, frame_id: "map"}, pose: {position: {x: 1.0, y: 0.0, z: 0.0}, orientation: {w: 1.0}}}
+// 	)
+
+// 	ros::Rate loop_rate(10);
+
+// 	int count = 0;
+// 	while (ros::ok())
+// 	{
+// 		std_msgs::String msg;
+
+// 		std::stringstream ss;
+// 		ss << "hello world " << count;
+// 		msg.data = ss.str();
+
+// 		ROS_INFO("%s", msg.data.c_str());
+
+// 		pub_.publish(msg);
+
+// 		ros::spinOnce();
+
+// 		loop_rate.sleep();
+// 		++count;
+// 	}
+
+// 	return 0;
+// }
+
+
+// // rostopic pub /move_base_simple/goal geometry_msgs/PoseStamped '{header: {stamp: now, frame_id: "map"}, pose: {position: {x: 1.0, y: 0.0, z: 0.0}, orientation: {w: 1.0}}}'
