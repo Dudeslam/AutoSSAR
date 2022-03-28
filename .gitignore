@@ -1,7 +1,7 @@
-/Gazebo/doc
 /Gazebo/models
-/Gazebo/src
 /Gazebo/world
 /Gazebo/catkin_ws/devel
 /Gazebo/catkin_ws/build
-Gazebo/LICENSE
+/Gazebo/catkin_ws/logs
+/Gazebo/catkin_ws/.catkin_tools
+
