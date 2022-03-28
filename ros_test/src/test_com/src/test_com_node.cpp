@@ -78,15 +78,15 @@ int main(int argc, char** argv){
   while(run) {
  
     // Ask the user where he wants the robot to go?
-    cout << "\nWhere do you want the robot to go?" << endl;
-    cout << "\n1 = Bathroom" << endl;
-    cout << "2 = Bedroom" << endl;
-    cout << "3 = Front Door" << endl;
-    cout << "4 = Living Room" << endl;
-    cout << "5 = Home Office" << endl;
-    cout << "6 = Kitchen" << endl;
-    cout << "\nEnter a number: ";
-    cin >> user_choice;
+    std::cout << "\nWhere do you want the robot to go?" << std::endl;
+    std::cout << "\n1 = Bathroom" << std::endl;
+    std::cout << "2 = Bedroom" << std::endl;
+    std::cout << "3 = Front Door" << std::endl;
+    std::cout << "4 = Living Room" << std::endl;
+    std::cout << "5 = Home Office" << std::endl;
+    std::cout << "6 = Kitchen" << std::endl;
+    std::cout << "\nEnter a number: ";
+    std::cin >> user_choice;
  
     // Create a new goal to send to move_base 
     move_base_msgs::MoveBaseGoal goal;
@@ -102,43 +102,43 @@ int main(int argc, char** argv){
     // display the coordinates to the /clicked_point topic.
     switch (user_choice) {
       case 1:
-        cout << "\nGoal Location: Bathroom\n" << endl;
+        std::cout << "\nGoal Location: Bathroom\n" << std::endl;
         goal.target_pose.pose.position.x = 10.0;
     	goal.target_pose.pose.position.y = 3.7;
         goal.target_pose.pose.orientation.w = 1.0;
         break;
       case 2:
-        cout << "\nGoal Location: Bedroom\n" << endl;
+        std::cout << "\nGoal Location: Bedroom\n" << std::endl;
         goal.target_pose.pose.position.x = 8.1;
     	goal.target_pose.pose.position.y = 4.3;
         goal.target_pose.pose.orientation.w = 1.0;
         break;
       case 3:
-        cout << "\nGoal Location: Front Door\n" << endl;
+        std::cout << "\nGoal Location: Front Door\n" << std::endl;
         goal.target_pose.pose.position.x = 10.5;
     	goal.target_pose.pose.position.y = 2.0;
         goal.target_pose.pose.orientation.w = 1.0;
         break;
       case 4:
-        cout << "\nGoal Location: Living Room\n" << endl;
+        std::cout << "\nGoal Location: Living Room\n" << std::endl;
         goal.target_pose.pose.position.x = 5.3;
     	goal.target_pose.pose.position.y = 2.7;
         goal.target_pose.pose.orientation.w = 1.0;
         break;
       case 5:
-        cout << "\nGoal Location: Home Office\n" << endl;
+        std::cout << "\nGoal Location: Home Office\n" << std::endl;
         goal.target_pose.pose.position.x = 2.5;
     	goal.target_pose.pose.position.y = 2.0;
         goal.target_pose.pose.orientation.w = 1.0;
         break;
       case 6:
-        cout << "\nGoal Location: Kitchen\n" << endl;
+        std::cout << "\nGoal Location: Kitchen\n" << std::endl;
         goal.target_pose.pose.position.x = 3.0;
     	goal.target_pose.pose.position.y = 6.0;
         goal.target_pose.pose.orientation.w = 1.0;
         break;
       default:
-        cout << "\nInvalid selection. Please try again.\n" << endl;
+        std::cout << "\nInvalid selection. Please try again.\n" << std::endl;
         valid_selection = false;
     }       
          
@@ -160,8 +160,8 @@ int main(int argc, char** argv){
          
     // Ask the user if he wants to continue giving goals
     do {
-      cout << "\nWould you like to go to another destination? (Y/N)" << endl;
-      cin >> choice_to_continue;
+      std::cout << "\nWould you like to go to another destination? (Y/N)" << std::endl;
+      std::cin >> choice_to_continue;
       choice_to_continue = tolower(choice_to_continue); // Put your letter to its lower case
     } while (choice_to_continue != 'n' && choice_to_continue != 'y'); 
  
