@@ -20,3 +20,5 @@
 /ros_test/src/test_com/src/.vscode/browse.vc.db
 /ros_test/src/test_com/src/~/
 .vscode/
+/Gazebo/catkin_ws/src/octomap_test/devel
+
