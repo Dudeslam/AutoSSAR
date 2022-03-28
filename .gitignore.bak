@@ -13,3 +13,10 @@
 /VNC_setup/logs
 /VNC_setup/src/Fast-planner/files
 /VNC_setup/src/Fast-planner/README.md
+/ros_test/devel
+/ros_test/build
+/ros_test/.catkin_tools
+/ros_test/src/test_com/src/.vscode
+/ros_test/src/test_com/src/.vscode/browse.vc.db
+/ros_test/src/test_com/src/~/
+.vscode/
