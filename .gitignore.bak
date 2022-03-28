@@ -3,4 +3,5 @@
 /Gazebo/catkin_ws/devel
 /Gazebo/catkin_ws/build
 /Gazebo/catkin_ws/logs
+/Gazebo/catkin_ws/.catkin_tools
 
