@@ -1,0 +1,41 @@
+{
+    "configurations": [
+        {
+            "browse": {
+                "databaseFilename": "",
+                "limitSymbolsToIncludedHeaders": true
+            },
+            "includePath": [
+                "/root/prj_ws/devel/include/**",
+                "/root/catkin_ws/devel/include/**",
+                "/opt/ros/melodic/include/**",
+                "/root/prj_ws/src/Fast-Planner/fast_planner/bspline/include/**",
+                "/root/prj_ws/src/Fast-Planner/fast_planner/bspline_opt/include/**",
+                "/root/catkin_ws/src/mavros_controllers/controller_msgs/include/**",
+                "/root/catkin_ws/src/mavros_controllers/geometric_controller/include/**",
+                "/root/catkin_ws/src/mav_comm/mav_msgs/include/**",
+                "/root/catkin_ws/src/mav_comm/mav_planning_msgs/include/**",
+                "/root/prj_ws/src/Fast-Planner/uav_simulator/Utils/multi_map_server/include/**",
+                "/root/prj_ws/src/Fast-Planner/fast_planner/path_searching/include/**",
+                "/root/prj_ws/src/Fast-Planner/fast_planner/plan_env/include/**",
+                "/root/prj_ws/src/Fast-Planner/fast_planner/plan_manage/include/**",
+                "/root/prj_ws/src/Fast-Planner/fast_planner/poly_traj/include/**",
+                "/root/prj_ws/src/Fast-Planner/uav_simulator/Utils/pose_utils/include/**",
+                "/root/prj_ws/src/Fast-Planner/uav_simulator/Utils/quadrotor_msgs/include/**",
+                "/root/prj_ws/src/Fast-Planner/uav_simulator/so3_control/include/**",
+                "/root/prj_ws/src/Fast-Planner/uav_simulator/so3_disturbance_generator/include/**",
+                "/root/prj_ws/src/Fast-Planner/uav_simulator/so3_quadrotor_simulator/include/**",
+                "/root/prj_ws/src/Fast-Planner/fast_planner/traj_utils/include/**",
+                "/root/catkin_ws/src/mavros_controllers/trajectory_publisher/include/**",
+                "/root/prj_ws/src/Fast-Planner/uav_simulator/Utils/uav_utils/include/**",
+                "/usr/include/**"
+            ],
+            "name": "ROS",
+            "intelliSenseMode": "gcc-x64",
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c11",
+            "cppStandard": "c++14"
+        }
+    ],
+    "version": 4
+}

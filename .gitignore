@@ -8,4 +8,8 @@
 /Gazebo/catkin_ws/src/MavLinkComm
 /Gazebo/catkin_ws/src/multimaster
 /Gazebo/catkin_ws/src/nre_multimaster-master
-
+/VNC_setup/devel
+/VNC_setup/build
+/VNC_setup/logs
+/VNC_setup/src/Fast-planner/files
+/VNC_setup/src/Fast-planner/README.md

@@ -1,0 +1,2 @@
+[2022-03-23 10:26:13.290] [sharedprocess] [info] main {"machineId":"3424b72ee104e99be183dc60a7b751a058f3ff95747d04922fb59889f7e032b1","windowId":2}
+[2022-03-23 10:26:13.346] [sharedprocess] [error] [File Watcher (node.js)] Error: ENOENT: no such file or directory, stat '/root/prj_ws/src/Fast-Planner/uav_simulator/~/.vscode-root/User/snippets'

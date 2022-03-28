@@ -4,4 +4,10 @@
 /Gazebo/catkin_ws/build
 /Gazebo/catkin_ws/logs
 /Gazebo/catkin_ws/.catkin_tools
-
+/Gazebo/catkin_ws/src/avoidance
+/Gazebo/catkin_ws/src/MavLinkComm
+/Gazebo/catkin_ws/src/multimaster
+/Gazebo/catkin_ws/src/nre_multimaster-master
+/VNC_setup/devel
+/VNC_setup/build
+/VNC_setup/logs
