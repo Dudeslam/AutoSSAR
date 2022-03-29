@@ -98,7 +98,7 @@ int main(int argc, char** argv){
 			case 'd':
 				std::cout << "\nEast\n" << std::endl;
 				//goal.target_pose.pose.position.x = 8.1;
-				goal.pose.position.y += 10;
+				goal.pose.position.y -= 10;
 				goal.pose.orientation.w = M_PI/2;
 				break;
 			case 'x':
@@ -110,7 +110,7 @@ int main(int argc, char** argv){
 			case 'a':
 				std::cout << "\nWest\n" << std::endl;
 				//goal.target_pose.pose.position.x = 5.3;
-				goal.pose.position.y -= 10;
+				goal.pose.position.y += 10;
 				goal.pose.orientation.w = M_PI*1.5;
 				break;
 			case 'e':
