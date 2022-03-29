@@ -79,7 +79,8 @@ while(run) {
     std::cin >> user_choice;
  
     // Create a new goal to send to move_base 
-    move_base_msgs::MoveBaseGoal goal;
+	geometry_msgs::PoseStamped goal;
+    //move_base_msgs::MoveBaseGoal goal;
  
     // Send a goal to the robot
     goal.target_pose.header.frame_id = "map";
