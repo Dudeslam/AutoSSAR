@@ -63,8 +63,7 @@ int main(int argc, char** argv){
 	ros::Publisher pub_ = nh_.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 1);
  
  
-	int user_choice = 1;
-	char choice_to_continue = 'Y';
+	char user_choice = 'e';
 	bool run = true;
      
 while(run) {
@@ -94,31 +93,31 @@ while(run) {
     // Launch RViz and click the Publish Point button in RViz to
     // display the coordinates to the /clicked_point topic.
     switch (user_choice) {
-      case "n":
+      case 'n':
         std::cout << "\nNorth\n" << std::endl;
         goal.pose.position.x += 10;
     	//goal.target_pose.pose.position.y = 3.7;
         goal.pose.orientation.w = 0;
         break;
-      case "d":
+      case 'd':
         std::cout << "\nEast\n" << std::endl;
         //goal.target_pose.pose.position.x = 8.1;
     	goal.pose.position.y += 10;
         goal.pose.orientation.w = M_PI/2;
         break;
-      case "x":
+      case 'x':
         std::cout << "\nSouth\n" << std::endl;
         goal.pose.position.x -= 10;
     	//goal.target_pose.pose.position.y = 2.0;
         goal.pose.orientation.w = M_PI;
         break;
-      case "a":
+      case 'a':
         std::cout << "\nWest\n" << std::endl;
         //goal.target_pose.pose.position.x = 5.3;
     	goal.pose.position.y -= 10;
         goal.pose.orientation.w = M_PI*1.5;
         break;
-      case "e":
+      case 'e':
         std::cout << "\nExit\n" << std::endl;
         run = false;
         break;
