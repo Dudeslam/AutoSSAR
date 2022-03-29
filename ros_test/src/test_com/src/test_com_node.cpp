@@ -94,26 +94,26 @@ while(run) {
     switch (user_choice) {
       case 1:
         std::cout << "\nNorth\n" << std::endl;
-        goal.pose.position.x += 1;
+        goal.pose.position.x += 10;
     	//goal.target_pose.pose.position.y = 3.7;
         goal.pose.orientation.w = 0;
         break;
       case 2:
         std::cout << "\nEast\n" << std::endl;
         //goal.target_pose.pose.position.x = 8.1;
-    	goal.pose.position.y += 1;
+    	goal.pose.position.y += 10;
         goal.pose.orientation.w = M_PI/2;
         break;
       case 3:
         std::cout << "\nSouth\n" << std::endl;
-        goal.pose.position.x -= 1;
+        goal.pose.position.x -= 10;
     	//goal.target_pose.pose.position.y = 2.0;
         goal.pose.orientation.w = M_PI;
         break;
       case 4:
         std::cout << "\nWest\n" << std::endl;
         //goal.target_pose.pose.position.x = 5.3;
-    	goal.pose.position.y -= 1;
+    	goal.pose.position.y -= 10;
         goal.pose.orientation.w = M_PI*1.5;
         break;
       default:
