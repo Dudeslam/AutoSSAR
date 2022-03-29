@@ -75,6 +75,7 @@ while(run) {
     std::cout << "2 = East" << std::endl;
     std::cout << "3 = South" << std::endl;
     std::cout << "4 = West" << std::endl;
+    std::cout << "e = Exit" << std::endl;
     std::cout << "\nEnter a number: ";
     std::cin >> user_choice;
  
@@ -116,31 +117,23 @@ while(run) {
     	goal.pose.position.y -= 10;
         goal.pose.orientation.w = M_PI*1.5;
         break;
+      case e:
+        std::cout << "\nExit\n" << std::endl;
+        run = false;
+        break;
       default:
         std::cout << "\nInvalid selection. Please try again.\n" << std::endl;
         valid_selection = false;
     }
          
     // Go back to beginning if the selection is invalid.
-    if(!valid_selection) {      continue;		// loop back inside while()
+    if(!valid_selection) {
+		continue;		// loop back inside while()
     }
  
 	pub_.publish(goal);
 	ros::spinOnce();
 	ros::Duration d(5);
-
-         
-    // // Ask the user if he wants to continue giving goals
-    // do {
-    //   std::cout << "\nWould you like to go to another destination? (Y/N)" << std::endl;
-    //   std::cin >> choice_to_continue;
-    //   choice_to_continue = tolower(choice_to_continue); // Put your letter to its lower case
-    // } while (choice_to_continue != 'n' && choice_to_continue != 'y'); 
- 
-    // if(choice_to_continue =='n') {
-    //     run = false;
-    // }  
-  }
    
   return 0;
 }
