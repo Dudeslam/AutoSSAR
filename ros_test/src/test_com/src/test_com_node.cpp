@@ -180,6 +180,7 @@
 /**
 **  Attempt 3)		http://wiki.ros.org/tf/Tutorials/Writing%20a%20tf%20broadcaster%20%28C%2B%2B%29
 **					https://answers.ros.org/question/276087/question-about-sending-simple-goal-to-navigation-stack/
+**
 **					Manual Rostopic call:
 **					// rostopic pub /move_base_simple/goal geometry_msgs/PoseStamped '{header: {stamp: now, frame_id: "map"}, pose: {position: {x: 1.0, y: 0.0, z: 0.0}, orientation: {w: 1.0}}}'
 **/
