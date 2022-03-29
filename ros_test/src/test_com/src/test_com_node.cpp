@@ -191,6 +191,10 @@ int main(int argc, char* argv[])
 	ROS_INFO("Hello, World!");
 
 
+	double x = 2;
+	double y = 2;
+	double z = 2;
+	double theta = 0.2;
 
 
 
