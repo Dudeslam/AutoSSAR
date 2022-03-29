@@ -71,13 +71,14 @@ while(run) {
  
     // Ask the user where he wants the robot to go?
     std::cout << "\nWhere do you want the robot to go?" << std::endl;
-    std::cout << "\n1 = North" << std::endl;
-    std::cout << "2 = East" << std::endl;
-    std::cout << "3 = South" << std::endl;
-    std::cout << "4 = West" << std::endl;
+    std::cout << "\nw = North" << std::endl;
+    std::cout << "d = East" << std::endl;
+    std::cout << "x = South" << std::endl;
+    std::cout << "a = West" << std::endl;
     std::cout << "e = Exit" << std::endl;
     std::cout << "\nEnter a number: ";
     std::cin >> user_choice;
+	user_choice = tolower(user_choice);
  
     // Create a new goal to send to move_base 
 	geometry_msgs::PoseStamped goal;
@@ -93,31 +94,31 @@ while(run) {
     // Launch RViz and click the Publish Point button in RViz to
     // display the coordinates to the /clicked_point topic.
     switch (user_choice) {
-      case 1:
+      case "n":
         std::cout << "\nNorth\n" << std::endl;
         goal.pose.position.x += 10;
     	//goal.target_pose.pose.position.y = 3.7;
         goal.pose.orientation.w = 0;
         break;
-      case 2:
+      case "d":
         std::cout << "\nEast\n" << std::endl;
         //goal.target_pose.pose.position.x = 8.1;
     	goal.pose.position.y += 10;
         goal.pose.orientation.w = M_PI/2;
         break;
-      case 3:
+      case "x":
         std::cout << "\nSouth\n" << std::endl;
         goal.pose.position.x -= 10;
     	//goal.target_pose.pose.position.y = 2.0;
         goal.pose.orientation.w = M_PI;
         break;
-      case 4:
+      case "a":
         std::cout << "\nWest\n" << std::endl;
         //goal.target_pose.pose.position.x = 5.3;
     	goal.pose.position.y -= 10;
         goal.pose.orientation.w = M_PI*1.5;
         break;
-      case e:
+      case "e":
         std::cout << "\nExit\n" << std::endl;
         run = false;
         break;
