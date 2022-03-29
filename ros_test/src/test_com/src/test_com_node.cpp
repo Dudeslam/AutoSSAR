@@ -130,16 +130,16 @@ while(run) {
 	ros::Duration d(5);
 
          
-    // Ask the user if he wants to continue giving goals
-    do {
-      std::cout << "\nWould you like to go to another destination? (Y/N)" << std::endl;
-      std::cin >> choice_to_continue;
-      choice_to_continue = tolower(choice_to_continue); // Put your letter to its lower case
-    } while (choice_to_continue != 'n' && choice_to_continue != 'y'); 
+    // // Ask the user if he wants to continue giving goals
+    // do {
+    //   std::cout << "\nWould you like to go to another destination? (Y/N)" << std::endl;
+    //   std::cin >> choice_to_continue;
+    //   choice_to_continue = tolower(choice_to_continue); // Put your letter to its lower case
+    // } while (choice_to_continue != 'n' && choice_to_continue != 'y'); 
  
-    if(choice_to_continue =='n') {
-        run = false;
-    }  
+    // if(choice_to_continue =='n') {
+    //     run = false;
+    // }  
   }
    
   return 0;
