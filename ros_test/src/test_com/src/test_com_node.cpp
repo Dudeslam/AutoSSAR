@@ -196,7 +196,7 @@ int main(int argc, char* argv[])
 
 	// Create a ROS node handle
 	ros::NodeHandle nh_;
-	ros::Publisher pub_ = nh_.advertise<geometry_msgs/PoseStamped>("move_base_simple/goal");
+	ros::Publisher pub_ = nh_.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 1);
 
 	ros::Rate loop_rate(10);
 
@@ -217,6 +217,7 @@ int main(int argc, char* argv[])
 
 		pub_.publish(goal);
 		ros::spinOnce();
+		ros::Duration d(5);
 		loop_rate.sleep();
 		++count;
 	}
