@@ -66,76 +66,78 @@ int main(int argc, char** argv){
 	char user_choice = 'e';
 	bool run = true;
      
-while(run) {
- 
-    // Ask the user where he wants the robot to go?
-    std::cout << "\nWhere do you want the robot to go?" << std::endl;
-    std::cout << "\nw = North" << std::endl;
-    std::cout << "d = East" << std::endl;
-    std::cout << "x = South" << std::endl;
-    std::cout << "a = West" << std::endl;
-    std::cout << "e = Exit" << std::endl;
-    std::cout << "\nEnter a number: ";
-    std::cin >> user_choice;
-	user_choice = tolower(user_choice);
- 
-    // Create a new goal to send to move_base 
-	geometry_msgs::PoseStamped goal;
-    //move_base_msgs::MoveBaseGoal goal;
- 
-    // Send a goal to the robot
-    goal.header.frame_id = "map";
-    goal.header.stamp = ros::Time::now();
-         
-    bool valid_selection = true;
- 
-    // Use map_server to load the map of the environment on the /map topic. 
-    // Launch RViz and click the Publish Point button in RViz to
-    // display the coordinates to the /clicked_point topic.
-    switch (user_choice) {
-      case 'n':
-        std::cout << "\nNorth\n" << std::endl;
-        goal.pose.position.x += 10;
-    	//goal.target_pose.pose.position.y = 3.7;
-        goal.pose.orientation.w = 0;
-        break;
-      case 'd':
-        std::cout << "\nEast\n" << std::endl;
-        //goal.target_pose.pose.position.x = 8.1;
-    	goal.pose.position.y += 10;
-        goal.pose.orientation.w = M_PI/2;
-        break;
-      case 'x':
-        std::cout << "\nSouth\n" << std::endl;
-        goal.pose.position.x -= 10;
-    	//goal.target_pose.pose.position.y = 2.0;
-        goal.pose.orientation.w = M_PI;
-        break;
-      case 'a':
-        std::cout << "\nWest\n" << std::endl;
-        //goal.target_pose.pose.position.x = 5.3;
-    	goal.pose.position.y -= 10;
-        goal.pose.orientation.w = M_PI*1.5;
-        break;
-      case 'e':
-        std::cout << "\nExit\n" << std::endl;
-        run = false;
-        break;
-      default:
-        std::cout << "\nInvalid selection. Please try again.\n" << std::endl;
-        valid_selection = false;
-    }
-         
-    // Go back to beginning if the selection is invalid.
-    if(!valid_selection) {
-		continue;		// loop back inside while()
-    }
- 
-	pub_.publish(goal);
-	ros::spinOnce();
-	ros::Duration d(5);
-   
-  return 0;
+	while(run) {
+	
+		// Ask the user where he wants the robot to go?
+		std::cout << "\nWhere do you want the robot to go?" << std::endl;
+		std::cout << "\nw = North" << std::endl;
+		std::cout << "d = East" << std::endl;
+		std::cout << "x = South" << std::endl;
+		std::cout << "a = West" << std::endl;
+		std::cout << "e = Exit" << std::endl;
+		std::cout << "\nEnter a number: ";
+		std::cin >> user_choice;
+		user_choice = tolower(user_choice);
+	
+		// Create a new goal to send to move_base 
+		geometry_msgs::PoseStamped goal;
+		//move_base_msgs::MoveBaseGoal goal;
+	
+		// Send a goal to the robot
+		goal.header.frame_id = "map";
+		goal.header.stamp = ros::Time::now();
+			
+		bool valid_selection = true;
+	
+		// Use map_server to load the map of the environment on the /map topic. 
+		// Launch RViz and click the Publish Point button in RViz to
+		// display the coordinates to the /clicked_point topic.
+		switch (user_choice) {
+			case 'n':
+				std::cout << "\nNorth\n" << std::endl;
+				goal.pose.position.x += 10;
+				//goal.target_pose.pose.position.y = 3.7;
+				goal.pose.orientation.w = 0;
+				break;
+			case 'd':
+				std::cout << "\nEast\n" << std::endl;
+				//goal.target_pose.pose.position.x = 8.1;
+				goal.pose.position.y += 10;
+				goal.pose.orientation.w = M_PI/2;
+				break;
+			case 'x':
+				std::cout << "\nSouth\n" << std::endl;
+				goal.pose.position.x -= 10;
+				//goal.target_pose.pose.position.y = 2.0;
+				goal.pose.orientation.w = M_PI;
+				break;
+			case 'a':
+				std::cout << "\nWest\n" << std::endl;
+				//goal.target_pose.pose.position.x = 5.3;
+				goal.pose.position.y -= 10;
+				goal.pose.orientation.w = M_PI*1.5;
+				break;
+			case 'e':
+				std::cout << "\nExit\n" << std::endl;
+				run = false;
+				break;
+			default:
+				std::cout << "\nInvalid selection. Please try again.\n" << std::endl;
+				valid_selection = false;
+		}
+			
+		// Go back to beginning if the selection is invalid.
+		if(!valid_selection) {
+			continue;		// loop back inside while()
+		}
+	
+		pub_.publish(goal);
+		ros::spinOnce();
+		ros::Duration d(5);
+	}
+
+	
+return 0;
 }
 
 
