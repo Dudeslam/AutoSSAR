@@ -62,7 +62,6 @@ int main(int argc, char** argv){
 	ros::NodeHandle nh_;
 	ros::Publisher pub_ = nh_.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 1);
  
- 
 	char user_choice = 'e';
 	bool run = true;
      
@@ -75,7 +74,7 @@ int main(int argc, char** argv){
 		std::cout << "x = South" << std::endl;
 		std::cout << "a = West" << std::endl;
 		std::cout << "e = Exit" << std::endl;
-		std::cout << "\nEnter a number: ";
+		std::cout << "\nEnter a direction: ";
 		std::cin >> user_choice;
 		user_choice = tolower(user_choice);
 	
@@ -86,14 +85,11 @@ int main(int argc, char** argv){
 		// Send a goal to the robot
 		goal.header.frame_id = "map";
 		goal.header.stamp = ros::Time::now();
-			
 		bool valid_selection = true;
 	
-		// Use map_server to load the map of the environment on the /map topic. 
-		// Launch RViz and click the Publish Point button in RViz to
-		// display the coordinates to the /clicked_point topic.
+
 		switch (user_choice) {
-			case 'n':
+			case 'w':
 				std::cout << "\nNorth\n" << std::endl;
 				goal.pose.position.x += 10;
 				//goal.target_pose.pose.position.y = 3.7;
@@ -136,7 +132,7 @@ int main(int argc, char** argv){
 		ros::Duration d(5);
 	}
 
-	
+
 return 0;
 }
 
