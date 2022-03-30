@@ -64,8 +64,8 @@ void Goal3DTool::onPoseSet(double x, double y, double z, double theta)
 {
   ROS_WARN("3D Goal Set");
   std::string fixed_frame = context_->getFixedFrame().toStdString();
-  ROS_INFO("fixed_frame %s", fixed_frame);				// EDIT !!!
-  ROS_INFO("fixed_frame str %s", fixed_frame.c_str());	// EDIT !!
+  ROS_INFO("*************fixed_frame**************** %s", fixed_frame);				// EDIT !!!
+  ROS_INFO("*************fixed_frame str************ %s", fixed_frame.c_str());	// EDIT !!
   tf::Quaternion quat;
   quat.setRPY(0.0, 0.0, theta);
   tf::Stamped<tf::Pose> p = tf::Stamped<tf::Pose>(tf::Pose(quat, tf::Point(x, y, z)), ros::Time::now(), fixed_frame);
