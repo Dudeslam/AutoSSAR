@@ -45,6 +45,7 @@
 using namespace octomap_server;
 
 int main(int argc, char** argv){
+  ROS_WARN("octomap_server: A Tool to serve 3D OctoMaps in ROS (binary and as visualization)");
   ros::init(argc, argv, "octomap_server");
   const ros::NodeHandle nh;
   const ros::NodeHandle private_nh("~");
