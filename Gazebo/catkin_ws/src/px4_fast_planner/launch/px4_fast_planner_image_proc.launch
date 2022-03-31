@@ -104,7 +104,7 @@
         args="load depth_image_proc/point_cloud_xyzrgb record_player_manager --no-bond">
     <remap from="depth_registered/image_rect" to="camera/depth/image"/>
     <remap from="depth_registered/points" to="camera/depth_registered/points"/>
-    <remap from="rgb/image_rect_color" to="$cloud_in/image_rect_color"/>
+    <remap from="rgb/image_rect_color" to="cloud_in/image_rect_color"/>
     <remap from="rgb/camera_info" to="cloud_in/camera_info"/>
   </node>
 
