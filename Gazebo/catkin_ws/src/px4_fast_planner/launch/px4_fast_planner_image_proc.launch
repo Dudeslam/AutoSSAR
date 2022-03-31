@@ -90,10 +90,8 @@
     </node>
 
    <!--Run depth_image_proc nodelet-->
-   <include file="$(find depth_image_proc)/launch/point_cloud_xyzrgb.launch" />
+   <!-- <include file="$(find depth_image_proc)/launch/point_cloud_xyzrgb.launch" /> -->
     
-
-
 
     <!--octomap launch-->
     <include file="$(find octomap_server)/launch/octomap_mapping.launch"/>
