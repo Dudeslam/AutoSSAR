@@ -24,4 +24,10 @@
 /ros_test/src/sim_test/~
 .vscode/
 /Gazebo/catkin_ws/src/octomap_test/devel
-
+/Mads2/catkin_ws/build
+/Mads2/catkin_ws/devel
+/Mads2/catkin_ws/build_isolated
+/Mads2/catkin_ws/devel_isolated
+/Mads2/catkin_ws/.catkin_tools
+/Mads2/catkin_ws/.vscode
+/Mads2/catkin_ws/.catkin_workspace

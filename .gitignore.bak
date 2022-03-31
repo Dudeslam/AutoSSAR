@@ -13,6 +13,7 @@
 /VNC_setup/logs
 /VNC_setup/src/Fast-planner/files
 /VNC_setup/src/Fast-planner/README.md
+/VNC_setup/src/~
 /ros_test/devel
 /ros_test/build
 /ros_test/.catkin_tools
