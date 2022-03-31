@@ -109,7 +109,7 @@
   </node>
 
     <!--octomap launch-->
-    <include file="$(find octomap_server)/launch/octomap_server.launch"/>
+    <include file="$(find octomap_server)/launch/octomap_mapping.launch"/>
 
     <!-- Rviz -->
     <include file="$(find px4_fast_planner)/launch/rviz.launch" />
