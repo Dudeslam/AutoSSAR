@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /root/AutoSSAR/Gazebo/octomap_ros-melodic-devel/build/devel/setup.sh
