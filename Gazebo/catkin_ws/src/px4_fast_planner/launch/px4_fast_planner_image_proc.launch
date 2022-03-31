@@ -98,19 +98,6 @@
     <remap from="image" to="camera/depth/image"/>
   </node>
 
-  <!-- Downsample and crop rgb image before converting to cloud, if it's high res -->
-  <node pkg="nodelet" type="nodelet" name="downsample_rgb"
-        args="load image_proc/crop_decimate record_player_manager --no-bond"
-        if="$(arg high_res_rgb)">
-    <param name="decimation_x" value="2"/>
-    <param name="decimation_y" value="2"/>
-    <param name="width" value="1280"/>
-    <param name="height" value="960"/>
-    <remap from="camera" to="camera/rgb"/>
-    <remap from="camera_out" to="$(arg cloud_input_ns)"/>
-    <remap from="camera/rgb/image_raw" to="camera/rgb/image_rect_color"/>
-    <remap from="$(arg cloud_input_ns)/image_raw" to="$(arg cloud_input_ns)/image_rect_color"/>
-  </node>
 
   <!-- Convert it into a point cloud -->
   <node pkg="nodelet" type="nodelet" name="cloudify"
