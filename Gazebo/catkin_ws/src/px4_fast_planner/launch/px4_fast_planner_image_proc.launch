@@ -89,25 +89,6 @@
         <param name="traj_pub_topic" value="command/trajectory"/>
     </node>
 
-  <!-- The depth image is already rectified and registered
-       to the camera optical frame, but stored in mm; convert it
-       to meters -->
-  <node pkg="nodelet" type="nodelet" name="metric_rect" 
-        args="load depth_image_proc/convert_metric record_player_manager --no-bond">
-    <remap from="image_raw" to="camera/depth/image_raw"/>
-    <remap from="image" to="camera/depth/image"/>
-  </node>
-
-
-  <!-- Convert it into a point cloud -->
-  <node pkg="nodelet" type="nodelet" name="cloudify"
-        args="load depth_image_proc/point_cloud_xyzrgb record_player_manager --no-bond">
-    <remap from="depth_registered/image_rect" to="camera/depth/image"/>
-    <remap from="depth_registered/points" to="camera/depth_registered/points"/>
-    <remap from="rgb/image_rect_color" to="cloud_in/image_rect_color"/>
-    <remap from="rgb/camera_info" to="cloud_in/camera_info"/>
-  </node>
-
     <!--octomap launch-->
     <include file="$(find octomap_server)/launch/octomap_mapping.launch"/>
 
