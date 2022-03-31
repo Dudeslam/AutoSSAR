@@ -20,7 +20,7 @@
         <!--remap from="rgb/image_rect_color" to="/carla/ego_vehicle/rgb_front/image"/-->
 
         <!-- Input: Rectified depth image, registered to the RGB camera. (sensor_msgs/Image) -->
-        <remap from="depth_registered/image_rect" to="/camera/depth/image_raw"/>
+        <remap from="depth_registered/image_rect" to="/camera/rgb/image_raw"/>
 
         <!-- Output: XYZ point cloud. If using PCL, subscribe as PointCloud<PointXYZ>.  (sensor_msgs/PointCloud2)  -->
         <remap from="depth_registered/points" to="/point_cloud/points"/>
