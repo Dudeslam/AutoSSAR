@@ -126,7 +126,7 @@
 
 
     <!--octomap launch-->
-    <include file="$(find octomap_server)/launch/octomap_mapping.launch"/>
+    <!-- <include file="$(find octomap_server)/launch/octomap_mapping.launch"/> -->
 
     <!-- Rviz -->
     <include file="$(find px4_fast_planner)/launch/rviz.launch" />
