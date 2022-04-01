@@ -11,17 +11,18 @@
 		<param name="resolution" value="0.20" />
 		
 		<!-- fixed map frame (set to 'map' if SLAM or localization running!) -->
-		<param name="frame_id" type="string" value="map" />
+		<param name="frame_id" type="string" value="odom" />
 		
 		<!-- maximum range to integrate (speedup!) -->
 		<param name="sensor_model/max_range" value="15" />
 
+		<!-- -->
 		<param name="base_frame_id" value="base_link" />
 		
 		<param name="latch" value="false" />
 
 		<!-- data source to integrate (PointCloud2) -->
-		<remap from="cloud_in" to="/pcl_render_node/cloud" />
+		<remap from="cloud_in" to="/voxel_grid/output" />
 	
 	</node>
 </launch>
