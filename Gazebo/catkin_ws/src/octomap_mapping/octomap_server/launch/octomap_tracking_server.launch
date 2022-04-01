@@ -14,6 +14,6 @@
 		<param name="topic_changes" value="/octomap_tracking_server/changeset" />
     <param name="change_id_frame" value="$(arg changeIdFrame)" />
     <param name="min_change_pub" value="0" />
-		<!--remap from="cloud_in" to="/rgbdslam/batch_clouds" /-->
+		<remap from="cloud_in" to="/camera/depth/points" />
 	</node>
 </launch>

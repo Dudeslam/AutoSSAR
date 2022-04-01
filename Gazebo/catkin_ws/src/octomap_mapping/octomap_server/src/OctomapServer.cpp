@@ -135,6 +135,7 @@ OctomapServer::OctomapServer(const ros::NodeHandle private_nh_, const ros::NodeH
   m_octree->setClampingThresMin(thresMin);
   m_octree->setClampingThresMax(thresMax);
   m_treeDepth = m_octree->getTreeDepth();
+  ROS_WARN("Octree Init");
   m_maxTreeDepth = m_treeDepth;
   m_gridmap.info.resolution = m_res;
 
@@ -354,7 +355,7 @@ void OctomapServer::insertCloudCallback(const sensor_msgs::PointCloud2::ConstPtr
 
 void OctomapServer::insertScan(const tf::Point& sensorOriginTf, const PCLPointCloud& ground, const PCLPointCloud& nonground){
   point3d sensorOrigin = pointTfToOctomap(sensorOriginTf);
-
+  
   if (!m_octree->coordToKeyChecked(sensorOrigin, m_updateBBXMin)
     || !m_octree->coordToKeyChecked(sensorOrigin, m_updateBBXMax))
   {
@@ -483,6 +484,7 @@ void OctomapServer::insertScan(const tf::Point& sensorOriginTf, const PCLPointCl
 void OctomapServer::publishAll(const ros::Time& rostime){
   ros::WallTime startTime = ros::WallTime::now();
   size_t octomapSize = m_octree->size();
+  ROS_WARN(m_octree);
   // TODO: estimate num occ. voxels for size of arrays (reserve)
   if (octomapSize <= 1){
     ROS_WARN("Nothing to publish, octree is empty");
