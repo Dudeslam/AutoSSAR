@@ -1,0 +1,4 @@
+<launch>
+  <!-- <node name="rvizvisualisation" pkg="rviz" type="rviz" output="log" args="-d $(find px4_fast_planner)/rviz/rviz.rviz" /> -->
+  <node name="rvizvisualisation" pkg="rviz" type="rviz" output="log" args="-d $(find px4_fast_planner)/rviz/d4x_rviz.rviz" />
+</launch>
