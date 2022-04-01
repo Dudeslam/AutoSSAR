@@ -124,10 +124,6 @@
 
     </node>
 
-    <!-- Publish camera pose in world frame (read from EKF pose estimates and published over TF for octomap generation)-->
-    <node pkg="FastPlannerOctomap" type="pubCamPose" name="pubCamPose"/>
-
-
     <!--octomap launch-->
     <!-- <include file="$(find octomap_server)/launch/octomap_mapping.launch"/> -->
 
