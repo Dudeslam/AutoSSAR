@@ -92,6 +92,38 @@
    <!--Run depth_image_proc nodelet-->
    <!-- <include file="$(find depth_image_proc)/launch/point_cloud_xyzrgb.launch" /> -->
     
+    <!-- PCL Voxel Filter (Downsampling the point cloud)-->
+    <node pkg="nodelet" type="nodelet" name="pcl_manager" args="manager" output="screen" />
+
+    <!-- Run a VoxelGrid filter to clean NaNs and downsample the data -->
+    <node pkg="nodelet" type="nodelet" name="voxel_grid" args="load pcl/VoxelGrid pcl_manager" output="screen">
+        <remap from="~input" to="/camera/depth/points" />
+        <rosparam>
+        filter_field_name: z
+        filter_limit_min: 0.01
+        filter_limit_max: 15
+        filter_limit_negative: False
+        leaf_size: 0.10
+        </rosparam>
+
+        <rosparam>
+        filter_field_name: x
+        filter_limit_min: -3
+        filter_limit_max: 3
+        filter_limit_negative: False
+        leaf_size: 0.10
+        </rosparam>
+
+        <rosparam>
+        filter_field_name: y
+        filter_limit_min: -3
+        filter_limit_max: 3
+        filter_limit_negative: False
+        leaf_size: 0.10
+        </rosparam>
+
+    </node>
+
 
     <!--octomap launch-->
     <include file="$(find octomap_server)/launch/octomap_mapping.launch"/>
