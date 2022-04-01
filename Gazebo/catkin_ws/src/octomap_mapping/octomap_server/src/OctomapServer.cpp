@@ -350,7 +350,7 @@ void OctomapServer::insertCloudCallback(const sensor_msgs::PointCloud2::ConstPtr
 
   double total_elapsed = (ros::WallTime::now() - startTime).toSec();
   ROS_DEBUG("Pointcloud insertion in OctomapServer done (%zu+%zu pts (ground/nonground), %f sec)", pc_ground.size(), pc_nonground.size(), total_elapsed);
-  ROS_WARN("About to publish");
+  ROS_WARN(m_octree->toString().c_str());
   publishAll(cloud->header.stamp);
 }
 
