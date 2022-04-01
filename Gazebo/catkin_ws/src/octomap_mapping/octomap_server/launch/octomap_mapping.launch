@@ -22,7 +22,7 @@
 		<param name="latch" value="false" />
 
 		<!-- data source to integrate (PointCloud2) -->
-		<remap from="cloud_in" to="/voxel_grid/output" />
+		<remap from="cloud_in" to="/camera/depth/points" />
 	
 	</node>
 </launch>
