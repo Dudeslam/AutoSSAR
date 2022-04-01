@@ -484,7 +484,6 @@ void OctomapServer::insertScan(const tf::Point& sensorOriginTf, const PCLPointCl
 void OctomapServer::publishAll(const ros::Time& rostime){
   ros::WallTime startTime = ros::WallTime::now();
   size_t octomapSize = m_octree->size();
-  ROS_WARN(m_octree);
   // TODO: estimate num occ. voxels for size of arrays (reserve)
   if (octomapSize <= 1){
     ROS_WARN("Nothing to publish, octree is empty");
