@@ -34,8 +34,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-ROS_WARN("octomap_server: A Tool to serve 3D OctoMaps in ROS (binary and as visualization)");
-
 #include <ros/ros.h>
 #include <octomap_server/OctomapServer.h>
 
