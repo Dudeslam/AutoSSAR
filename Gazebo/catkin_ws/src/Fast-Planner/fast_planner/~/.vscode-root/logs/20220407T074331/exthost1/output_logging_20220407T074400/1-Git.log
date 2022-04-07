@@ -1,0 +1,12 @@
+[2022-04-07T07:44:02.673Z] Validating found git in: git
+[2022-04-07T07:44:02.938Z] Using git 2.17.1 from git
+[2022-04-07T07:44:03.028Z] > git rev-parse --git-dir [17ms]
+[2022-04-07T07:44:03.033Z] Open repository: /root/AutoSSAR
+[2022-04-07T07:44:03.276Z] > git symbolic-ref --short HEAD [88ms]
+[2022-04-07T07:44:03.299Z] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track) refs/heads/Develop refs/remotes/Develop [13ms]
+[2022-04-07T07:44:03.468Z] > git remote --verbose [147ms]
+[2022-04-07T07:44:03.468Z] > git for-each-ref --sort -committerdate --format %(refname) %(objectname) %(*objectname) [159ms]
+[2022-04-07T07:44:03.698Z] > git config --get commit.template [115ms]
+[2022-04-07T07:44:06.843Z] > git ls-files --stage -- /root/AutoSSAR/Mads2/catkin_ws/src/Fast-Planner/fast_planner/bspline/CMakeLists.txt [3ms]
+[2022-04-07T07:44:07.903Z] > git ls-files --stage -- /root/AutoSSAR/Mads2/catkin_ws/src/Fast-Planner/fast_planner/bspline/src/non_uniform_bspline.cpp [3ms]
+[2022-04-07T07:44:20.618Z] > git ls-files --stage -- /root/AutoSSAR/Mads2/catkin_ws/src/Fast-Planner/fast_planner/bspline_opt/src/bspline_optimizer.cpp [3ms]

@@ -1,0 +1,23 @@
+[variant] Loaded new set of variants
+[kit] Successfully loaded 7 kits from /root/.local/share/CMakeTools/cmake-tools-kits.json
+[kit] Detected kits definition version change from undefined to 2. Silently scanning for kits.
+[proc] Executing command: /usr/bin/c89-gcc -v
+[proc] Executing command: /usr/bin/c99-gcc -v
+[proc] Executing command: /usr/bin/clang -v
+[proc] Executing command: /usr/bin/clang-6.0 -v
+[proc] Executing command: /usr/bin/gcc -v
+[proc] Executing command: /usr/bin/gcc-7 -v
+[proc] Executing command: /usr/bin/x86_64-linux-gnu-gcc -v
+[proc] Executing command: /usr/bin/x86_64-linux-gnu-gcc-7 -v
+[proc] Executing command: /usr/bin/c99-gcc -v
+[proc] Executing command: /usr/bin/c89-gcc -v
+[kit] Found Kit: GCC 7.5.0 x86_64-linux-gnu
+[kit] Found Kit: GCC 7.5.0 x86_64-linux-gnu
+[kit] Found Kit: Clang 6.0.0 x86_64-pc-linux-gnu
+[kit] Found Kit: Clang 6.0.0 x86_64-pc-linux-gnu
+[kit] Found Kit: GCC 7.5.0 x86_64-linux-gnu
+[kit] Found Kit: GCC 7.5.0 x86_64-linux-gnu
+[kit] Found Kit: GCC 7.5.0 x86_64-linux-gnu
+[kit] Found Kit: GCC 7.5.0 x86_64-linux-gnu
+[kit] Successfully loaded 7 kits from /root/.local/share/CMakeTools/cmake-tools-kits.json
+[rollbar] Unhandled exception: Unhandled Promise rejection: Post-folder-open Canceled: Canceled {"folder":{"uri":{"$mid":1,"fsPath":"/root/AutoSSAR/Mads2/catkin_ws/src/Fast-Planner/fast_planner","external":"file:///root/AutoSSAR/Mads2/catkin_ws/src/Fast-Planner/fast_planner","path":"/root/AutoSSAR/Mads2/catkin_ws/src/Fast-Planner/fast_planner","scheme":"file"},"name":"fast_planner","index":0}}
