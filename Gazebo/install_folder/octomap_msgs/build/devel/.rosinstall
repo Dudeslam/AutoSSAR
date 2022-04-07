@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /root/AutoSSAR/Gazebo/catkin_ws/src/octomap_msgs/build/devel/setup.sh

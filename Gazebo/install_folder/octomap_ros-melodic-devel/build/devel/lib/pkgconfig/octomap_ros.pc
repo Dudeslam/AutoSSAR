@@ -1,0 +1,8 @@
+prefix=/root/AutoSSAR/Gazebo/octomap_ros-melodic-devel/build/devel
+
+Name: octomap_ros
+Description: Description of octomap_ros
+Version: 0.4.1
+Cflags: -I/root/AutoSSAR/Gazebo/octomap_ros-melodic-devel/include -I/opt/ros/melodic/include
+Libs: -L${prefix}/lib -loctomap_ros /opt/ros/melodic/lib/liboctomap.so /opt/ros/melodic/lib/liboctomath.so
+Requires: octomap_msgs sensor_msgs tf

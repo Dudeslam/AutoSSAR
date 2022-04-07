@@ -1,0 +1,15 @@
+/usr/local/_setup_util.py
+/usr/local/env.sh
+/usr/local/setup.bash
+/usr/local/local_setup.bash
+/usr/local/setup.sh
+/usr/local/local_setup.sh
+/usr/local/setup.zsh
+/usr/local/local_setup.zsh
+/usr/local/.rosinstall
+/opt/ros/melodic/lib/pkgconfig/octomap_ros.pc
+/opt/ros/melodic/share/octomap_ros/cmake/octomap_rosConfig.cmake
+/opt/ros/melodic/share/octomap_ros/cmake/octomap_rosConfig-version.cmake
+/opt/ros/melodic/share/octomap_ros/package.xml
+/opt/ros/melodic/lib/liboctomap_ros.so
+/opt/ros/melodic/include/octomap_ros//conversions.h
