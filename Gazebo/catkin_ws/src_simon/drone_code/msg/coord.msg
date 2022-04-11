@@ -1,2 +1,0 @@
-int8 ID
-geometry_msgs/PoseStamped frontierLocation
