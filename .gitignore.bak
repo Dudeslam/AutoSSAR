@@ -28,3 +28,7 @@
 /Splash/catkin_ws/devel
 /Splash/catkin_ws/build_isolated
 /Splash/catkin_ws/devel_isolated
+/Splash/catkin_ws/.catkin_tools
+/Splash/catkin_ws/logs
+/Splash/catkin_ws/.catkin_workspace
+/Splash/catkin_ws/.vscode
