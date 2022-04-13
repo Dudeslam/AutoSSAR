@@ -1,0 +1,8 @@
+prefix=/home/malle/AutoSSAR/Splash/catkin_ws/install
+
+Name: mavros_test
+Description: Description of mavros_test
+Version: 1.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: roscpp mavros
