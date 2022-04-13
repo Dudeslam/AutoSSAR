@@ -4,7 +4,7 @@
 #include <octomap/octomap.h>
 #include <octomap_msgs/Octomap.h>
 #include <nav_msgs/OccupancyGrid.h>
-#include "drone_code/coordination.h"
+#include "drone_code/coord.h"
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/PoseArray.h>
 
