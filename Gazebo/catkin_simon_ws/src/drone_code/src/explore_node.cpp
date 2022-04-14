@@ -352,6 +352,8 @@ int main(int argc, char **argv)
 	nh.param<double>("explore_node/homeX", offX,0);
 	nh.param<std::string>("explore_node/frame_id", frameId,"local_origin");
 	fileName = "/home/simon/results/dist" + std::to_string(ID) + ".txt";
+	Unit_ID = nh.param<int>("explore_node/ID", 0);
+	ROS_WARN("Unit ID: %d",Unit_ID);
 	
 	max_height = max_height - offsetStartY;
 	min_height = min_height - offsetStartY;
