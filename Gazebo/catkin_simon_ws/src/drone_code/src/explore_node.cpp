@@ -20,7 +20,7 @@
 #include <tf/transform_listener.h>
 #include "coordination.h"
 #include <nav_msgs/Path.h>
-#include "drone_code/coord.h"
+#include "coord.h"
 #define UNKNOWN -1
 #define FREE 0
 #define FRONTIER_REGION 100
