@@ -354,7 +354,7 @@ int main(int argc, char **argv)
 	fileName = "/home/simon/results/dist" + std::to_string(ID) + ".txt";
 	Unit_ID = nh.param<int>("explore_node/ID", 0);
 	ROS_WARN("Unit ID: %d",Unit_ID);
-	
+	ROS::Duration(5.0).sleep();
 	max_height = max_height - offsetStartY;
 	min_height = min_height - offsetStartY;
 	
