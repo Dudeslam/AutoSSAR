@@ -11,7 +11,6 @@
 /Gazebo/catkin_simon_ws/devel
 /Gazebo/catkin_simon_ws/build
 /Gazebo/catkin_tutorial_ws/devel
-*.bash
 /Gazebo/catkin_tutorial_ws/build
 /Gazebo/catkin_other_ws/devel
 /Gazebo/catkin_other_ws/build
