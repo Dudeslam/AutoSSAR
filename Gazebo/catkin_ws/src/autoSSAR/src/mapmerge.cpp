@@ -23,7 +23,7 @@
 using namespace std;
 
 sensor_msgs::PointCloud2 own_globalMap_pcd;
-sensor_msgs::PointCloud2 rcv_glocalMap_pcd;
+sensor_msgs::PointCloud2 rcv_globalMap_pcd;
 sensor_msgs::PointCloud2 localMap_pcd;
 pcl::PointCloud<pcl::PointXYZ> cloudMap;
 
@@ -35,7 +35,7 @@ void getMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
     pcl::fromROSMsg(rcv_globalMap_pcd, cloudMap);
 }
 
-int main (int argc, char** argv)){
+int main (int argc, char** argv){
     ros::init(argc, argv, "map_merger");
     ros::NodeHandle nh;
     ros::NodeHandle nh_private("~");
