@@ -1,2 +1,2 @@
 - setup-file:
-    local-name: /mnt/hgfs/Thesis2019_code/workspace/devel/setup.sh
+    local-name: /home/malle/AutoSSAR/Gazebo/catkin_simon_ws/devel/setup.sh

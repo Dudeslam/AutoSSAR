@@ -1,8 +1,8 @@
-prefix=/mnt/hgfs/Thesis2019_code/workspace/devel
+prefix=/home/malle/AutoSSAR/Gazebo/catkin_simon_ws/devel
 
 Name: drone_code
 Description: Description of drone_code
 Version: 0.0.0
-Cflags: -I/mnt/hgfs/Thesis2019_code/workspace/devel/include -I/mnt/hgfs/Thesis2019_code/workspace/src/drone_code/include
+Cflags: -I/home/malle/AutoSSAR/Gazebo/catkin_simon_ws/devel/include -I/home/malle/AutoSSAR/Gazebo/catkin_simon_ws/src/drone_code/include
 Libs: -L${prefix}/lib 
 Requires: message_runtime
