@@ -353,9 +353,8 @@ int main(int argc, char **argv)
 	nh.param<double>("explore_node/homeX", offX,0);
 	nh.param<std::string>("explore_node/frame_id", frameId,"local_origin");
 	fileName = "/home/simon/results/dist" + std::to_string(ID) + ".txt";
-	Unit_ID = nh.param<int>("explore_node/ID", 0);
-	ROS_WARN("Unit ID: %d",Unit_ID);
-	ros::Duration(5.0).sleep();
+
+
 	max_height = max_height - offsetStartY;
 	min_height = min_height - offsetStartY;
 	
@@ -368,6 +367,8 @@ int main(int argc, char **argv)
             ("mavros/state", 10, state_cb);
 	ros::Publisher local_pos_pub = nh.advertise<geometry_msgs::PoseStamped>
             ("move_base_simple/goal", 1);
+
+
     ros::ServiceClient arming_client = nh.serviceClient<mavros_msgs::CommandBool>
             ("mavros/cmd/arming");
     ros::ServiceClient set_mode_client = nh.serviceClient<mavros_msgs::SetMode>
@@ -535,6 +536,7 @@ int main(int argc, char **argv)
 			case MEETING:
 				
 				local_pos_pub.publish(home);
+				unit_id_pub.publish(Unit_ID);
 				break;
 			
 			case HOME:

@@ -34,7 +34,11 @@ int main(int argc, char **argv)
 	ros::Publisher coord_state_pub = nh.advertise<std_msgs::Int8>
             ("coordination_state", 1);
 	ros::Subscriber exploration_comp = nh.subscribe<std_msgs::Bool>("exploration_complete",1,explorationCallback);
+	ros::Publisher unit_id_pub = nh.advertise<std_msgs::Int8>("/unit_id", 1);
 
+	Unit_ID = nh.param<int>("explore_node/ID", 0);
+	ROS_WARN("Unit ID: %d",Unit_ID);
+	
 	ros::Rate rate(10);
     
 	double offY, offX;
@@ -94,7 +98,7 @@ int main(int argc, char **argv)
 					ros::spinOnce();
 					rate.sleep();
 				}
-			
+				
 				coordination_state = EXPLORE;
 				std_msgs::Int8 coord_state_msg;
 				coord_state_msg.data = coordination_state;
