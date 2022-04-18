@@ -46,9 +46,7 @@
   </include>
 
 
-  <node pkg="map_merger" name = "map_merger_node" type="mapmerge" output="screen">
-    <remap from "~/map_merger/global_cloud" to="~/map_generator/global_cloud"/>
-  </node>
+
   <!-- trajectory server -->
   <node pkg="plan_manage" name="traj_server" type="traj_server" output="screen">
     <remap from="/position_cmd" to="planning/pos_cmd"/>
@@ -68,6 +66,10 @@
     
 
   </node>
+
+  <include file="$(find autoSSAR)/launch/map_merge.launch">
+  
+  </include>
 
   <node pkg="waypoint_generator" name="waypoint_generator" type="waypoint_generator" output="screen">
     <remap from="~odom" to="$(arg odom_topic)"/>        
