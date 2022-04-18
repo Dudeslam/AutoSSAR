@@ -1,4 +1,4 @@
-#include "mapmerge.h"
+#include "include/mapmerge.h"
 #include "ros/ros.h"
 #include "nav_msgs/Odometry.h"
 
