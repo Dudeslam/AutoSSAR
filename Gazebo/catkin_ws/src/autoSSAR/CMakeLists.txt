@@ -122,7 +122,7 @@ include_directories(
 
 ## Declare a C++ library
 add_library(${PROJECT_NAME}
-  src/${PROJECT_NAME}/mapmerge.cpp
+  src/${PROJECT_NAME}/src/mapmerge.cpp
 )
 
 ## Add cmake target dependencies of the library
