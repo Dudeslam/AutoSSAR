@@ -23,7 +23,7 @@
 using namespace std;
 
 sensor_msgs::PointCloud2 own_globalMap_pcd;
-sensor_msgs::PointCloud2 rcv_glocalMap_pcd;
+sensor_msgs::PointCloud2 rcv_globalMap_pcd;
 sensor_msgs::PointCloud2 localMap_pcd;
 pcl::PointCloud<pcl::PointXYZ> cloudMap;
 
