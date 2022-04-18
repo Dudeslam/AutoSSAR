@@ -1,4 +1,4 @@
-#include "MapMerger.h"
+#include "mapmerge.h"
 #include "ros/ros.h"
 #include "nav_msgs/Odometry.h"
 
@@ -39,7 +39,7 @@ int main (int argc, char** argv)){
     ros::init(argc, argv, "map_merger");
     ros::NodeHandle nh;
     ros::NodeHandle nh_private("~");
-    ros::Subscriber map_sub = nh.subscribe("/map_generator/global_cloud", 1, getMapCallback);
+    ros::Subscriber map_sub = nh.subscribe("/map_merger/global_cloud", 1, getMapCallback);
     ROSWARN("Subscribed");
 
     ros::Publisher map_pub = nh.advertise<sensor_msgs::PointCloud2>("/map_merged", 1);
