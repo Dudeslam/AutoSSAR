@@ -34,7 +34,8 @@ void getMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
     sensor_msgs::PointCloud2 localMap_pcd = *msg;
     pcl::PointCloud<pcl::PointXYZ> cloudMap;
     pcl::fromROSMsg(localMap_pcd, cloudMap);
-    own_globalMap_pcd += cloudMap;
+    //merge maps
+
 }
 
 
@@ -44,6 +45,7 @@ void getLocalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
     sensor_msgs::PointCloud2 localMap_pcd = *msg;
     pcl::PointCloud<pcl::PointXYZ> cloudMap;
     pcl::fromROSMsg(localMap_pcd, cloudMap);
+    Eigen::Transform<Scalar, 3, Eigen::Affine> cloudMap_mat(received.sensor_origin)
     local_map_pcd += cloudMap;
     own_globalMap_pcd += cloudMap;
 }
@@ -54,8 +56,8 @@ int main (int argc, char** argv){
     ros::NodeHandle nh_private("~");
 
     //Pub Subs
-    ros::Subscriber map_sub = nh.subscribe("/pcl_render_node/local_map", 1, getMapCallback);
-    ros::Subscriber map_sub2 = nh.subscribe("/map_generator/global_cloud", 1, getMapCallback);
+    ros::Subscriber map_local = nh.subscribe("/pcl_render_node/local_map", 1, getLocalMapCallback);
+    ros::Subscriber map_global = nh.subscribe("/octomap_full", 1, getMapCallback);
     ros::Publisher map_pub = nh.advertise<sensor_msgs::PointCloud2>("/map_merged", 1);
     //merge local received map with own global map
 
