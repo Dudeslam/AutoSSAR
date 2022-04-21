@@ -1,0 +1,7 @@
+<launch>
+  <node pkg="autoSSAR" name = "map_merger_node" type="mapmerge" output="screen">
+    <remap from="~/map_merger/global_cloud" to="~/map_generator/global_cloud"/>
+  </node>
+
+
+</launch>
