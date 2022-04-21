@@ -45,6 +45,7 @@ void getLocalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
     pcl::PointCloud<pcl::PointXYZ> cloudMap;
     pcl::fromROSMsg(localMap_pcd, cloudMap);
     local_map_pcd += cloudMap;
+    own_globalMap_pcd += cloudMap;
 }
 
 int main (int argc, char** argv){
@@ -65,6 +66,6 @@ int main (int argc, char** argv){
     map_pub.publish(globalMap_pcd);
 
     ros::Rate loop_rate(10);
-
+    ros::spin();
     return 0;
 }

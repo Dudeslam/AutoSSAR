@@ -1,3 +1,8 @@
 <launch>
-    <node pkg="autoSSAR" name="mapmerge" type="mapmerge" output="screen">
+    <node pkg="autoSSAR" name="mapmerge" type="mapmerge" output="screen"/>
+
+
+    <include file="$find(autoSSAR)/launch/octomap.launch">
+        <arg name="cloud_in" value="/pcl_render_node/cloud"/>
+    </include>
 </launch>
