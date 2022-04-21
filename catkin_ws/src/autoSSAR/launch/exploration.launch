@@ -73,9 +73,9 @@
   <!--Octomap Launcher-->
   <node pkg="nodelet" type="nodelet" name="standalone_nodelet" args="manager" />
 
-  <include file="$(find octomap_server)/launch/octomap_mapping.launch">
+  <!-- <include file="$(find octomap_server)/launch/octomap_mapping.launch">
     <remap="cloud_in" to="pcl_render_node/cloud"/>
-  </include>
+  </include> -->
 
 
 

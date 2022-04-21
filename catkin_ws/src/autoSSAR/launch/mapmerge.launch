@@ -1,0 +1,3 @@
+<launch>
+    <node pkg="autoSSAR" name="mapmerge" type="mapmerge" output="screen">
+</launch>
