@@ -65,6 +65,20 @@
 
   </node>
 
+  <!-- MapMerger-->
+  <node pkg="autoSSAR" name="mapmerge" type="mapmerge" output="screen">
+    
+  </node>
+
+  <!--Octomap Launcher-->
+  <node pkg="nodelet" type="nodelet" name="standalone_nodelet" args="manager" />
+
+  <include file="$(find octomap_server)/launch/octomap_mapping.launch">
+    <remap="cloud_in" to="pcl_render_node/cloud"/>
+  </include>
+
+
+
   <node pkg="waypoint_generator" name="waypoint_generator" type="waypoint_generator" output="screen">
     <remap from="~odom" to="$(arg odom_topic)"/>        
     <remap from="~goal" to="/move_base_simple/goal"/>
