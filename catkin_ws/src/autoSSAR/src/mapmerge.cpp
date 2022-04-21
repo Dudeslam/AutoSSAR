@@ -18,6 +18,10 @@
 #include <sensor_msgs/PointCloud2.h>
 #include <Eigen/Eigen>
 #include <random>
+#include <octomap_msgs/Octomap.h>
+#include <octomap_msgs/conversions.h>
+#include <octomap/octomap.h>
+#include <map_merge_3d>
 
 
 using namespace std;
@@ -28,15 +32,20 @@ sensor_msgs::PointCloud2 rcv_globalMap_pcd;
 sensor_msgs::PointCloud2 globalMap_pcd;
 
 
-void getMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
+void getMapCallback(const octomap_msgs::octomap msg)
 {
+    //conversations between octomap and pcl
     ROS_WARN("Received map");
-    sensor_msgs::PointCloud2 localMap_pcd = *msg;
+    sensor_msgs::PointCloud2 temp_pcd;
     pcl::PointCloud<pcl::PointXYZ> cloudMap;
-    pcl::fromROSMsg(localMap_pcd, cloudMap);
+    octomap_msgs::octomaptoPointCloud2(msg, temp_pcd);
+    pcl::fromROSMsg(temp_pcd, cloudMap);
     //merge maps
-
+    mergeMaps(cloudMap);
+    ROS_WARN("Merged with own map");
 }
+
+
 
 
 void getLocalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
@@ -45,10 +54,23 @@ void getLocalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
     sensor_msgs::PointCloud2 localMap_pcd = *msg;
     pcl::PointCloud<pcl::PointXYZ> cloudMap;
     pcl::fromROSMsg(localMap_pcd, cloudMap);
-    Eigen::Transform<Scalar, 3, Eigen::Affine> cloudMap_mat(received.sensor_origin)
     local_map_pcd += cloudMap;
     own_globalMap_pcd += cloudMap;
 }
+
+
+void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& cloudMap)
+{
+    ROS_WARN("Merging maps");
+    // transform received
+
+    // find closest point in own_globalMap_pcd
+    // if distance < threshold, add to own_globalMap_pcd
+    // else add to own_globalMap_pcd
+
+
+}
+
 
 int main (int argc, char** argv){
     ros::init(argc, argv, "map_merger");
