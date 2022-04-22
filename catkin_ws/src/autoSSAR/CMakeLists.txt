@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   pcl_conversions
   octomap_msgs
   octomap_ros
+  PCL 
 )
 
 ## System dependencies are found with CMake's conventions
@@ -123,6 +124,7 @@ include_directories(
   include
   ${OCTOMAP_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
+  ${PCL_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -154,6 +156,7 @@ add_executable(mapmerge src/mapmerge.cpp)
 target_link_libraries(mapmerge
   ${catkin_LIBRARIES}
   ${OCTOMAP_LIBRARIES}
+  ${PCL_LIBRARIES}
 )
 
 link_directories(${OCTOMAP_LIBRARY_DIRS})
