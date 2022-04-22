@@ -13,13 +13,8 @@
 #include <nav_msgs/Odometry.h>
 #include <ros/console.h>
 #include <ros/ros.h>
-#include <sensor_msgs/PointCloud2.h>
-#include <octomap_msgs/Octomap.h>
-#include <octomap_msgs/conversions.h>
-#include <octomap/octomap.h>
-#include <pcl/registration/icp.h>
-#include <pcl/filters/filter.h>
-#include <pcl/common/projection_matrix.h>
+
+
 
 
 void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, sensor_msgs::PointCloud2& map_out)
@@ -32,7 +27,7 @@ void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, sensor_msgs::PointCloud2&
     pcl::fromROSMsg(map_out, *map_out_ptr_tmp);
     //Remove NAN points
     std::vector<int> indices;
-    pcl::removeNaNFromPointCloud(map_in_ptr, map_in_ptr, indices);
+    // pcl::removeNaNFromPointCloud(*map_in_ptr, *map_in_ptr, indices);
 
     pcl::IterativeClosestPoint<pcl::PointXYZ, pcl::PointXYZ> icp;
     icp.setInputSource(map_in_ptr);

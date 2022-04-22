@@ -7,6 +7,13 @@
 #include <pcl/common/projection_matrix.h>
 #include <pcl/kdtree/kdtree_flann.h>
 #include <pcl_conversions/pcl_conversions.h>
+#include <pcl/registration/icp.h>
+#include <pcl/filters/filter.h>
+#include <pcl/common/projection_matrix.h>
+#include <sensor_msgs/PointCloud2.h>
+#include <octomap_msgs/Octomap.h>
+#include <octomap_msgs/conversions.h>
+#include <octomap/octomap.h>
 
 namespace mapMerge
 {
