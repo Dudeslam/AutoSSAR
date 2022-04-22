@@ -22,34 +22,36 @@
 #include <pcl/common/projection_matrix.h>
 
 
-void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, octomap_msgs::Octomap map_out)
+void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, sensor_msgs::PointCloud2& map_out)
 {
     ROS_WARN("Merging maps");
-
+    
+    pcl::PointCloud<pcl::PointXYZ>::Ptr map_in_ptr(new pcl::PointCloud<pcl::PointXYZ>(map_in));
+    pcl::PointCloud<pcl::PointXYZ>::Ptr map_out_ptr(new pcl::PointCloud<pcl::PointXYZ>);
+    pcl::PointCloud<pcl::PointXYZ>::Ptr map_out_ptr_tmp(new pcl::PointCloud<pcl::PointXYZ>);
+    pcl::fromROSMsg(map_out, *map_out_ptr_tmp);
     //Remove NAN points
     std::vector<int> indices;
-    pcl::removeNaNFromPointCloud(cloudMap, cloudMap, indices);
+    pcl::removeNaNFromPointCloud(map_in_ptr, map_in_ptr, indices);
 
     pcl::IterativeClosestPoint<pcl::PointXYZ, pcl::PointXYZ> icp;
-    icp.setInputSource(cloudMap);
-    icp.setInputTarget(own_globalMap_pcd);
-    icp.align(cloudMap);
+    icp.setInputSource(map_in_ptr);
+    icp.setInputTarget(map_out_ptr);
+    icp.align(*map_out_ptr_tmp);
     if(icp.hasConverged())
     {
         ROS_WARN("ICP has converged");
         icp.getFitnessScore();
         icp.getFinalTransformation();
-        own_globalMap_pcd = cloudMap;
+        pcl::transformPointCloud(*map_in_ptr, *map_out_ptr_tmp, icp.getFinalTransformation());
+        pcl::concatenateFields(*map_out_ptr_tmp, *map_out_ptr, *map_out_ptr);
+        pcl::toROSMsg(*map_out_ptr, map_out);
     }
     else
     {
         ROS_WARN("ICP has not converged");
     }
     ROS_WARN("ICP done");
-    //convert to ROS message
-    pcl::toROSMsg(map_out, globalMap_pcd);
-    globalMap_pcd.header.frame_id = "map";
-
 }
 
 
