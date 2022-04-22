@@ -1,4 +1,4 @@
-// #include "include/mapmerge.h"
+#include "mapMerge/mapmerge.h"
 #include "ros/ros.h"
 #include "nav_msgs/Odometry.h"
 #include <pcl/point_cloud.h>
@@ -29,13 +29,13 @@ sensor_msgs::PointCloud2 rcv_globalMap_pcd;
 sensor_msgs::PointCloud2 globalMap_pcd;
 
 
-void getMapCallback(const octomap_msgs::octomap msg)
+void getMapCallback(const octomap_msgs::Octomap msg)
 {
     //conversations between octomap and pcl
     ROS_WARN("Received map");
     sensor_msgs::PointCloud2 temp_pcd;
     pcl::PointCloud<pcl::PointXYZ> cloudMap;
-    octomap_msgs::octomaptoPointCloud2(msg, temp_pcd);
+    octomap_msgs::OctomaptoPointCloud2(msg, temp_pcd);
     pcl::fromROSMsg(temp_pcd, cloudMap);
     //merge maps
     mergeMaps(cloudMap);
