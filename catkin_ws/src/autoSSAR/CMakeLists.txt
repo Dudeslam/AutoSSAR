@@ -158,10 +158,6 @@ target_link_libraries(mapmerge
 
 link_directories(${OCTOMAP_LIBRARY_DIRS})
 
-target_include_directories(${PROJECT_NAME}
-  ${catkin_INCLUDE_DIRS}
-  /include
-)
 
 #############
 ## Install ##
