@@ -10,7 +10,7 @@
 
 namespace mapMerge
 {
-    void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, octomap_msgs::Octomap map_out);
+    void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, sensor_msgs::PointCloud2& map_out);
 
 
 }
