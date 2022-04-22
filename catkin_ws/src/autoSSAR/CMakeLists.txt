@@ -156,6 +156,8 @@ target_link_libraries(mapmerge
   ${OCTOMAP_LIBRARIES}
 )
 
+link_directories(${OCTOMAP_LIBRARY_DIRS}
+
 target_include_directories(${PROJECT_NAME}
   ${catkin_INCLUDE_DIRS}
   /include
