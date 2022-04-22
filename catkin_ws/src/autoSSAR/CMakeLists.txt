@@ -121,6 +121,7 @@ catkin_package(
 ## Your package locations should be listed before other locations
 include_directories(
   include
+  ${OCTOMAP_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -152,6 +153,7 @@ add_executable(mapmerge src/mapmerge.cpp)
 ## Specify libraries to link a library or executable target against
 target_link_libraries(mapmerge
   ${catkin_LIBRARIES}
+  ${OCTOMAP_LIBRARIES}
 )
 
 target_include_directories(${PROJECT_NAME}
