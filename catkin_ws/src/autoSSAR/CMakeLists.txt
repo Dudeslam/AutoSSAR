@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(autoSSAR)
 
+/opt/ros/melodic/share/catkin/cmake/toplevel.cmake
+
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
 
@@ -14,7 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   pcl_conversions
   octomap_msgs
-  octomap
+  octomap_ros
 )
 
 ## System dependencies are found with CMake's conventions
@@ -156,7 +158,7 @@ target_link_libraries(mapmerge
   ${OCTOMAP_LIBRARIES}
 )
 
-link_directories(${OCTOMAP_LIBRARY_DIRS}
+link_directories(${OCTOMAP_LIBRARY_DIRS})
 
 target_include_directories(${PROJECT_NAME}
   ${catkin_INCLUDE_DIRS}
