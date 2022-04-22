@@ -1,8 +1,13 @@
 <launch>
-    <node pkg="autoSSAR" name="mapmerge" type="mapmerge" output="screen"/>
+    <!-- Change this to where to get cloud in -->
+    <!-- <arg name="Cloud_in_octo" value="/pcl_render_node/local_map"/> -->
+    <node pkg="autoSSAR" name="mapmerge" type="mapmerge" output="screen">
+        <param name="Cloud_in" value="/pcl_render_node/local_map" />
+        <param name="Publish_out" value="/MapMerged" />
+    </node>
 
 
-    <include file="$(find autoSSAR)/launch/octomap.launch">
-
-    </include>
+    <!-- <include file="$(find autoSSAR)/launch/octomap.launch">
+        <param name="Cloud_in" value="$(arg Cloud_in_octo)"/>
+    </include> -->
 </launch>
