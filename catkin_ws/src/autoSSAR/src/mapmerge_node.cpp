@@ -26,7 +26,7 @@ void getGlobalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
     ROS_WARN("Received map");
     pcl::PointCloud<pcl::PointXYZ> cloudMap;
     pcl::fromROSMsg(*msg, cloudMap);
-    sensor_msgs::convertPointCloudToPointCloud2(own_globalMap_pcd, globalMap_pcd2);
+    pcl::toPCLPointCloud2(own_globalMap_pcd, globalMap_pcd2);
     //merge maps
     mapMerge::mergeMaps(cloudMap, globalMap_pcd2);
     pcl::fromROSMsg(globalMap_pcd2, own_globalMap_pcd);
@@ -65,7 +65,7 @@ int main (int argc, char* argv[]){
     pcl::toROSMsg(own_globalMap_pcd, globalMap_pcd2);
     
     ROS_WARN("Publishing map");
-    map_pub.publish(globalMap_pcd);
+    map_pub.publish(globalMap_pcd2);
 
     ros::Rate loop_rate(10);
     ros::spin();
