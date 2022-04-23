@@ -20,13 +20,13 @@ pcl::PointCloud<pcl::PointXYZ> local_map_pcd;
 sensor_msgs::PointCloud2 rcv_globalMap_pcd2;
 sensor_msgs::PointCloud2 globalMap_pcd2;
 
-void getMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
+void getGlobalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
 {
     //conversations between octomap and pcl
     ROS_WARN("Received map");
     pcl::PointCloud<pcl::PointXYZ> cloudMap;
     pcl::fromROSMsg(*msg, cloudMap);
-    sensor_msgs::PointCloudToPointCloud2(own_globalMap_pcd, globalMap_pcd2);
+    sensor_msgs::convertPointCloudToPointCloud2(own_globalMap_pcd, globalMap_pcd2);
     //merge maps
     mergeMaps(cloudMap, globalMap_pcd2);
     pcl::toROSMsg(globalMap_pcd2, own_globalMap_pcd);
@@ -53,10 +53,10 @@ int main (int argc, char* argv[]){
     std::string Publish_topic;
 
     // Parameter Handles
-    nh.getparam("Cloud_in", cloud_topic);
-    ng.getparam("Publish_out", Publish_topic);
+    nh.param("Cloud_in", cloud_topic);
+    nh.param("Publish_out", Publish_topic);
     //Pub Subs
-    ros::Subscriber map_local = nh.subscribe(cloud_Topic, 1, getLocalMapCallback);
+    ros::Subscriber map_local = nh.subscribe(cloud_topic, 1, getLocalMapCallback);
     ros::Subscriber map_global = nh.subscribe("/octomap_full", 1, getMapGlobalCallback);
     ros::Publisher map_pub = nh.advertise<sensor_msgs::PointCloud2>(Publish_topic, 1);
     //merge local received map with own global map
