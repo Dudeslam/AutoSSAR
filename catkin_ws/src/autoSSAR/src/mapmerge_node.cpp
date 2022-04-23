@@ -26,10 +26,10 @@ void getGlobalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
     ROS_WARN("Received map");
     pcl::PointCloud<pcl::PointXYZ> cloudMap;
     pcl::fromROSMsg(*msg, cloudMap);
-    pcl::toROSMsg(own_globalMap_pcd, globalMap_pcd2);
+    pcl::toROSMsg(own_globalMap_pcd, &globalMap_pcd2);
     //merge maps
     mapMerge::mergeMaps(cloudMap, &globalMap_pcd2);
-    pcl::fromROSMsg(globalMap_pcd2, own_globalMap_pcd);
+    pcl::fromROSMsg(&globalMap_pcd2, own_globalMap_pcd);
     ROS_WARN("Merged with own map");
 }
 
@@ -63,10 +63,10 @@ int main (int argc, char* argv[]){
     //merge local received map with own global map
 
     //Publish merged map
-    pcl::toROSMsg(own_globalMap_pcd, globalMap_pcd2);
+    pcl::toROSMsg(own_globalMap_pcd, &globalMap_pcd2);
     
     ROS_WARN("Publishing map");
-    map_pub.publish(globalMap_pcd2);
+    map_pub.publish(&globalMap_pcd2);
 
     ros::Rate loop_rate(10);
     ros::spin();
