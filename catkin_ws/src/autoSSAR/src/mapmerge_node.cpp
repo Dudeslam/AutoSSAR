@@ -1,5 +1,5 @@
 
-#include <mapMerge/mapmerge.h>
+#include "mapMerge/mapmerge.h"
 #include "ros/ros.h"
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
@@ -26,7 +26,7 @@ void getGlobalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
     ROS_WARN("Received map");
     pcl::PointCloud<pcl::PointXYZ> cloudMap;
     pcl::fromROSMsg(*msg, cloudMap);
-    pcl::toPCLPointCloud2(own_globalMap_pcd, globalMap_pcd2);
+    pcl::toROSMsg(own_globalMap_pcd, globalMap_pcd2);
     //merge maps
     mapMerge::mergeMaps(cloudMap, globalMap_pcd2);
     pcl::fromROSMsg(globalMap_pcd2, own_globalMap_pcd);

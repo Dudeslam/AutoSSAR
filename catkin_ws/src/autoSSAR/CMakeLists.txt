@@ -128,9 +128,9 @@ include_directories(
 )
 
 ## Declare a C++ library
-# add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/src/mapmerge.cpp
-# )
+add_library(
+  src/${PROJECT_NAME}/src/mapmerge.cpp
+)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
