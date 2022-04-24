@@ -38,7 +38,7 @@
     <remap from ="/planning/replan" to="/$(arg drone_index)/planning/replan"/>
     <remap from ="/planning/new" to="/$(arg drone_index)/planning/new"/>
     <remap from ="/planning/bspline" to="/$(arg drone_index)/planning/bspline"/>
-    <remap from="/waypoint_generator/waypoints" to="/$(arg drone_index)/waypoint_generator/waypoints" />
+    <remap from ="/waypoint_generator/waypoints" to="/$(arg drone_index)/waypoint_generator/waypoints" />
 
 
 
