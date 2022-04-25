@@ -164,7 +164,7 @@ target_link_libraries(
   ${catkin_LIBRARIES}
   ${OCTOMAP_LIBRARIES}
   ${PCL_LIBRARIES}
-  mapmerge_node
+  # mapmerge_node
 )
 
 # link_directories(${OCTOMAP_LIBRARY_DIRS}
