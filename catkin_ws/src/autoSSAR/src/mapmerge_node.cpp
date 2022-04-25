@@ -12,36 +12,37 @@
 #include <pcl/registration/icp.h>
 #include <pcl/filters/filter.h>
 #include <pcl/common/projection_matrix.h>
+#include <pcl/common/io.h>
 
 pcl::PointCloud<pcl::PointXYZ> own_globalMap_pcd;
 pcl::PointCloud<pcl::PointXYZ> local_map_pcd;
 sensor_msgs::PointCloud2 rcv_globalMap_pcd2;
-sensor_msgs::PointCloud2* globalMap_pcd2;
+sensor_msgs::PointCloud2 Global_Publish;
 //functions here
-void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, sensor_msgs::PointCloud2 map_out)
+void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, pcl::PointCloud<pcl::PointXYZ>& map_out)
 {
     ROS_WARN("Merging maps");
     
     pcl::PointCloud<pcl::PointXYZ>::Ptr map_in_ptr(new pcl::PointCloud<pcl::PointXYZ>(map_in));
-    pcl::PointCloud<pcl::PointXYZ>::Ptr map_out_ptr(new pcl::PointCloud<pcl::PointXYZ>);
+    pcl::PointCloud<pcl::PointXYZ>::Ptr map_out_ptr(new pcl::PointCloud<pcl::PointXYZ>(map_out));
     pcl::PointCloud<pcl::PointXYZ>::Ptr map_out_ptr_tmp(new pcl::PointCloud<pcl::PointXYZ>);
-    pcl::fromROSMsg(map_out, *map_out_ptr_tmp);
+    //pcl::fromROSMsg(map_out, *map_out_ptr_tmp);
     //Remove NAN points
     std::vector<int> indices;
     // pcl::removeNaNFromPointCloud(*map_in_ptr, *map_in_ptr, indices);
-
     pcl::IterativeClosestPoint<pcl::PointXYZ, pcl::PointXYZ> icp;
+    ROS_WARN("Set input cloud");
     icp.setInputSource(map_in_ptr);
     icp.setInputTarget(map_out_ptr);
-    icp.align(*map_out_ptr_tmp);
+    icp.align(map_out_ptr_tmp);
     if(icp.hasConverged())
     {
         ROS_WARN("ICP has converged");
         icp.getFitnessScore();
         icp.getFinalTransformation();
         pcl::transformPointCloud(*map_in_ptr, *map_out_ptr_tmp, icp.getFinalTransformation());
-        pcl::concatenateFields(*map_out_ptr_tmp, *map_out_ptr, *map_out_ptr);
-        pcl::toROSMsg(*map_out_ptr, map_out);
+        pcl::concatenate(*map_out_ptr_tmp, *map_out_ptr, *map_out_ptr);
+        //pcl::toROSMsg(*map_out_ptr, map_out);
     }
     else
     {
@@ -57,21 +58,29 @@ void getGlobalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
 {
     //GOBack
     //conversations between octomap and pcl
-    ROS_WARN("Received map");
     pcl::PointCloud<pcl::PointXYZ> cloudMap;
     pcl::fromROSMsg(*msg, cloudMap);
-    pcl::toROSMsg(own_globalMap_pcd, *globalMap_pcd2);
+    ROS_WARN("Received Global map");
+    if(own_globalMap_pcd.size() > 0)
+    {
+        ROS_WARN("Own Global map is not empty");
+        mergeMaps(cloudMap, own_globalMap_pcd);
+    }
+    else            
+    {
+        ROS_WARN("Own Global map is empty");
+        own_globalMap_pcd = cloudMap;
+    }
     //merge maps
-    mergeMaps(cloudMap, *globalMap_pcd2);
-    pcl::fromROSMsg(*globalMap_pcd2, own_globalMap_pcd);
-    ROS_WARN("Merged with own map");
+    pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
+    // ROS_WARN("Merged with own map");
 }
 
 
 
 void getLocalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
 {
-    ROS_WARN("Received local map");
+    // ROS_WARN("Received local map");
     sensor_msgs::PointCloud2 localMap_pcd = *msg;
     pcl::PointCloud<pcl::PointXYZ> cloudMap;
     pcl::fromROSMsg(localMap_pcd, cloudMap);
@@ -84,7 +93,7 @@ void getLocalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
 int main (int argc, char* argv[]){
     ros::init(argc, argv, "map_merger");
     ros::NodeHandle nh;
-    ros::NodeHandle nh_private("~");
+    // ros::NodeHandle nh_private("~");
     // std::string cloud_local_topic;
     // std::string cloud_global_topic;
     // std::string Publish_topic;
@@ -99,22 +108,27 @@ int main (int argc, char* argv[]){
     // ros::Subscriber map_global = nh.subscribe(cloud_global_topic, 1, getGlobalMapCallback);
 
     // Static pubsub
-
-    
-    ros::Subscriber map_local = nh.subscribe("/sdf_map/depth_cloud", 1, getLocalMapCallback);
-    ros::Subscriber map_global = nh.subscribe("/map_generator/global_cloud", 1, getGlobalMapCallback);
-    // ros::Publisher map_pub = nh.advertise<sensor_msgs::PointCloud2>("/MergedMap", 1);
+	ROS_WARN("Trying to subscribe");
+    ros::Subscriber map_local = nh.subscribe("/sdf_map/occupancy_local", 1, getLocalMapCallback);
+    ros::Subscriber map_global = nh.subscribe("/sdf_map/occupancy_all", 1, getGlobalMapCallback);
+    ros::Publisher map_pub = nh.advertise<sensor_msgs::PointCloud2>("/MergedMap", 1000);
+    ros::Rate loop_rate(10);
     //merge local received map with own global map
+	ROS_WARN("Have subscribed");
+    
     while(ros::ok())
     {
-        pcl::toROSMsg(own_globalMap_pcd, *globalMap_pcd2);
-        //Publish merged map
-        ROS_WARN("Publishing map");
-        // map_pub.publish(*globalMap_pcd2);
-        
+        if(own_globalMap_pcd.size()>0)
+        {
+            pcl::toROSMsg(own_globalMap_pcd, rcv_globalMap_pcd2);
+            map_pub.publish(rcv_globalMap_pcd2);
+            // ROS_WARN("Published merged map");
+            loop_rate.sleep();
+        }
+        ros::spinOnce();
         
     }
-    // ros::Rate loop_rate(10);
+    
     ros::spin();
    
 
