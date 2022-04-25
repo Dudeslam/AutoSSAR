@@ -18,10 +18,11 @@
 pcl::PointCloud<pcl::PointXYZ> own_globalMap_pcd;
 pcl::PointCloud<pcl::PointXYZ> local_map_pcd;
 sensor_msgs::PointCloud2 rcv_globalMap_pcd2;
-sensor_msgs::PointCloud2::ConstPtr& globalMap_pcd2;
+sensor_msgs::PointCloud2* globalMap_pcd2;
 
 void getGlobalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
 {
+    //GOBack
     //conversations between octomap and pcl
     ROS_WARN("Received map");
     pcl::PointCloud<pcl::PointXYZ> cloudMap;
