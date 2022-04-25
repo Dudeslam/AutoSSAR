@@ -17,14 +17,14 @@
 
 
 
-void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, sensor_msgs::PointCloud2* map_out)
+void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, sensor_msgs::PointCloud2:ConstPtr& map_out)
 {
     ROS_WARN("Merging maps");
     
     pcl::PointCloud<pcl::PointXYZ>::Ptr map_in_ptr(new pcl::PointCloud<pcl::PointXYZ>(map_in));
     pcl::PointCloud<pcl::PointXYZ>::Ptr map_out_ptr(new pcl::PointCloud<pcl::PointXYZ>);
     pcl::PointCloud<pcl::PointXYZ>::Ptr map_out_ptr_tmp(new pcl::PointCloud<pcl::PointXYZ>);
-    pcl::fromROSMsg(map_out, *map_out_ptr_tmp);
+    pcl::fromROSMsg(*map_out, *map_out_ptr_tmp);
     //Remove NAN points
     std::vector<int> indices;
     // pcl::removeNaNFromPointCloud(*map_in_ptr, *map_in_ptr, indices);
@@ -40,7 +40,7 @@ void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, sensor_msgs::PointCloud2*
         icp.getFinalTransformation();
         pcl::transformPointCloud(*map_in_ptr, *map_out_ptr_tmp, icp.getFinalTransformation());
         pcl::concatenateFields(*map_out_ptr_tmp, *map_out_ptr, *map_out_ptr);
-        pcl::toROSMsg(*map_out_ptr, map_out);
+        pcl::toROSMsg(*map_out_ptr, *map_out);
     }
     else
     {

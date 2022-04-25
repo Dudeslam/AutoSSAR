@@ -18,7 +18,7 @@
 pcl::PointCloud<pcl::PointXYZ> own_globalMap_pcd;
 pcl::PointCloud<pcl::PointXYZ> local_map_pcd;
 sensor_msgs::PointCloud2 rcv_globalMap_pcd2;
-sensor_msgs::PointCloud2* globalMap_pcd2;
+sensor_msgs::PointCloud2::ConstPtr& globalMap_pcd2;
 
 void getGlobalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
 {
@@ -28,7 +28,7 @@ void getGlobalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
     pcl::fromROSMsg(*msg, cloudMap);
     pcl::toROSMsg(own_globalMap_pcd, *globalMap_pcd2);
     //merge maps
-    mapMerge::mergeMaps(cloudMap, globalMap_pcd2);
+    mapMerge::mergeMaps(cloudMap, *globalMap_pcd2);
     pcl::fromROSMsg(*globalMap_pcd2, own_globalMap_pcd);
     ROS_WARN("Merged with own map");
 }
