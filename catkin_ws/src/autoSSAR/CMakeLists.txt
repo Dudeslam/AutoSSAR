@@ -111,7 +111,7 @@ catkin_package(
  INCLUDE_DIRS include
 #  LIBRARIES autoSSAR
  CATKIN_DEPENDS roscpp rospy std_msgs
-#  DEPENDS system_lib
+ DEPENDS system_lib
 )
 
 ###########
@@ -125,6 +125,7 @@ include_directories(
   ${OCTOMAP_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
   ${PCL_INCLUDE_DIRS}
+  src
 )
 
 ## Declare a C++ library
