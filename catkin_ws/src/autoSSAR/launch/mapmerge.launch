@@ -1,7 +1,7 @@
 <launch>
     <!-- Change this to where to get cloud in -->
     <!-- <arg name="Cloud_in_octo" value="/pcl_render_node/local_map"/> -->
-    <node pkg="autoSSAR" name="mapmerge" type="mapmerge" output="screen">
+    <node pkg="autoSSAR" name="mapmerge_node" type="mapmerge_node" output="screen">
         <param name="Cloud_in" value="/pcl_render_node/local_map" />
         <param name="Publish_out" value="/MapMerged" />
     </node>
