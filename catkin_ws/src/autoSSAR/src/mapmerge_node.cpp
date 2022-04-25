@@ -100,18 +100,25 @@ int main (int argc, char* argv[]){
 
     // Static pubsub
 
+    
     ros::Subscriber map_local = nh.subscribe("/sdf_map/depth_cloud", 1, getLocalMapCallback);
     ros::Subscriber map_global = nh.subscribe("/map_generator/global_cloud", 1, getGlobalMapCallback);
-    ros::Publisher map_pub = nh.advertise<sensor_msgs::PointCloud2>(Publish_topic, 1);
+    // ros::Publisher map_pub = nh.advertise<sensor_msgs::PointCloud2>("/MergedMap", 1);
     //merge local received map with own global map
-
-    //Publish merged map
-    pcl::toROSMsg(own_globalMap_pcd, *globalMap_pcd2);
-    
-    ROS_WARN("Publishing map");
-    map_pub.publish(*globalMap_pcd2);
-
-    ros::Rate loop_rate(10);
+    while(ros::ok())
+    {
+        pcl::toROSMsg(own_globalMap_pcd, *globalMap_pcd2);
+        //Publish merged map
+        ROS_WARN("Publishing map");
+        // map_pub.publish(*globalMap_pcd2);
+        
+        
+    }
+    // ros::Rate loop_rate(10);
     ros::spin();
+   
+
+
+
     return 0;
 }
