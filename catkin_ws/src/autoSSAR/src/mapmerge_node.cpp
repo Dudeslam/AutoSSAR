@@ -28,7 +28,7 @@ void getGlobalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
     pcl::fromROSMsg(*msg, cloudMap);
     pcl::toROSMsg(own_globalMap_pcd, *globalMap_pcd2);
     //merge maps
-    mapMerge::mergeMaps(cloudMap, *globalMap_pcd2);
+    mapMerge::mergeMaps(cloudMap, globalMap_pcd2);
     pcl::fromROSMsg(*globalMap_pcd2, own_globalMap_pcd);
     ROS_WARN("Merged with own map");
 }
