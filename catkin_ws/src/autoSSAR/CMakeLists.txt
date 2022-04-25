@@ -143,8 +143,8 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(
   mapmerge 
-  # src/mapmerge_node.cpp 
-  src/mapmerge.cpp
+  src/mapmerge_node.cpp 
+  # src/mapmerge.cpp
   
   )
 
@@ -164,7 +164,7 @@ target_link_libraries(
   ${catkin_LIBRARIES}
   ${OCTOMAP_LIBRARIES}
   ${PCL_LIBRARIES}
-  # mapmerge_node
+  mapmerge_node
 )
 
 # link_directories(${OCTOMAP_LIBRARY_DIRS}

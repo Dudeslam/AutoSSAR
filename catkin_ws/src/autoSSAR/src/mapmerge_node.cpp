@@ -17,33 +17,7 @@ pcl::PointCloud<pcl::PointXYZ> own_globalMap_pcd;
 pcl::PointCloud<pcl::PointXYZ> local_map_pcd;
 sensor_msgs::PointCloud2 rcv_globalMap_pcd2;
 sensor_msgs::PointCloud2* globalMap_pcd2;
-
-void getGlobalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
-{
-    //GOBack
-    //conversations between octomap and pcl
-    ROS_WARN("Received map");
-    pcl::PointCloud<pcl::PointXYZ> cloudMap;
-    pcl::fromROSMsg(*msg, cloudMap);
-    pcl::toROSMsg(own_globalMap_pcd, *globalMap_pcd2);
-    //merge maps
-    mergeMaps(cloudMap, *globalMap_pcd2);
-    pcl::fromROSMsg(*globalMap_pcd2, own_globalMap_pcd);
-    ROS_WARN("Merged with own map");
-}
-
-
-
-void getLocalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
-{
-    ROS_WARN("Received local map");
-    sensor_msgs::PointCloud2 localMap_pcd = *msg;
-    pcl::PointCloud<pcl::PointXYZ> cloudMap;
-    pcl::fromROSMsg(localMap_pcd, cloudMap);
-    local_map_pcd += cloudMap;
-    own_globalMap_pcd += cloudMap;
-}
-
+//functions here
 void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, sensor_msgs::PointCloud2 map_out)
 {
     ROS_WARN("Merging maps");
@@ -75,6 +49,36 @@ void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, sensor_msgs::PointCloud2 
     }
     ROS_WARN("ICP done");
 }
+
+
+//Callbacks
+
+void getGlobalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
+{
+    //GOBack
+    //conversations between octomap and pcl
+    ROS_WARN("Received map");
+    pcl::PointCloud<pcl::PointXYZ> cloudMap;
+    pcl::fromROSMsg(*msg, cloudMap);
+    pcl::toROSMsg(own_globalMap_pcd, *globalMap_pcd2);
+    //merge maps
+    mergeMaps(cloudMap, *globalMap_pcd2);
+    pcl::fromROSMsg(*globalMap_pcd2, own_globalMap_pcd);
+    ROS_WARN("Merged with own map");
+}
+
+
+
+void getLocalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
+{
+    ROS_WARN("Received local map");
+    sensor_msgs::PointCloud2 localMap_pcd = *msg;
+    pcl::PointCloud<pcl::PointXYZ> cloudMap;
+    pcl::fromROSMsg(localMap_pcd, cloudMap);
+    local_map_pcd += cloudMap;
+    own_globalMap_pcd += cloudMap;
+}
+
 
 
 int main (int argc, char* argv[]){
