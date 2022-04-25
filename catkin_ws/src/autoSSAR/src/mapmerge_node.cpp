@@ -85,15 +85,17 @@ int main (int argc, char* argv[]){
     ros::init(argc, argv, "map_merger");
     ros::NodeHandle nh;
     ros::NodeHandle nh_private("~");
-    std::string cloud_topic;
+    std::string cloud_local_topic;
+    std::string cloud_global_topic;
     std::string Publish_topic;
 
     // Parameter Handles
-    nh.param("Cloud_in", cloud_topic);
+    nh.param("Cloud_in_local", cloud_local_topic);
+    nh.param("Cloud_in_global", cloud_global_topic);
     nh.param("Publish_out", Publish_topic);
     //Pub Subs
-    ros::Subscriber map_local = nh.subscribe(cloud_topic, 1, getLocalMapCallback);
-    ros::Subscriber map_global = nh.subscribe("/octomap_full", 1, getGlobalMapCallback);
+    ros::Subscriber map_local = nh.subscribe(cloud_local_topic, 1, getLocalMapCallback);
+    ros::Subscriber map_global = nh.subscribe(cloud_global_topic, 1, getGlobalMapCallback);
     ros::Publisher map_pub = nh.advertise<sensor_msgs::PointCloud2>(Publish_topic, 1);
     //merge local received map with own global map
 
