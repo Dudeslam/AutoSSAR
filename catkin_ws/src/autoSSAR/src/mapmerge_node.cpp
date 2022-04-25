@@ -85,17 +85,23 @@ int main (int argc, char* argv[]){
     ros::init(argc, argv, "map_merger");
     ros::NodeHandle nh;
     ros::NodeHandle nh_private("~");
-    std::string cloud_local_topic;
-    std::string cloud_global_topic;
-    std::string Publish_topic;
+    // std::string cloud_local_topic;
+    // std::string cloud_global_topic;
+    // std::string Publish_topic;
 
-    // Parameter Handles
-    nh.param("Cloud_in_local", cloud_local_topic);
-    nh.param("Cloud_in_global", cloud_global_topic);
-    nh.param("Publish_out", Publish_topic);
-    //Pub Subs
-    ros::Subscriber map_local = nh.subscribe(cloud_local_topic, 1, getLocalMapCallback);
-    ros::Subscriber map_global = nh.subscribe(cloud_global_topic, 1, getGlobalMapCallback);
+    // // Parameter Handles
+    // nh.param("Cloud_in_local", cloud_local_topic);
+    // nh.param("Cloud_in_global", cloud_global_topic);
+    // nh.param("Publish_out", Publish_topic);
+    // //Pub Subs for roslaunch
+    // ros::Publisher map_pub = nh.advertise<sensor_msgs::PointCloud2>(Publish_topic, 1);
+    // ros::Subscriber map_local = nh.subscribe(cloud_local_topic, 1, getLocalMapCallback);
+    // ros::Subscriber map_global = nh.subscribe(cloud_global_topic, 1, getGlobalMapCallback);
+
+    // Static pubsub
+
+    ros::Subscriber map_local = nh.subscribe("/sdf_map/depth_cloud", 1, getLocalMapCallback);
+    ros::Subscriber map_global = nh.subscribe("/map_generator/global_cloud", 1, getGlobalMapCallback);
     ros::Publisher map_pub = nh.advertise<sensor_msgs::PointCloud2>(Publish_topic, 1);
     //merge local received map with own global map
 
