@@ -19,13 +19,31 @@ pcl::PointCloud<pcl::PointXYZ> local_map_pcd;
 sensor_msgs::PointCloud2 rcv_globalMap_pcd2;
 sensor_msgs::PointCloud2 Global_Publish;
 //functions here
+bool concatePCL(pcl::PointCloud<pcl::PointXYZ> cloud1, pcl::PointCloud<pcl::PointXYZ> cloud2, pcl::PointCloud<pcl::PointXYZ>& cloud_out)
+{
+    // Make the resultant point cloud take the newest stamp
+    cloud1.header.stamp = std::max (cloud1.header.stamp, cloud2.header.stamp);
+
+    // libstdc++ (GCC) on calling reserve allocates new memory, copies and deallocates old vector
+    // This causes a drastic performance hit. Prefer not to use reserve with libstdc++ (default on clang)
+    cloud1.insert (cloud1.end (), cloud2.begin (), cloud2.end ());
+
+    cloud1.width    = cloud1.size ();
+    cloud1.height   = 1;
+    cloud1.is_dense = cloud1.is_dense && cloud2.is_dense;
+    cloud_out = cloud1;
+    return true;
+
+
+}
+
 void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, pcl::PointCloud<pcl::PointXYZ>& map_out)
 {
     ROS_WARN("Merging maps");
     
     pcl::PointCloud<pcl::PointXYZ>::Ptr map_in_ptr(new pcl::PointCloud<pcl::PointXYZ>(map_in));
     pcl::PointCloud<pcl::PointXYZ>::Ptr map_out_ptr(new pcl::PointCloud<pcl::PointXYZ>(map_out));
-    pcl::PointCloud<pcl::PointXYZ>::Ptr map_out_ptr_tmp(new pcl::PointCloud<pcl::PointXYZ>);
+    pcl::PointCloud<pcl::PointXYZ> Final;
     //pcl::fromROSMsg(map_out, *map_out_ptr_tmp);
     //Remove NAN points
     std::vector<int> indices;
@@ -34,14 +52,14 @@ void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, pcl::PointCloud<pcl::Poin
     ROS_WARN("Set input cloud");
     icp.setInputSource(map_in_ptr);
     icp.setInputTarget(map_out_ptr);
-    icp.align(map_out_ptr_tmp);
+    icp.align(Final);
     if(icp.hasConverged())
     {
         ROS_WARN("ICP has converged");
         icp.getFitnessScore();
         icp.getFinalTransformation();
-        pcl::transformPointCloud(*map_in_ptr, *map_out_ptr_tmp, icp.getFinalTransformation());
-        pcl::concatenate(*map_out_ptr_tmp, *map_out_ptr, *map_out);
+        pcl::transformPointCloud(*map_in_ptr, Final, icp.getFinalTransformation());
+        concatePCL(Final, *map_out_ptr, map_out);
         //pcl::toROSMsg(*map_out_ptr, map_out);
     }
     else

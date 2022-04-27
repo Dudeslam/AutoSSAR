@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(MapMerge)
+project(mapmerge)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -8,14 +8,11 @@ project(MapMerge)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  rospy
-  std_msgs
-  geometry_msgs
-  pcl_conversions
+  PCL
   octomap_msgs
   octomap_ros
-  PCL 
+  roscpp
+  std_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -75,7 +72,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate added messages and services with any dependencies listed here
 # generate_messages(
 #   DEPENDENCIES
-#   std_msgs
+#   octomap_msgs#   std_msgs
 # )
 
 ################################################
@@ -109,8 +106,8 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES MapMerge
-#  CATKIN_DEPENDS roscpp rospy std_msgs
+#  LIBRARIES mapmerge
+#  CATKIN_DEPENDS PCL octomap_msgs octomap_ros roscpp std_msgs
 #  DEPENDS system_lib
 )
 
@@ -121,6 +118,7 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
+# include
   # include
   ${OCTOMAP_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
@@ -129,8 +127,8 @@ include_directories(
 )
 
 ## Declare a C++ library
-# add_library(
-#   src/${PROJECT_NAME}/src/mapmerge.cpp
+# add_library(${PROJECT_NAME}
+#   src/${PROJECT_NAME}/mapmerge.cpp
 # )
 
 ## Add cmake target dependencies of the library
@@ -166,11 +164,6 @@ target_link_libraries(
   ${PCL_LIBRARIES}
   # mapmerge_node
 )
-
-# link_directories(${OCTOMAP_LIBRARY_DIRS}
-#   include
-# )
-
 
 #############
 ## Install ##
@@ -219,7 +212,7 @@ target_link_libraries(
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_autoSSAR.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_mapmerge.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
