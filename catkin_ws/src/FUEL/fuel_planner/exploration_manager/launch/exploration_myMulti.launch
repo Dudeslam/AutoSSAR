@@ -23,7 +23,7 @@
   <arg name="ns0_init_y" value="0.0"/>
   <arg name="ns0_init_z" value="1.0"/> 
 
-  <!-- main algorithm params -->
+  <!-- main algorithm params, calls: "exploration_node.cpp" with arguments -->
   <include file="$(find exploration_manager)/launch/algorithm_myMulti.xml" ns="$(arg ns0)">
     <arg name="drone_index" value="$(arg ns0)"/> 
 
@@ -41,11 +41,13 @@
     <arg name="odometry_topic" value="/$(arg ns0)/state_ukf/odom"/>
     <!-- sensor pose: transform of camera frame in the world frame -->
     <arg name="sensor_pose_topic" value="/$(arg ns0)/pcl_render_node/sensor_pose"/>
+
     <!-- depth topic: depth image, 640x480 by default -->
     <!-- cloud topic: point cloud measurement  -->
     <!-- subscribe ONLY TO ONE of the two topics -->
     <arg name="depth_topic" value="/$(arg ns0)/pcl_render_node/depth"/>
     <arg name="cloud_topic" value="/$(arg ns0)/pcl_render_node/cloud"/>
+    
 
     <!-- intrinsic params of the depth camera -->
     <arg name="cx" value="321.04638671875"/>

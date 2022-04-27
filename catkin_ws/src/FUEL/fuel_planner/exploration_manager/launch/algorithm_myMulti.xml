@@ -14,6 +14,7 @@
   <arg name="sensor_pose_topic"/>
   <arg name="depth_topic"/>
   <arg name="cloud_topic"/>
+  
 
   <arg name="cx"/>
   <arg name="cy"/>
@@ -39,6 +40,8 @@
     <remap from ="/planning/new" to="/$(arg drone_index)/planning/new"/>
     <remap from ="/planning/bspline" to="/$(arg drone_index)/planning/bspline"/>
     <remap from ="/waypoint_generator/waypoints" to="/$(arg drone_index)/waypoint_generator/waypoints" />
+    <remap from ="/map_ros/occupancy_all" to="/$(arg drone_index)/map_ros/occupancy_all"/>
+    <remap from ="/map_ros/occupancy_local_inflate" to="/$(arg drone_index)/map_ros/occupancy_local_inflate"/>
 
 
 
