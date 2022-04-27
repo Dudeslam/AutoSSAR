@@ -1,5 +1,6 @@
 #include "ros/ros.h"
 #include <pcl/point_cloud.h>
+#include <pcl_ros/point_cloud.h>
 #include <pcl/point_types.h>
 #include <pcl/kdtree/kdtree_flann.h>
 #include <pcl_conversions/pcl_conversions.h>
@@ -13,10 +14,23 @@
 #include <pcl/filters/filter.h>
 #include <pcl/common/projection_matrix.h>
 #include <pcl/common/io.h>
+#include <geometry_msgs/PoseStamped.h>
+#include <geometry_msgs/PoseArray.h>
+#include <geometry_msgs/Pose.h>
+#include <geometry_msgs/Point.h>
+#include <tf/transform_listener.h>
+#include <tf/transform_broadcaster.h>
 
 pcl::PointCloud<pcl::PointXYZ> own_globalMap_pcd;
 pcl::PointCloud<pcl::PointXYZ> local_map_pcd;
 sensor_msgs::PointCloud2 Global_Publish;
+geometry_msgs::PoseStamped UAV_pose;
+geometry_msgs::PoseStamped Global_Pose;
+
+//placeholder for inRange flag, to be set
+bool inRange = true;
+
+
 //functions here
 bool concatePCL(pcl::PointCloud<pcl::PointXYZ> cloud1, pcl::PointCloud<pcl::PointXYZ> cloud2, pcl::PointCloud<pcl::PointXYZ>& cloud_out)
 {
@@ -91,6 +105,16 @@ void getGlobalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
     // ROS_WARN("Merged with own map");
 }
 
+// void getGlobalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
+// {
+
+//     // ROS_WARN("Received local map");
+//     pcl::PointCloud<pcl::PointXYZ> cloudMap;
+//     pcl::fromROSMsg(*msg, cloudMap);
+//     local_map_pcd += cloudMap;
+//     own_globalMap_pcd += cloudMap;
+
+// }
 
 
 void getLocalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
@@ -103,6 +127,10 @@ void getLocalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
     own_globalMap_pcd += cloudMap;
 }
 
+void getSensorPoseCallback(const geometry_msgs::PoseStamped::ConstPtr& msg)
+{
+    UAV_pose = *msg;
+}
 
 
 int main (int argc, char* argv[]){
@@ -114,6 +142,8 @@ int main (int argc, char* argv[]){
     // std::string Publish_topic;
 
     tf::TransformBroadcaster br;
+    tf::TransformListener listener;
+    tf::Transform transform;
 
     // // Parameter Handles
     // nh.param("Cloud_in_local", cloud_local_topic);
@@ -128,6 +158,7 @@ int main (int argc, char* argv[]){
 	ROS_WARN("Trying to subscribe");
     ros::Subscriber map_local = nh.subscribe("/sdf_map/occupancy_local", 1, getLocalMapCallback);
     ros::Subscriber map_global = nh.subscribe("/sdf_map/occupancy_all", 1, getGlobalMapCallback);
+    ros::Subscriber sensor_pose_local = nh.subscribe("/pcl_render_node/sensor_pose", 1, getSensorPoseCallback);
     ros::Publisher map_pub = nh.advertise<sensor_msgs::PointCloud2>("/MergedMap", 1000);
     ros::Rate loop_rate(10);
     //merge local received map with own global map
@@ -136,15 +167,15 @@ int main (int argc, char* argv[]){
 
     while(ros::ok())
     {
-        if(own_globalMap_pcd.size()>0)
+        if(own_globalMap_pcd.size()>0 && inRange == true)
         {
             // pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
             // map_pub.publish(Global_Publish);
             // ROS_WARN("Published merged map");
-            // pcl_ros::transformPointCloud("world", own_globalMap_pcd, temp_Map, br);
-			pcl_conversions::toPCL(ros::Time::now(), own_globalMap_pcd.header.stamp);
+            pcl::transformPointCloud("world", own_globalMap_pcd, temp_Map, listener);
+			// pcl_conversions::toPCL(ros::Time::now(), own_globalMap_pcd.header.stamp);
             // pcl::toROSMsg(temp_Map, Global_Publish);
-			pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
+			pcl::toROSMsg(temp_Map, Global_Publish);
             map_pub.publish(Global_Publish);
             loop_rate.sleep();
         }
