@@ -1,11 +1,13 @@
 #include "ros/ros.h"
 #include <pcl/point_cloud.h>
 #include <pcl_ros/point_cloud.h>
+#include <pcl_ros/transforms.h>
 #include <pcl/point_types.h>
 #include <pcl/kdtree/kdtree_flann.h>
 #include <pcl_conversions/pcl_conversions.h>
 #include <iostream>
 #include <sensor_msgs/PointCloud2.h>
+#include <std_msgs/Header.h>
 #include <octomap_msgs/Octomap.h>
 #include <octomap_msgs/conversions.h>
 #include <octomap/octomap.h>
@@ -20,12 +22,14 @@
 #include <geometry_msgs/Point.h>
 #include <tf/transform_listener.h>
 #include <tf/transform_broadcaster.h>
+#include <visualization_msgs/Marker.h>
 
 pcl::PointCloud<pcl::PointXYZ> own_globalMap_pcd;
 pcl::PointCloud<pcl::PointXYZ> local_map_pcd;
 sensor_msgs::PointCloud2 Global_Publish;
 geometry_msgs::PoseStamped UAV_pose;
 geometry_msgs::PoseStamped Global_Pose;
+std::string UAV_frame;
 
 //placeholder for inRange flag, to be set
 bool inRange = true;
@@ -72,7 +76,6 @@ void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, pcl::PointCloud<pcl::Poin
         icp.getFitnessScore();
         pcl::transformPointCloud(*map_in_ptr, Final, icp.getFinalTransformation());
         concatePCL(Final, *map_out_ptr, map_out);
-        //pcl::toROSMsg(*map_out_ptr, map_out);
     }
     else
     {
@@ -89,32 +92,24 @@ void getGlobalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
     //conversations between octomap and pcl
     pcl::PointCloud<pcl::PointXYZ> cloudMap;
     pcl::fromROSMsg(*msg, cloudMap);
+
+    //will be removed when local map update works
+    UAV_frame = msg->header.frame_id;
+    // std::cout << "UAV frame id: " << World_frame << std::endl;
+
     ROS_WARN("Received Global map");
     if(own_globalMap_pcd.size() > 0)
     {
-        ROS_WARN("Own Global map is not empty");
+        // ROS_WARN("Own Global map is not empty");
         mergeMaps(cloudMap, own_globalMap_pcd);
     }
     else            
     {
-        ROS_WARN("Own Global map is empty");
+        // ROS_WARN("Own Global map is empty");
         own_globalMap_pcd = cloudMap;
     }
-    //merge maps
-    pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
-    // ROS_WARN("Merged with own map");
 }
 
-// void getGlobalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
-// {
-
-//     // ROS_WARN("Received local map");
-//     pcl::PointCloud<pcl::PointXYZ> cloudMap;
-//     pcl::fromROSMsg(*msg, cloudMap);
-//     local_map_pcd += cloudMap;
-//     own_globalMap_pcd += cloudMap;
-
-// }
 
 
 void getLocalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
@@ -125,12 +120,9 @@ void getLocalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
     pcl::fromROSMsg(localMap_pcd, cloudMap);
     local_map_pcd += cloudMap;
     own_globalMap_pcd += cloudMap;
+    UAV_frame = msg->header.frame_id;
 }
 
-void getSensorPoseCallback(const geometry_msgs::PoseStamped::ConstPtr& msg)
-{
-    UAV_pose = *msg;
-}
 
 
 int main (int argc, char* argv[]){
@@ -157,9 +149,15 @@ int main (int argc, char* argv[]){
     // Static pubsub
 	ROS_WARN("Trying to subscribe");
     ros::Subscriber map_local = nh.subscribe("/sdf_map/occupancy_local", 1, getLocalMapCallback);
-    ros::Subscriber map_global = nh.subscribe("/sdf_map/occupancy_all", 1, getGlobalMapCallback);
-    ros::Subscriber sensor_pose_local = nh.subscribe("/pcl_render_node/sensor_pose", 1, getSensorPoseCallback);
+    ros::Subscriber map_global = nh.subscribe("/sdf_map/occupancy_all", 1000, getGlobalMapCallback);
     ros::Publisher map_pub = nh.advertise<sensor_msgs::PointCloud2>("/MergedMap", 1000);
+
+    //Transform listener
+    
+
+    //Transform broadcaster
+    // br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "/world", "/sdf_map"));
+
     ros::Rate loop_rate(10);
     //merge local received map with own global map
 	ROS_WARN("Have subscribed");
@@ -169,13 +167,8 @@ int main (int argc, char* argv[]){
     {
         if(own_globalMap_pcd.size()>0 && inRange == true)
         {
-            // pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
-            // map_pub.publish(Global_Publish);
-            // ROS_WARN("Published merged map");
-            pcl::transformPointCloud("world", own_globalMap_pcd, temp_Map, listener);
-			// pcl_conversions::toPCL(ros::Time::now(), own_globalMap_pcd.header.stamp);
-            // pcl::toROSMsg(temp_Map, Global_Publish);
-			pcl::toROSMsg(temp_Map, Global_Publish);
+            Global_Publish.header.frame_id = "/map";
+			pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
             map_pub.publish(Global_Publish);
             loop_rate.sleep();
         }

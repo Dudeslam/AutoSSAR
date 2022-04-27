@@ -7,7 +7,7 @@
         <param name="Publish_out" value="/MapMerged" /> -->
     </node>
 
-    <include file="$(find mapmerge)/launch/octomap.launch" />
+    <!-- <include file="$(find mapmerge)/launch/octomap.launch" /> -->
     <!-- <include file="$(find autoSSAR)/launch/octomap.launch">
         <param name="Cloud_in" value="$(arg Cloud_in_octo)"/>
     </include> -->
