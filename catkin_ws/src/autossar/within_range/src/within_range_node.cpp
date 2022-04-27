@@ -87,7 +87,7 @@ int main(int argc, char **argv)
   std::cout << std::setfill ('0') << std::setw (6);
   //std::cout << std::setprecision(4) << std::fixed;
 
-  // Set rate !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // Set rate
   ros::Rate r(10); // 10 hz
 
 
@@ -114,6 +114,8 @@ int main(int argc, char **argv)
       msg.data = "within_range_" + otherUAV0;
       pub.publish(msg);
     }
+
+    
     if(within_range(odomSelf, odomOtherUAV1)){
       std::cout << selfUAV << std::endl;
       std::cout << "Dist to " << otherUAV1 << ": " << dist(odomSelf, odomOtherUAV1) << " " << within_range(odomSelf, odomOtherUAV1) << std::endl;
