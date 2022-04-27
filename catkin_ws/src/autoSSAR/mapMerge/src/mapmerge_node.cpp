@@ -56,8 +56,6 @@ bool concatePCL(pcl::PointCloud<pcl::PointXYZ> cloud1, pcl::PointCloud<pcl::Poin
 
 void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, pcl::PointCloud<pcl::PointXYZ>& map_out)
 {
-    ROS_WARN("Merging maps");
-    
     pcl::PointCloud<pcl::PointXYZ>::Ptr map_in_ptr(new pcl::PointCloud<pcl::PointXYZ>(map_in));
     pcl::PointCloud<pcl::PointXYZ>::Ptr map_out_ptr(new pcl::PointCloud<pcl::PointXYZ>(map_out));
     pcl::PointCloud<pcl::PointXYZ> Final;
@@ -95,9 +93,7 @@ void getGlobalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
 
     //will be removed when local map update works
     UAV_frame = msg->header.frame_id;
-    // std::cout << "UAV frame id: " << World_frame << std::endl;
 
-    ROS_WARN("Received Global map");
     if(own_globalMap_pcd.size() > 0)
     {
         // ROS_WARN("Own Global map is not empty");
@@ -133,10 +129,6 @@ int main (int argc, char* argv[]){
     // std::string cloud_global_topic;
     // std::string Publish_topic;
 
-    tf::TransformBroadcaster br;
-    tf::TransformListener listener;
-    tf::Transform transform;
-
     // // Parameter Handles
     // nh.param("Cloud_in_local", cloud_local_topic);
     // nh.param("Cloud_in_global", cloud_global_topic);
@@ -151,13 +143,6 @@ int main (int argc, char* argv[]){
     ros::Subscriber map_local = nh.subscribe("/sdf_map/occupancy_local", 1, getLocalMapCallback);
     ros::Subscriber map_global = nh.subscribe("/sdf_map/occupancy_all", 1000, getGlobalMapCallback);
     ros::Publisher map_pub = nh.advertise<sensor_msgs::PointCloud2>("/MergedMap", 1000);
-
-    //Transform listener
-    
-
-    //Transform broadcaster
-    // br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "/world", "/sdf_map"));
-
     ros::Rate loop_rate(10);
     //merge local received map with own global map
 	ROS_WARN("Have subscribed");
