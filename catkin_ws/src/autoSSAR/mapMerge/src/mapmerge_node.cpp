@@ -33,7 +33,7 @@ std::string UAV_frame;
 
 //placeholder for inRange flag, to be set
 bool inRange = true;
-
+bool finishState = false;
 
 //functions here
 bool concatePCL(pcl::PointCloud<pcl::PointXYZ> cloud1, pcl::PointCloud<pcl::PointXYZ> cloud2, pcl::PointCloud<pcl::PointXYZ>& cloud_out)
@@ -70,7 +70,7 @@ void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, pcl::PointCloud<pcl::Poin
     icp.align(Final);
     if(icp.hasConverged())
     {
-        ROS_WARN("ICP has converged");
+        // ROS_WARN("ICP has converged");
         icp.getFitnessScore();
         pcl::transformPointCloud(*map_in_ptr, Final, icp.getFinalTransformation());
         concatePCL(Final, *map_out_ptr, map_out);
@@ -86,23 +86,24 @@ void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, pcl::PointCloud<pcl::Poin
 
 void getGlobalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
 {
-    //GOBack
-    //conversations between octomap and pcl
-    pcl::PointCloud<pcl::PointXYZ> cloudMap;
-    pcl::fromROSMsg(*msg, cloudMap);
+    if(!finishState){
+        //conversations between octomap and pcl
+        pcl::PointCloud<pcl::PointXYZ> cloudMap;
+        pcl::fromROSMsg(*msg, cloudMap);
 
-    //will be removed when local map update works
-    UAV_frame = msg->header.frame_id;
+        //will be removed when local map update works
+        UAV_frame = msg->header.frame_id;
 
-    if(own_globalMap_pcd.size() > 0)
-    {
-        // ROS_WARN("Own Global map is not empty");
-        mergeMaps(cloudMap, own_globalMap_pcd);
-    }
-    else            
-    {
-        // ROS_WARN("Own Global map is empty");
-        own_globalMap_pcd = cloudMap;
+        if(own_globalMap_pcd.size() > 0)
+        {
+            // ROS_WARN("Own Global map is not empty");
+            mergeMaps(cloudMap, own_globalMap_pcd);
+        }
+        else            
+        {
+            // ROS_WARN("Own Global map is empty");
+            own_globalMap_pcd = cloudMap;
+        }
     }
 }
 
@@ -110,13 +111,24 @@ void getGlobalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
 
 void getLocalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
 {
-    // ROS_WARN("Received local map");
-    sensor_msgs::PointCloud2 localMap_pcd = *msg;
-    pcl::PointCloud<pcl::PointXYZ> cloudMap;
-    pcl::fromROSMsg(localMap_pcd, cloudMap);
-    local_map_pcd += cloudMap;
-    own_globalMap_pcd += cloudMap;
-    UAV_frame = msg->header.frame_id;
+    if(!finishState){
+        // ROS_WARN("Received local map");
+        pcl::PointCloud<pcl::PointXYZ> cloudMap;
+        pcl::fromROSMsg(*msg, cloudMap);
+        UAV_frame = msg->header.frame_id;
+        if(cloudMap.size() > 0 && own_globalMap_pcd.size() > 0)
+        {
+            // ROS_WARN("Local map is not empty");
+            local_map_pcd = cloudMap;
+            own_globalMap_pcd += cloudMap;
+        }
+        else
+        {
+            // ROS_WARN("Local map is empty");
+            local_map_pcd = cloudMap;
+            own_globalMap_pcd = cloudMap;
+        }
+    }
 }
 
 
@@ -140,21 +152,24 @@ int main (int argc, char* argv[]){
 
     // Static pubsub
 	ROS_WARN("Trying to subscribe");
-    ros::Subscriber map_local = nh.subscribe("/sdf_map/occupancy_local", 1, getLocalMapCallback);
-    ros::Subscriber map_global = nh.subscribe("/sdf_map/occupancy_all", 1000, getGlobalMapCallback);
+    ros::Subscriber map_local = nh.subscribe("/sdf_map/occupancy_all", 10, getLocalMapCallback);
+    // ros::Subscriber map_global = nh.subscribe("/sdf_map/occupancy_all", 1, getGlobalMapCallback);
     ros::Publisher map_pub = nh.advertise<sensor_msgs::PointCloud2>("/MergedMap", 1000);
     ros::Rate loop_rate(10);
     //merge local received map with own global map
 	ROS_WARN("Have subscribed");
-    pcl::PointCloud<pcl::PointXYZ> temp_Map;
+
 
     while(ros::ok())
     {
-        if(own_globalMap_pcd.size()>0 && inRange == true)
+        if(own_globalMap_pcd.size() > 0  && inRange == true)
         {
             Global_Publish.header.frame_id = "/map";
+            //This to publish Global
 			pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
+
             map_pub.publish(Global_Publish);
+            // Global_Publish.clear();
             loop_rate.sleep();
         }
         ros::spinOnce();
