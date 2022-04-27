@@ -41,7 +41,7 @@ void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, pcl::PointCloud<pcl::Poin
         icp.getFitnessScore();
         icp.getFinalTransformation();
         pcl::transformPointCloud(*map_in_ptr, *map_out_ptr_tmp, icp.getFinalTransformation());
-        pcl::concatenate(*map_out_ptr_tmp, *map_out_ptr, *map_out_ptr);
+        pcl::concatenate(*map_out_ptr_tmp, *map_out_ptr, *map_out);
         //pcl::toROSMsg(*map_out_ptr, map_out);
     }
     else
