@@ -1,4 +1,5 @@
 /catkin_ws/build
 /catkin_ws/devel
-/catkin_ws/src/.vscode/*
 .vscode/*
+/catkin_ws/src/.vscode/*
+/catkin_ws/src/FUEL/.vscode/*
