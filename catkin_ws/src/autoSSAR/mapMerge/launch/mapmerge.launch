@@ -1,7 +1,7 @@
 <launch>
     <!-- Change this to where to get cloud in -->
     <!-- <arg name="Cloud_in_octo" value="/pcl_render_node/local_map"/> -->
-    <node pkg="mapMerge" name="mapmerge" type="mapmerge" output="screen">
+    <node pkg="mapmerge" name="mapmerge" type="mapmerge" output="screen">
         <!-- <param name="Cloud_in_local" value="/pcl_render_node/cloud" />
         <param name="Cloud_in_global" value="/Publish_out" />
         <param name="Publish_out" value="/MapMerged" /> -->

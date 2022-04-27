@@ -49,7 +49,7 @@ void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, pcl::PointCloud<pcl::Poin
     std::vector<int> indices;
     // pcl::removeNaNFromPointCloud(*map_in_ptr, *map_in_ptr, indices);
     pcl::IterativeClosestPoint<pcl::PointXYZ, pcl::PointXYZ> icp;
-    ROS_WARN("Set input cloud");
+    // ROS_WARN("Set input cloud");
     icp.setInputSource(map_in_ptr);
     icp.setInputTarget(map_out_ptr);
     icp.align(Final);
@@ -66,7 +66,6 @@ void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, pcl::PointCloud<pcl::Poin
     {
         ROS_WARN("ICP has not converged");
     }
-    ROS_WARN("ICP done");
 }
 
 
