@@ -141,8 +141,10 @@ int main (int argc, char* argv[]){
             // pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
             // map_pub.publish(Global_Publish);
             // ROS_WARN("Published merged map");
-            pcl_ros::transformPointCloud("world", own_globalMap_pcd, temp_Map, br);
-            pcl::toROSMsg(temp_Map, Global_Publish);
+            // pcl_ros::transformPointCloud("world", own_globalMap_pcd, temp_Map, br);
+			pcl_conversions::toPCL(ros::Time::now(), own_globalMap_pcd.header.stamp);
+            // pcl::toROSMsg(temp_Map, Global_Publish);
+			pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
             map_pub.publish(Global_Publish);
             loop_rate.sleep();
         }
@@ -151,8 +153,6 @@ int main (int argc, char* argv[]){
     }
     
     ros::spin();
-   
-
 
 
     return 0;

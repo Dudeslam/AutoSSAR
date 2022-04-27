@@ -7,7 +7,7 @@
   www.ros.org/wiki/octomap_server for details  
 -->
 <launch>
-	<arg name="Cloud_in" />
+	<!-- <arg name="Cloud_in" /> -->
   <node pkg="nodelet" type="nodelet" name="standalone_nodelet"  args="manager"/>
 
   <node pkg="nodelet" type="nodelet" name="octomap_server_nodelet" args="load octomap_server/OctomapServerNodelet standalone_nodelet">
@@ -21,7 +21,7 @@
 		<param name="sensor_model/max_range" value="5.0" />
 		
 		<!-- data source to integrate (PointCloud2) -->
-		<remap from="octomap_server_nodelet/cloud_in" to="map_merged" />
+		<remap from="octomap_server_nodelet/cloud_in" to="/MergedMap" />
 	 
 	  <!-- output collision map -->
 	  <remap from="octomap_server_nodelet/collision_map_out" to="collision_map_out"/>
