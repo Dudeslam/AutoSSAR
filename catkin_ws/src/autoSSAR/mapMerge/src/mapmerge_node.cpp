@@ -8,7 +8,7 @@
 #include <octomap_msgs/Octomap.h>
 #include <octomap_msgs/conversions.h>
 #include <octomap/octomap.h>
-
+#include <tf/transform_broadcaster.h>
 #include <pcl/registration/icp.h>
 #include <pcl/filters/filter.h>
 #include <pcl/common/projection_matrix.h>
@@ -16,7 +16,6 @@
 
 pcl::PointCloud<pcl::PointXYZ> own_globalMap_pcd;
 pcl::PointCloud<pcl::PointXYZ> local_map_pcd;
-sensor_msgs::PointCloud2 rcv_globalMap_pcd2;
 sensor_msgs::PointCloud2 Global_Publish;
 //functions here
 bool concatePCL(pcl::PointCloud<pcl::PointXYZ> cloud1, pcl::PointCloud<pcl::PointXYZ> cloud2, pcl::PointCloud<pcl::PointXYZ>& cloud_out)
@@ -57,7 +56,6 @@ void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, pcl::PointCloud<pcl::Poin
     {
         ROS_WARN("ICP has converged");
         icp.getFitnessScore();
-        icp.getFinalTransformation();
         pcl::transformPointCloud(*map_in_ptr, Final, icp.getFinalTransformation());
         concatePCL(Final, *map_out_ptr, map_out);
         //pcl::toROSMsg(*map_out_ptr, map_out);
@@ -115,6 +113,9 @@ int main (int argc, char* argv[]){
     // std::string cloud_global_topic;
     // std::string Publish_topic;
 
+
+    tf::TransformBroadcaster br;
+
     // // Parameter Handles
     // nh.param("Cloud_in_local", cloud_local_topic);
     // nh.param("Cloud_in_global", cloud_global_topic);
@@ -132,14 +133,18 @@ int main (int argc, char* argv[]){
     ros::Rate loop_rate(10);
     //merge local received map with own global map
 	ROS_WARN("Have subscribed");
-    
+    pcl::PointCloud<pcl::PointXYZ>::temp_Map;
+
     while(ros::ok())
     {
         if(own_globalMap_pcd.size()>0)
         {
-            pcl::toROSMsg(own_globalMap_pcd, rcv_globalMap_pcd2);
-            map_pub.publish(rcv_globalMap_pcd2);
+            // pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
+            // map_pub.publish(Global_Publish);
             // ROS_WARN("Published merged map");
+            pcl_ros::transformPointCloud("world", own_globalMap_pcd, temp_Map, br);
+            pcl::toROSMsg(temp_Map, Global_Publish);
+            map_pub.publish(Global_Publish);
             loop_rate.sleep();
         }
         ros::spinOnce();
