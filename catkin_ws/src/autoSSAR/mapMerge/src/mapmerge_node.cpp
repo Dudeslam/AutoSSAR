@@ -113,7 +113,6 @@ int main (int argc, char* argv[]){
     // std::string cloud_global_topic;
     // std::string Publish_topic;
 
-
     tf::TransformBroadcaster br;
 
     // // Parameter Handles
@@ -133,7 +132,7 @@ int main (int argc, char* argv[]){
     ros::Rate loop_rate(10);
     //merge local received map with own global map
 	ROS_WARN("Have subscribed");
-    pcl::PointCloud<pcl::PointXYZ>::temp_Map;
+    pcl::PointCloud<pcl::PointXYZ> temp_Map;
 
     while(ros::ok())
     {
