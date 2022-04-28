@@ -16,6 +16,7 @@
 #include <pcl/filters/filter.h>
 #include <pcl/common/projection_matrix.h>
 #include <pcl/common/io.h>
+#include <pcl/filters/voxel_grid.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/PoseArray.h>
 #include <geometry_msgs/Pose.h>
@@ -23,6 +24,7 @@
 #include <tf/transform_listener.h>
 #include <tf/transform_broadcaster.h>
 #include <visualization_msgs/Marker.h>
+
 
 pcl::PointCloud<pcl::PointXYZ> own_globalMap_pcd;
 pcl::PointCloud<pcl::PointXYZ> local_map_pcd;
@@ -62,7 +64,7 @@ void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, pcl::PointCloud<pcl::Poin
     //pcl::fromROSMsg(map_out, *map_out_ptr_tmp);
     //Remove NAN points
     std::vector<int> indices;
-    // pcl::removeNaNFromPointCloud(*map_in_ptr, *map_in_ptr, indices);
+    pcl::removeNaNFromPointCloud(*map_in_ptr, *map_in_ptr, indices);
     pcl::IterativeClosestPoint<pcl::PointXYZ, pcl::PointXYZ> icp;
     // ROS_WARN("Set input cloud");
     icp.setInputSource(map_in_ptr);
@@ -79,6 +81,16 @@ void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, pcl::PointCloud<pcl::Poin
     {
         ROS_WARN("ICP has not converged");
     }
+}
+
+void downsample(pcl::PointCloud<pcl::PointXYZ>& cloud_in, pcl::PointCloud<pcl::PointXYZ>& cloud_out)
+{
+    std::cout << "Cloud in before downsample: " << cloud_in.size() << std::endl;
+    pcl::VoxelGrid<pcl::PointXYZ> sor;
+    sor.setInputCloud (cloud_in.makeShared());
+    sor.setLeafSize (0.1, 0.1, 0.1);
+    sor.filter (cloud_out);
+    std::cout << "Cloud in after downsample: " << cloud_out.size() << std::endl;
 }
 
 
@@ -98,11 +110,13 @@ void getGlobalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
         {
             // ROS_WARN("Own Global map is not empty");
             mergeMaps(cloudMap, own_globalMap_pcd);
+            downsample(own_globalMap_pcd, own_globalMap_pcd);
         }
         else            
         {
             // ROS_WARN("Own Global map is empty");
             own_globalMap_pcd = cloudMap;
+            downsample(own_globalMap_pcd, own_globalMap_pcd);
         }
     }
 }
@@ -115,18 +129,21 @@ void getLocalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
         // ROS_WARN("Received local map");
         pcl::PointCloud<pcl::PointXYZ> cloudMap;
         pcl::fromROSMsg(*msg, cloudMap);
+        pcl::removeNaNFromPointCloud(cloudMap, cloudMap, indices);
         UAV_frame = msg->header.frame_id;
         if(cloudMap.size() > 0 && own_globalMap_pcd.size() > 0)
         {
             // ROS_WARN("Local map is not empty");
             local_map_pcd = cloudMap;
             own_globalMap_pcd += cloudMap;
-        }
+            downsample(own_globalMap_pcd, own_globalMap_pcd);
+        }   
         else
         {
             // ROS_WARN("Local map is empty");
             local_map_pcd = cloudMap;
             own_globalMap_pcd = cloudMap;
+            downsample(own_globalMap_pcd, own_globalMap_pcd);
         }
     }
 }
