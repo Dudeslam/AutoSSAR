@@ -129,6 +129,7 @@ void getLocalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
         // ROS_WARN("Received local map");
         pcl::PointCloud<pcl::PointXYZ> cloudMap;
         pcl::fromROSMsg(*msg, cloudMap);
+        std::vector<int> indices;
         pcl::removeNaNFromPointCloud(cloudMap, cloudMap, indices);
         UAV_frame = msg->header.frame_id;
         if(cloudMap.size() > 0 && own_globalMap_pcd.size() > 0)
