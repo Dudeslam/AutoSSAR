@@ -111,7 +111,7 @@ int main(int argc, char **argv)
       std::cout << "Dist to " << otherUAV0 << ": " << dist(odomSelf, odomOtherUAV0) << " " << within_range(odomSelf, odomOtherUAV0) << std::endl;
 
       std_msgs::String msg;
-      msg.data = "within_range_" + otherUAV0;
+      msg.data = otherUAV0;
       pub.publish(msg);
     }
     if(within_range(odomSelf, odomOtherUAV1)){
@@ -119,7 +119,7 @@ int main(int argc, char **argv)
       std::cout << "Dist to " << otherUAV1 << ": " << dist(odomSelf, odomOtherUAV1) << " " << within_range(odomSelf, odomOtherUAV1) << std::endl;
 
       std_msgs::String msg;
-      msg.data = "within_range_" + otherUAV1;
+      msg.data = otherUAV1;
       pub.publish(msg);
     }
 

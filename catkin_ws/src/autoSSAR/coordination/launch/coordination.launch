@@ -15,6 +15,7 @@
     <node pkg="mapmerge" name="mapmerge" type="mapmerge" output="screen" ns="$(arg ns0)">
         <param name="otherUAV0" value="/$(arg ns1)"/>
         <param name="otherUAV1" value="/$(arg ns2)"/>
+	</node>
 
     <node pkg="within_range" name="within_range" type="within_range" output="screen" ns="$(arg ns1)">
         <param name="otherUAV0" value="/$(arg ns0)"/>
@@ -24,6 +25,7 @@
     <node pkg="mapmerge" name="mapmerge" type="mapmerge" output="screen" ns="$(arg ns1)">
         <param name="otherUAV0" value="/$(arg ns0)"/>
         <param name="otherUAV1" value="/$(arg ns2)"/>
+	</node>
 
     <node pkg="within_range" name="within_range" type="within_range" output="screen" ns="$(arg ns2)">
         <param name="otherUAV0" value="/$(arg ns0)"/>
@@ -33,7 +35,7 @@
     <node pkg="mapmerge" name="mapmerge" type="mapmerge" output="screen" ns="$(arg ns2)">
         <param name="otherUAV0" value="/$(arg ns0)"/>
         <param name="otherUAV1" value="/$(arg ns1)"/>
-
+    </node>
 
 
 

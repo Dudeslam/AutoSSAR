@@ -8,6 +8,7 @@
 #include <iostream>
 #include <sensor_msgs/PointCloud2.h>
 #include <std_msgs/Header.h>
+#include <std_msgs/String.h>
 #include <octomap_msgs/Octomap.h>
 #include <octomap_msgs/conversions.h>
 #include <octomap/octomap.h>
@@ -119,6 +120,7 @@ void getGlobalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
             inRangeUAV1 = false;
             inRangeUAV2 = false;
         }
+    }
 }
 
 
@@ -148,17 +150,19 @@ void getLocalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
     }
 }
 
-void getWithinRangeCallback(const std_msgs::Bool::ConstPtr& msg)
+void getWithinRangeCallback(const std_msgs::String& msg)
 {
     //wait for message to be received
     //if received, set inRange flag
-    std::string str = msg->data;
+    std::string str = msg.data;
         switch(str[0])
         {
             case 'UAV1':
+                ROS_WARN("Setting Range UAV1");
                 inRangeUAV1 = true;
                 break;
             case 'UAV2':
+                ROS_WARN("Setting Range UAV2");
                 inRangeUAV2 = true;
                 break;
             default:
@@ -181,12 +185,12 @@ int main (int argc, char* argv[]){
     nh.getParam(selfUAV+"/mapmerge/otherUAV1", otherUAV1);
 
 	ROS_WARN("Trying to subscribe");
-    ros::Subscriber map_global_own = nh.subscribe(selvUAV+"/sdf_map/occupancy_all", 10, getLocalMapCallback);
+    ros::Subscriber map_global_own = nh.subscribe(selfUAV+"/sdf_map/occupancy_all", 10, getLocalMapCallback);
     ros::Subscriber map_global_uav1 = nh.subscribe(otherUAV0+"/MergedMap", 10, getGlobalMapCallback);
     ros::Subscriber map_global_uav2 = nh.subscribe(otherUAV1+"/MergedMap", 10, getGlobalMapCallback);
     ros::Subscriber within_range_uav1 = nh.subscribe(otherUAV0+"/within_range", 10, getWithinRangeCallback);
     ros::Subscriber within_range_uav2 = nh.subscribe(otherUAV1+"/within_range", 10, getWithinRangeCallback);
-    ros::Publisher map_pub = nh.advertise<sensor_msgs::PointCloud2>(selvUAV+"/MergedMap", 1000);
+    ros::Publisher map_pub = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/MergedMap", 1000);
 
     ros::Rate loop_rate(10);
     //merge local received map with own global map
