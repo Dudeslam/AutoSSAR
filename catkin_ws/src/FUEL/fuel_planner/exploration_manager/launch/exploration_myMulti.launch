@@ -23,7 +23,7 @@
   <arg name="ns0_init_y" value="0.0"/>
   <arg name="ns0_init_z" value="1.0"/> 
 
-  <!-- main algorithm params, calls: "exploration_node.cpp" with arguments -->
+  <!-- main algorithm params, calls: "exploration_node.cpp" with arguments NOTE: this node does all the printing !!! -->
   <include file="$(find exploration_manager)/launch/algorithm_myMulti.xml" ns="$(arg ns0)">
     <arg name="drone_index" value="$(arg ns0)"/> 
 
@@ -63,13 +63,14 @@
 
   <!-- trajectory server -->
   <node pkg="plan_manage" name="traj_server" type="traj_server" output="screen" ns="$(arg ns0)">
+  <!-- <node pkg="plan_manage" name="traj_server" type="traj_server" ns="$(arg ns0)"> -->
     <remap from="/position_cmd" to="/$(arg ns0)/planning/pos_cmd"/>
     <remap from="/odom_world" to="/$(arg ns0)/state_ukf/odom"/>
     <param name="traj_server/time_forward" value="1.5" type="double"/>
     <param name="traj_server/pub_traj_id" value="4" type="int"/>
-    <param name="traj_server/init_x" value="0.0" type="double"/>
-    <param name="traj_server/init_y" value="0.0" type="double"/>
-    <param name="traj_server/init_z" value="1.0" type="double"/>
+    <param name="traj_server/init_x" value="$(arg ns0_init_x)" type="double"/>
+    <param name="traj_server/init_y" value="$(arg ns0_init_y)" type="double"/>
+    <param name="traj_server/init_z" value="$(arg ns0_init_z)" type="double"/>
 
     <param name="perception_utils/top_angle" value="0.56125" type="double"/>
     <param name="perception_utils/left_angle" value="0.69222" type="double"/>
@@ -80,6 +81,7 @@
 
 
   <node pkg="waypoint_generator" name="waypoint_generator" type="waypoint_generator" output="screen" ns="$(arg ns0)">
+  <!-- <node pkg="waypoint_generator" name="waypoint_generator" type="waypoint_generator" ns="$(arg ns0)"> -->
     <remap from="~odom" to="/$(arg ns0)/state_ukf/odom"/>        
     <remap from="~goal" to="/move_base_simple/goal"/>
     <remap from="~traj_start_trigger" to="/$(arg ns0)/traj_start_trigger" />
@@ -135,14 +137,15 @@
 
 
   <!-- trajectory server -->
-  <node pkg="plan_manage" name="traj_server" type="traj_server" output="screen" ns="$(arg ns1)">
+  <node pkg="plan_manage" name="traj_server" type="traj_server" output="screen" ns="$(arg ns1)"> <!--Prints zeros at startup??-->
+  <!-- <node pkg="plan_manage" name="traj_server" type="traj_server" ns="$(arg ns1)"> -->
     <remap from="/position_cmd" to="/$(arg ns1)/planning/pos_cmd"/>
     <remap from="/odom_world" to="/$(arg ns1)/state_ukf/odom"/>
     <param name="traj_server/time_forward" value="1.5" type="double"/>
     <param name="traj_server/pub_traj_id" value="4" type="int"/>
-    <param name="traj_server/init_x" value="-6.0" type="double"/>
-    <param name="traj_server/init_y" value="0.0" type="double"/>
-    <param name="traj_server/init_z" value="1.0" type="double"/>
+    <param name="traj_server/init_x" value="$(arg ns1_init_x)" type="double"/>
+    <param name="traj_server/init_y" value="$(arg ns1_init_y)" type="double"/>
+    <param name="traj_server/init_z" value="$(arg ns1_init_z)" type="double"/>
 
     <param name="perception_utils/top_angle" value="0.56125" type="double"/>
     <param name="perception_utils/left_angle" value="0.69222" type="double"/>
@@ -153,6 +156,7 @@
 
 
   <node pkg="waypoint_generator" name="waypoint_generator" type="waypoint_generator" output="screen" ns="$(arg ns1)">
+  <!-- <node pkg="waypoint_generator" name="waypoint_generator" type="waypoint_generator" ns="$(arg ns1)"> -->
     <remap from="~odom" to="/$(arg ns1)/state_ukf/odom"/>        
     <remap from="~goal" to="/move_base_simple/goal"/>
     <remap from="~traj_start_trigger" to="/$(arg ns1)/traj_start_trigger" />
@@ -212,13 +216,14 @@
 
   <!-- trajectory server -->
   <node pkg="plan_manage" name="traj_server" type="traj_server" output="screen" ns="$(arg ns2)">
+  <!-- <node pkg="plan_manage" name="traj_server" type="traj_server" ns="$(arg ns2)"> -->
     <remap from="/position_cmd" to="/$(arg ns2)/planning/pos_cmd"/>
     <remap from="/odom_world" to="/$(arg ns2)/state_ukf/odom"/>
     <param name="traj_server/time_forward" value="1.5" type="double"/>
     <param name="traj_server/pub_traj_id" value="4" type="int"/>
-    <param name="traj_server/init_x" value="-6.0" type="double"/>
-    <param name="traj_server/init_y" value="0.0" type="double"/>
-    <param name="traj_server/init_z" value="1.0" type="double"/>
+    <param name="traj_server/init_x" value="$(arg ns2_init_x)" type="double"/>
+    <param name="traj_server/init_y" value="$(arg ns2_init_y)" type="double"/>
+    <param name="traj_server/init_z" value="$(arg ns2_init_z)" type="double"/>
 
     <param name="perception_utils/top_angle" value="0.56125" type="double"/>
     <param name="perception_utils/left_angle" value="0.69222" type="double"/>
@@ -229,6 +234,7 @@
 
 
   <node pkg="waypoint_generator" name="waypoint_generator" type="waypoint_generator" output="screen" ns="$(arg ns2)">
+  <!-- <node pkg="waypoint_generator" name="waypoint_generator" type="waypoint_generator" ns="$(arg ns2)"> -->
     <remap from="~odom" to="/$(arg ns2)/state_ukf/odom"/>        
     <remap from="~goal" to="/move_base_simple/goal"/>
     <remap from="~traj_start_trigger" to="/$(arg ns2)/traj_start_trigger" />
