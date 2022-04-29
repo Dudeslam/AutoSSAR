@@ -31,10 +31,10 @@ pcl::PointCloud<pcl::PointXYZ> local_map_pcd;
 sensor_msgs::PointCloud2 Global_Publish;
 geometry_msgs::PoseStamped UAV_pose;
 geometry_msgs::PoseStamped Global_Pose;
-std::string UAV_frame;
 
 //placeholder for inRange flag, to be set
-bool inRange = true;
+bool inRangeUAV1 = false;
+bool inRangeUAV2 = false;
 bool finishState = false;
 
 //functions here
@@ -98,27 +98,27 @@ void downsample(pcl::PointCloud<pcl::PointXYZ>& cloud_in, pcl::PointCloud<pcl::P
 
 void getGlobalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
 {
-    if(!finishState){
+    if(inRangeUAV1 == true || inRangeUAV2 == true){
         //conversations between octomap and pcl
         pcl::PointCloud<pcl::PointXYZ> cloudMap;
         pcl::fromROSMsg(*msg, cloudMap);
-
-        //will be removed when local map update works
-        UAV_frame = msg->header.frame_id;
 
         if(own_globalMap_pcd.size() > 0)
         {
             // ROS_WARN("Own Global map is not empty");
             mergeMaps(cloudMap, own_globalMap_pcd);
             downsample(own_globalMap_pcd, own_globalMap_pcd);
+            inRangeUAV1 = false;
+            inRangeUAV2 = false;
         }
         else            
         {
             // ROS_WARN("Own Global map is empty");
             own_globalMap_pcd = cloudMap;
             downsample(own_globalMap_pcd, own_globalMap_pcd);
+            inRangeUAV1 = false;
+            inRangeUAV2 = false;
         }
-    }
 }
 
 
@@ -131,7 +131,6 @@ void getLocalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
         pcl::fromROSMsg(*msg, cloudMap);
         std::vector<int> indices;
         pcl::removeNaNFromPointCloud(cloudMap, cloudMap, indices);
-        UAV_frame = msg->header.frame_id;
         if(cloudMap.size() > 0 && own_globalMap_pcd.size() > 0)
         {
             // ROS_WARN("Local map is not empty");
@@ -149,30 +148,46 @@ void getLocalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
     }
 }
 
+void getWithinRangeCallback(const std_msgs::Bool::ConstPtr& msg)
+{
+    //wait for message to be received
+    //if received, set inRange flag
+    std::string str = msg->data;
+        switch(str[0])
+        {
+            case 'UAV1':
+                inRangeUAV1 = true;
+                break;
+            case 'UAV2':
+                inRangeUAV2 = true;
+                break;
+            default:
+                break;
+        }
+
+}
 
 
 int main (int argc, char* argv[]){
     ros::init(argc, argv, "map_merger");
     ros::NodeHandle nh;
-    // ros::NodeHandle nh_private("~");
-    // std::string cloud_local_topic;
-    // std::string cloud_global_topic;
-    // std::string Publish_topic;
+    std::string selfUAV;
+    std::string otherUAV0 = "nan";
+    std::string otherUAV1 = "nan";
 
-    // // Parameter Handles
-    // nh.param("Cloud_in_local", cloud_local_topic);
-    // nh.param("Cloud_in_global", cloud_global_topic);
-    // nh.param("Publish_out", Publish_topic);
-    // //Pub Subs for roslaunch
-    // ros::Publisher map_pub = nh.advertise<sensor_msgs::PointCloud2>(Publish_topic, 1);
-    // ros::Subscriber map_local = nh.subscribe(cloud_local_topic, 1, getLocalMapCallback);
-    // ros::Subscriber map_global = nh.subscribe(cloud_global_topic, 1, getGlobalMapCallback);
 
-    // Static pubsub
+    selfUAV = nh.getNamespace().c_str();
+    nh.getParam(selfUAV+"/mapmerge/otherUAV0", otherUAV0);
+    nh.getParam(selfUAV+"/mapmerge/otherUAV1", otherUAV1);
+
 	ROS_WARN("Trying to subscribe");
-    ros::Subscriber map_local = nh.subscribe("/sdf_map/occupancy_all", 10, getLocalMapCallback);
-    // ros::Subscriber map_global = nh.subscribe("/sdf_map/occupancy_all", 1, getGlobalMapCallback);
-    ros::Publisher map_pub = nh.advertise<sensor_msgs::PointCloud2>("/MergedMap", 1000);
+    ros::Subscriber map_global_own = nh.subscribe(selvUAV+"/sdf_map/occupancy_all", 10, getLocalMapCallback);
+    ros::Subscriber map_global_uav1 = nh.subscribe(otherUAV0+"/MergedMap", 10, getGlobalMapCallback);
+    ros::Subscriber map_global_uav2 = nh.subscribe(otherUAV1+"/MergedMap", 10, getGlobalMapCallback);
+    ros::Subscriber within_range_uav1 = nh.subscribe(otherUAV0+"/within_range", 10, getWithinRangeCallback);
+    ros::Subscriber within_range_uav2 = nh.subscribe(otherUAV1+"/within_range", 10, getWithinRangeCallback);
+    ros::Publisher map_pub = nh.advertise<sensor_msgs::PointCloud2>(selvUAV+"/MergedMap", 1000);
+
     ros::Rate loop_rate(10);
     //merge local received map with own global map
 	ROS_WARN("Have subscribed");
@@ -180,7 +195,7 @@ int main (int argc, char* argv[]){
 
     while(ros::ok())
     {
-        if(own_globalMap_pcd.size() > 0  && inRange == true)
+        if(own_globalMap_pcd.size() > 0)
         {
             Global_Publish.header.frame_id = "/map";
             //This to publish Global
