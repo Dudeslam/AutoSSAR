@@ -20,7 +20,6 @@ find_package(catkin REQUIRED COMPONENTS
   PCL
 )
 
-<<<<<<< HEAD:catkin_ws/src/autoSSAR/coordination/CMakeLists.txt
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -100,8 +99,6 @@ find_package(catkin REQUIRED COMPONENTS
 #   cfg/DynReconf1.cfg
 #   cfg/DynReconf2.cfg
 # )
-=======
->>>>>>> dev/Mads:catkin_ws/src/autossar/coordination/CMakeLists.txt
 
 ###################################
 ## catkin specific configuration ##
@@ -126,19 +123,12 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-<<<<<<< HEAD:catkin_ws/src/autoSSAR/coordination/CMakeLists.txt
 # include
-  # include
+  include
   ${OCTOMAP_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
   ${PCL_INCLUDE_DIRS}
   # src
-=======
-  include
-  ${PROJECT_SOURCE_DIR}/include
-  ${catkin_INCLUDE_DIRS}
-  ${PCL_INCLUDE_DIRS}
->>>>>>> dev/Mads:catkin_ws/src/autossar/coordination/CMakeLists.txt
 )
 
 ## Declare a C++ library

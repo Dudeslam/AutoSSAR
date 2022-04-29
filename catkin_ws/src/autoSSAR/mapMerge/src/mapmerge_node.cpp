@@ -86,12 +86,12 @@ void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, pcl::PointCloud<pcl::Poin
 
 void downsample(pcl::PointCloud<pcl::PointXYZ>& cloud_in, pcl::PointCloud<pcl::PointXYZ>& cloud_out)
 {
-    std::cout << "Cloud in before downsample: " << cloud_in.size() << std::endl;
+    // std::cout << "Cloud in before downsample: " << cloud_in.size() << std::endl;
     pcl::VoxelGrid<pcl::PointXYZ> sor;
     sor.setInputCloud (cloud_in.makeShared());
     sor.setLeafSize (0.1, 0.1, 0.1);
     sor.filter (cloud_out);
-    std::cout << "Cloud in after downsample: " << cloud_out.size() << std::endl;
+    // std::cout << "Cloud in after downsample: " << cloud_out.size() << std::endl;
 }
 
 

@@ -45,20 +45,40 @@
     <remap from ="/planning/replan" to="/$(arg drone_index)/planning/replan"/>
 
     <!--MY CHANGES-->
+    <remap from ="/planning/travel_traj" to="/$(arg drone_index)/planning/travel_traj"/>
+
+    <remap from ="/planning_vis/trajectory" to="/$(arg drone_index)/planning_vis/trajectory"/>
+    <remap from ="/planning_vis/frontier" to="/$(arg drone_index)/planning_vis/frontier"/>
+    <remap from ="/planning_vis/viewpoints" to="/$(arg drone_index)/planning_vis/viewpoints"/>
+    <remap from ="/planning_vis/prediction" to="/$(arg drone_index)/planning_vis/prediction"/>
+    <remap from ="/planning_vis/topo_path" to="/$(arg drone_index)/planning_vis/topo_path"/>
+    <remap from ="/planning_vis/viewpoints" to="/$(arg drone_index)/planning_vis/viewpoints"/>
+    <remap from ="/planning_vis/yaw" to="/$(arg drone_index)/planning_vis/yaw"/>
+    <remap from ="/planning_vis/visib_constraint" to="/$(arg drone_index)/planning_vis/visib_constraint"/>    
+
+    <remap from ="/process_msg/execute_traj" to="/$(arg drone_index)/process_msg/execute_traj"/>
+    <remap from ="/process_msg/execute_traj_array" to="/$(arg drone_index)/process_msg/execute_traj_array"/>
+    <remap from ="/process_msg/marker1" to="/$(arg drone_index)/process_msg/marker1"/>
+    <remap from ="/process_msg/marker1_array" to="/$(arg drone_index)/process_msg/marker1_array"/>
+
+    <remap from ="/heading_planner/box" to="/$(arg drone_index)/heading_planner/box"/>
+    <remap from ="/heading_planner/frontier" to="/$(arg drone_index)/heading_planner/frontier"/>
+    <remap from ="/heading_planner/visib" to="/$(arg drone_index)/heading_planner/visib"/>
+
     <remap from ="/sdf_map/occupancy_all" to="/$(arg drone_index)/sdf_map/occupancy_all"/>
     <remap from ="/sdf_map/occupancy_local" to="/$(arg drone_index)/sdf_map/occupancy_local"/>
     <remap from ="/sdf_map/occupancy_local_inflate" to="/$(arg drone_index)/sdf_map/occupancy_local_inflate"/>
+    <remap from ="/sdf_map/depth_cloud" to="/$(arg drone_index)/sdf_map/depth_cloud"/>
 
-    <!-- <remap from ="/sdf_map/depth_cloud" to="/$(arg drone_index)/sdf_map/depth_cloud"/>
+    <!-- <remap from ="/sdf_map/depth_cloud" to="/$(arg drone_index)/sdf_map/depth_cloud"/>  IS DONE BY OTHER NS-->
     <remap from ="/sdf_map/esdf" to="/$(arg drone_index)/sdf_map/esdf"/>
     <remap from ="/sdf_map/unknown" to="/$(arg drone_index)/sdf_map/unknown"/>
-    <remap from ="/sdf_map/update_range" to="/$(arg drone_index)/sdf_map/update_range"/> -->
+    <remap from ="/sdf_map/update_range" to="/$(arg drone_index)/sdf_map/update_range"/>
 
-    <!--Planning folder in Rviz-->
-    <remap from ="/planning_vis/trajectory" to="/$(arg drone_index)/planning_vis/trajectory"/>
-    <remap from ="/planning/travel_traj" to="/$(arg drone_index)/planning_/travel_traj"/>
-    <remap from ="/planning_vis/frontier" to="/$(arg drone_index)/planning_vis/frontier"/>
-    <remap from ="/planning_vis/viewpoints" to="/$(arg drone_index)/planning_vis/viewpoints"/>
+
+
+
+
 
 
 
