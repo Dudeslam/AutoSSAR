@@ -1,4 +1,4 @@
-PROBLEM_FILE = /home/liping/Documents/fuel_ws/src/FUEL/fuel_planner/utils/lkh_tsp_solver/resource/single.tsp
+PROBLEM_FILE = /home/malle/AutoSSAR/catkin_ws/src/FUEL/fuel_planner/utils/lkh_tsp_solver/resource/single.tsp
 GAIN23 = NO
-OUTPUT_TOUR_FILE =/home/liping/Documents/fuel_ws/src/FUEL/fuel_planner/utils/lkh_tsp_solver/resource/single.txt
+OUTPUT_TOUR_FILE =/home/malle/AutoSSAR/catkin_ws/src/FUEL/fuel_planner/utils/lkh_tsp_solver/resource/single.txt
 RUNS = 1
