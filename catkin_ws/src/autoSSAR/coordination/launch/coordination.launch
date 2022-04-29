@@ -8,8 +8,8 @@
 
 
     <!-- Start range utils -->
-    <node pkg="within_range" name="within_range" type="within_range" output="screen" ns="$(arg ns0)">
-    <!--node pkg="within_range" name="within_range" type="within_range" ns="$(arg ns0)"-->
+    <!-- <node pkg="within_range" name="within_range" type="within_range" output="screen" ns="$(arg ns0)"> -->
+    <node pkg="within_range" name="within_range" type="within_range" ns="$(arg ns0)">
         <param name="otherUAV0" value="/$(arg ns1)"/>
         <param name="otherUAV1" value="/$(arg ns2)"/>
     </node>
@@ -45,5 +45,10 @@
     <node pkg="dist_traversed" name="dist_traversed" type="dist_traversed" output="screen" ns="$(arg ns0)"/>
     <node pkg="dist_traversed" name="dist_traversed" type="dist_traversed" output="screen" ns="$(arg ns1)"/>
     <node pkg="dist_traversed" name="dist_traversed" type="dist_traversed" output="screen" ns="$(arg ns2)"/>
+
+
+
+    <node pkg="coordination" name="coordination_node" type="coordination_node" output="screen" ns="$(arg ns2)"/>
+
 
 </launch>

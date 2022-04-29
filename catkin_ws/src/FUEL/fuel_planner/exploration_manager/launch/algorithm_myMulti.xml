@@ -29,19 +29,38 @@
 
 
   <!-- main node -->
-  <node pkg="exploration_manager" name="exploration_node" type="exploration_node" output="screen">
+  <!-- <node pkg="exploration_manager" name="exploration_node" type="exploration_node" output="screen"> -->
+  <node pkg="exploration_manager" name="exploration_node" type="exploration_node">
     <remap from ="/odom_world" to="$(arg odometry_topic)"/>
     <remap from ="/map_ros/pose"   to = "$(arg sensor_pose_topic)"/> 
     <remap from ="/map_ros/depth" to = "$(arg depth_topic)"/>
     <remap from ="/map_ros/cloud" to="$(arg cloud_topic)"/>
 
     <!-- for multi drone system -->
+    <remap from ="/waypoint_generator/waypoints" to="/$(arg drone_index)/waypoint_generator/waypoints" />
+    <remap from ="/map_ros/occupancy_all" to="/$(arg drone_index)/map_ros/occupancy_all"/>
     <remap from ="/planning/replan" to="/$(arg drone_index)/planning/replan"/>
     <remap from ="/planning/new" to="/$(arg drone_index)/planning/new"/>
     <remap from ="/planning/bspline" to="/$(arg drone_index)/planning/bspline"/>
-    <remap from ="/waypoint_generator/waypoints" to="/$(arg drone_index)/waypoint_generator/waypoints" />
-    <remap from ="/map_ros/occupancy_all" to="/$(arg drone_index)/map_ros/occupancy_all"/>
-    <remap from ="/map_ros/occupancy_local_inflate" to="/$(arg drone_index)/map_ros/occupancy_local_inflate"/>
+    <remap from ="/planning/replan" to="/$(arg drone_index)/planning/replan"/>
+
+    <!--MY CHANGES-->
+    <remap from ="/sdf_map/occupancy_all" to="/$(arg drone_index)/sdf_map/occupancy_all"/>
+    <remap from ="/sdf_map/occupancy_local" to="/$(arg drone_index)/sdf_map/occupancy_local"/>
+    <remap from ="/sdf_map/occupancy_local_inflate" to="/$(arg drone_index)/sdf_map/occupancy_local_inflate"/>
+
+    <!-- <remap from ="/sdf_map/depth_cloud" to="/$(arg drone_index)/sdf_map/depth_cloud"/>
+    <remap from ="/sdf_map/esdf" to="/$(arg drone_index)/sdf_map/esdf"/>
+    <remap from ="/sdf_map/unknown" to="/$(arg drone_index)/sdf_map/unknown"/>
+    <remap from ="/sdf_map/update_range" to="/$(arg drone_index)/sdf_map/update_range"/> -->
+
+    <!--Planning folder in Rviz-->
+    <remap from ="/planning_vis/trajectory" to="/$(arg drone_index)/planning_vis/trajectory"/>
+    <remap from ="/planning/travel_traj" to="/$(arg drone_index)/planning_/travel_traj"/>
+    <remap from ="/planning_vis/frontier" to="/$(arg drone_index)/planning_vis/frontier"/>
+    <remap from ="/planning_vis/viewpoints" to="/$(arg drone_index)/planning_vis/viewpoints"/>
+
+
 
 
 
@@ -107,10 +126,14 @@
     <param name="exploration/refined_radius" value="5.0" type="double"/>
     <param name="exploration/max_decay" value="0.8" type="double"/>
     <param name="exploration/top_view_num" value="15" type="int"/>
-    <param name="exploration/vm" value="$(eval 1.0 * arg('max_vel'))" type="double"/>
-    <param name="exploration/am" value="$(eval 1.0 * arg('max_acc'))" type="double"/>
-    <param name="exploration/yd" value="$(eval 60 * 3.1415926 / 180.0)" type="double"/>
-    <param name="exploration/ydd" value="$(eval 90 * 3.1415926 / 180.0)" type="double"/>
+    <!--param name="exploration/vm" value="$(eval 1.0 * arg('max_vel'))" type="double"/-->
+    <param name="exploration/vm" value="2" type="double"/>
+    <!--param name="exploration/am" value="$(eval 1.0 * arg('max_acc'))" type="double"/-->
+    <param name="exploration/am" value="2" type="double"/>
+    <!--param name="exploration/yd" value="$(eval 60 * 3.1415926 / 180.0)" type="double"/-->
+    <param name="exploration/yd" value="1.047197551" type="double"/>
+    <!--param name="exploration/ydd" value="$(eval 90 * 3.1415926 / 180.0)" type="double"/-->
+    <param name="exploration/ydd" value="1.570796327" type="double"/>
     <param name="exploration/w_dir" value="1.5" type="double"/>
     <param name="exploration/tsp_dir" value="$(find lkh_tsp_solver)/resource" type="string"/>
     <param name="exploration/relax_time" value="1.0" type="double"/>
@@ -120,7 +143,8 @@
     <param name="frontier/cluster_size_z" value="10.0" type="double"/>
     <param name="frontier/min_candidate_dist" value="0.75" type="double"/>
     <param name="frontier/min_candidate_clearance" value="0.21" type="double"/>
-    <param name="frontier/candidate_dphi" value="$(eval 15 * 3.1415926 / 180.0)" type="double"/>
+    <!--param name="frontier/candidate_dphi" value="$(eval 15 * 3.1415926 / 180.0)" type="double"/-->
+    <param name="frontier/candidate_dphi" value="0.261799388" type="double"/>
     <param name="frontier/candidate_rnum" value="3" type="int"/>
     <param name="frontier/candidate_rmin" value="1.5" type="double"/>
     <param name="frontier/candidate_rmax" value="2.5" type="double"/>
@@ -136,11 +160,13 @@
     <param name="perception_utils/vis_dist" value="1.0" type="double"/>;
 
 
-    <param name="heading_planner/yaw_diff" value="$(eval 30 * 3.1415926 / 180.0)" type="double"/>
+    <!--param name="heading_planner/yaw_diff" value="$(eval 30 * 3.1415926 / 180.0)" type="double"/-->
+    <param name="heading_planner/yaw_diff" value="0.523598776" type="double"/>
     <param name="heading_planner/half_vert_num" value="5" type="int"/>
     <param name="heading_planner/lambda1" value="2.0" type="double"/>
     <param name="heading_planner/lambda2" value="1.0" type="double"/>
-    <param name="heading_planner/max_yaw_rate" value="$(eval 10 * 3.1415926 / 180.0)" type="double"/>
+    <!--param name="heading_planner/max_yaw_rate" value="$(eval 10 * 3.1415926 / 180.0)" type="double"/-->
+    <param name="heading_planner/max_yaw_rate" value="0.174532925" type="double"/>
     <param name="heading_planner/w" value="20000.0" type="double"/>
     <param name="heading_planner/weight_type" value="1" type="double"/>
 
