@@ -70,7 +70,6 @@
     <remap from ="/sdf_map/occupancy_local_inflate" to="/$(arg drone_index)/sdf_map/occupancy_local_inflate"/>
     <remap from ="/sdf_map/depth_cloud" to="/$(arg drone_index)/sdf_map/depth_cloud"/>
 
-    <!-- <remap from ="/sdf_map/depth_cloud" to="/$(arg drone_index)/sdf_map/depth_cloud"/>  IS DONE BY OTHER NS-->
     <remap from ="/sdf_map/esdf" to="/$(arg drone_index)/sdf_map/esdf"/>
     <remap from ="/sdf_map/unknown" to="/$(arg drone_index)/sdf_map/unknown"/>
     <remap from ="/sdf_map/update_range" to="/$(arg drone_index)/sdf_map/update_range"/>
