@@ -71,7 +71,9 @@ void FastExplorationFSM::FSMCallback(const ros::TimerEvent& e) {
 
     case FINISH: {
       ROS_INFO_THROTTLE(1.0, "finish exploration.");
-      state_pub_.publish(std_msgs::String::ConstPtr("finish"));
+      std_msgs::String msg;
+      msg.data = "finish";
+      state_pub_.publish(msg);
       break;
     }
 
