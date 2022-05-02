@@ -208,7 +208,7 @@ int main (int argc, char* argv[]){
             if(otherUAV0InRange_){
                 // Publish own
                 Global_Publish.header.frame_id = "/map";
-                pcl::toROSMsg(ownGlobalMap_, Global_Publish);
+                pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
                 map_pub.publish(Global_Publish);
                 // Merge
                 //mergeMaps(ownGlobalMap_, other0GlobalMap_);
@@ -216,25 +216,25 @@ int main (int argc, char* argv[]){
                 otherUAV0InRange_ = false;
 
 
-                // Publish debug
-                pcl::toROSMsg(other0GlobalMap_, Global_Publish);
-                map_pub2.publish(Global_Publish);
+                // // Publish debug
+                // pcl::toROSMsg(other0GlobalMap_, Global_Publish);
+                // map_pub2.publish(Global_Publish);
             }
 
 
             if(otherUAV1InRange_){
                 // Publish own
                 Global_Publish.header.frame_id = "/map";
-                pcl::toROSMsg(ownGlobalMap_, Global_Publish);
+                pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
                 map_pub.publish(Global_Publish);
                 // Merge
                 //mergeMaps(ownGlobalMap_, other1GlobalMap_);
                 // Reset flag
                 otherUAV1InRange_ = false;
 
-                // Publish debug
-                pcl::toROSMsg(other1GlobalMap_, Global_Publish);
-                map_pub3.publish(Global_Publish);
+                // // Publish debug
+                // pcl::toROSMsg(other1GlobalMap_, Global_Publish);
+                // map_pub3.publish(Global_Publish);
             }
         ros::spinOnce();
         loop_rate.sleep();
