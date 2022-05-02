@@ -146,7 +146,7 @@
     <param name="exploration/refined_radius" value="5.0" type="double"/>
     <param name="exploration/max_decay" value="0.8" type="double"/>
     <param name="exploration/top_view_num" value="15" type="int"/>
-    <param name="exploration/vm" value="$(eval 1.0 * arg('max_vel'))" type="double"/ >
+    <param name="exploration/vm" value="$(eval 1.0 * arg('max_vel'))" type="double"/>
     <param name="exploration/vm" value="2" type="double"/>
     <param name="exploration/am" value="$(eval 1.0 * arg('max_acc'))" type="double"/>
     <param name="exploration/am" value="2" type="double"/>
