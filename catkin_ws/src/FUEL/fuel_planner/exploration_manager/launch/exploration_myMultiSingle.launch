@@ -112,7 +112,7 @@
 
 
   <!-- use simulator (for swarm)-->
-  <include file="$(find exploration_manager)/launch/simulator_myMulti.xml">
+  <include file="$(find exploration_manager)/launch/simulator_myMultiSingle.xml">
     <arg name="ns0" value="$(arg ns0)"/>
     <!-- <arg name="ns1" value="$(arg ns1)"/>
     <arg name="ns2" value="$(arg ns2)"/> -->
