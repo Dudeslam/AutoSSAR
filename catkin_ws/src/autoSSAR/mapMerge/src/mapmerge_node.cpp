@@ -134,7 +134,7 @@ void getGlobalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
 void getLocalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
 {
     if(!finishState){
-        ROS_WARN("Received local map");
+        // ROS_WARN("Received local map");
         pcl::PointCloud<pcl::PointXYZ> cloudMap;
         pcl::fromROSMsg(*msg, cloudMap);
         std::vector<int> indices;
