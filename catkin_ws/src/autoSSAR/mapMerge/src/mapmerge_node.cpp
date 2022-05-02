@@ -212,9 +212,10 @@ int main (int argc, char* argv[]){
             // pcl::toROSMsg(other0GlobalMap_, Global_Publish);
             // map_pub2.publish(Global_Publish);
 
+
+        }
         ros::spinOnce();
         loop_rate.sleep();
-        }
         
     }
     
