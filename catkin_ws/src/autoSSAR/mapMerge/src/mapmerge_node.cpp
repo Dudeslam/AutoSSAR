@@ -104,6 +104,7 @@ void downsample(pcl::PointCloud<pcl::PointXYZ>& cloud_in, pcl::PointCloud<pcl::P
 
 void getGlobalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
 {
+    //can only merge if other UAVs are in range
     if(otherUAV0InRange_  == true || otherUAV1InRange_ == true){
         //conversations between octomap and pcl
         pcl::PointCloud<pcl::PointXYZ> cloudMap;
@@ -197,45 +198,20 @@ int main (int argc, char* argv[]){
     ros::Publisher map_pub = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/MergedMap", 1000);
 
     ros::Rate loop_rate(20);
-    //merge local received map with own global map
-
-
 
     while(ros::ok())
     {
         if(own_globalMap_pcd.size() > 0)
         {
-            if(otherUAV0InRange_){
-                // Publish own
-                Global_Publish.header.frame_id = "/map";
-                pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
-                map_pub.publish(Global_Publish);
-                // Merge
-                //mergeMaps(ownGlobalMap_, other0GlobalMap_);
-                // Reset flag
-                otherUAV0InRange_ = false;
+            // Always publish own global map if it is not empty
+            Global_Publish.header.frame_id = "/map";
+            pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
+            map_pub.publish(Global_Publish);
 
+            // // Publish debug
+            // pcl::toROSMsg(other0GlobalMap_, Global_Publish);
+            // map_pub2.publish(Global_Publish);
 
-                // // Publish debug
-                // pcl::toROSMsg(other0GlobalMap_, Global_Publish);
-                // map_pub2.publish(Global_Publish);
-            }
-
-
-            if(otherUAV1InRange_){
-                // Publish own
-                Global_Publish.header.frame_id = "/map";
-                pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
-                map_pub.publish(Global_Publish);
-                // Merge
-                //mergeMaps(ownGlobalMap_, other1GlobalMap_);
-                // Reset flag
-                otherUAV1InRange_ = false;
-
-                // // Publish debug
-                // pcl::toROSMsg(other1GlobalMap_, Global_Publish);
-                // map_pub3.publish(Global_Publish);
-            }
         ros::spinOnce();
         loop_rate.sleep();
         }
