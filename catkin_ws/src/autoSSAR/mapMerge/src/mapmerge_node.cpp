@@ -170,6 +170,13 @@ void getWithinRangeCallback(const std_msgs::String& msg){
 
 }
 
+void getFinishCallback(const std_msgs::String& msg){
+    std::string str = msg.data;
+    if(str == "finish"){
+        finishState = true;
+    }
+}
+
 
 int main (int argc, char* argv[]){
     ros::init(argc, argv, "map_merger");
@@ -186,6 +193,7 @@ int main (int argc, char* argv[]){
     ros::Subscriber map_global_uav1 = nh.subscribe(otherUAV0+"/MergedMap", 10, getGlobalMapCallback);
     ros::Subscriber map_global_uav2 = nh.subscribe(otherUAV1+"/MergedMap", 10, getGlobalMapCallback); 
     ros::Subscriber within_range = nh.subscribe(selfUAV+"/within_range", 10, getWithinRangeCallback);
+    ros::Subscriber finish = nh.subscribe(selfUAV+"/planning/state", 10, getFinishCallback);
     ROS_WARN("Have subscribed");
 
     ros::Publisher other_pub = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/MergedMap", 1000);
@@ -201,7 +209,7 @@ int main (int argc, char* argv[]){
             // Always publish own global map if it is not empty
             Global_Publish.header.frame_id = "/map";
             pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
-            own_pub.publish(Global_Publish);
+            own_publish.publish(Global_Publish);
 
             if(otherUAV0InRange_)
             {

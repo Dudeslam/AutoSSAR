@@ -45,6 +45,7 @@ void FastExplorationFSM::init(ros::NodeHandle& nh) {
   replan_pub_ = nh.advertise<std_msgs::Empty>("/planning/replan", 10);
   new_pub_ = nh.advertise<std_msgs::Empty>("/planning/new", 10);
   bspline_pub_ = nh.advertise<bspline::Bspline>("/planning/bspline", 10);
+  state_pub_ = nh.advertise<std_msgs::String>("/planning/state", 10);
 }
 
 void FastExplorationFSM::FSMCallback(const ros::TimerEvent& e) {
@@ -70,6 +71,7 @@ void FastExplorationFSM::FSMCallback(const ros::TimerEvent& e) {
 
     case FINISH: {
       ROS_INFO_THROTTLE(1.0, "finish exploration.");
+      state_pub_.publish(std_msgs::String::ConstPtr("finish"));
       break;
     }
 
