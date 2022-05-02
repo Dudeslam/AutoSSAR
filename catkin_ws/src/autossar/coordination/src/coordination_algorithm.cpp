@@ -17,19 +17,30 @@ void coordinationAlgorithm::init(ros::NodeHandle& nh) {
 
     within_range_ = nh.subscribe(selfUAV_+"/within_range", 1, &coordinationAlgorithm::withinRangeCallback, this);
     battery_      = nh.subscribe(selfUAV_+"/dist_traversed", 1, &coordinationAlgorithm::batteryCallback, this);
-
+    
+    otherUAV0InRange_ = false;
+    otherUAV1InRange_ = false;
 }
 
 
 
 
-void coordinationAlgorithm::batteryCallback(const nav_msgs::PathConstPtr& msg){
-
+void coordinationAlgorithm::batteryCallback(const std_msgs::String& msg){
+  double distTraversed = std::atof(msg->data)
+  rangeLeft_ = batteryCapasity_ - distTraversed;
 }
 
 
-void coordinationAlgorithm::withinRangeCallback(const nav_msgs::PathConstPtr& msg){
+void coordinationAlgorithm::withinRangeCallback(const std_msgs::String& msg){
+  std::string str = msg.data;
 
+    if( str == otherUAV0 ){
+        otherUAV0InRange_ = true;
+    }
+
+    if( str == otherUAV1 ){
+        otherUAV1InRange_ = true;
+    }
 }
 
 

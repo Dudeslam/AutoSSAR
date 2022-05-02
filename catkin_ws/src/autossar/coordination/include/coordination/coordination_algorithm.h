@@ -26,9 +26,12 @@ private:
 
 
     // ROS utils
-    ros::NodeHandle node_;
     //ros::Timer exec_timer_, safety_timer_, vis_timer_, frontier_timer_;
     ros::Subscriber within_range_, battery_;
+    double batteryCapasity_;
+    double rangeLeft_;
+    bool otherUAV0InRange_;
+    bool otherUAV1InRange_;
     //ros::Publisher replan_pub_, new_pub_, bspline_pub_;
 
     // Util callbacks
@@ -46,7 +49,6 @@ public:
     }
     ~coordinationAlgorithm() {
     }
-
     void init(ros::NodeHandle& nh);
 
 };

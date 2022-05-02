@@ -4,6 +4,7 @@
 
 
 
+
 int main(int argc, char **argv)
 {
   ROS_INFO("coordination_node started");
@@ -12,6 +13,7 @@ int main(int argc, char **argv)
 
   coordinationAlgorithm coordAlgo;
   coordAlgo.init(nh);
+
 
 
   // // Set rate

@@ -59,7 +59,7 @@
     </node>
 
 <!-- Start coordination algorithm -->
-    <!-- <node pkg="coordination" name="coordination_node" type="coordination_node" output="screen" ns="$(arg ns2)"/> -->
+    <node pkg="coordination" name="coordination" type="coordination" output="screen" ns="$(arg ns2)"/>
 
 
 </launch>
