@@ -198,7 +198,7 @@ int main (int argc, char* argv[]){
 
     ros::Publisher other_pub = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/MergedMap", 1000);
 
-    ros::Publisher own_publish = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/map_ros/cloud", 1000);
+    ros::Publisher own_publish = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/pcl_render_node/cloud", 1000);
 
     ros::Rate loop_rate(20);
 
@@ -206,11 +206,13 @@ int main (int argc, char* argv[]){
     {
         if(own_globalMap_pcd.size() > 0)
         {
-            // Always publish own global map if it is not empty
-            Global_Publish.header.frame_id = "/map";
-            pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
-            own_publish.publish(Global_Publish);
-
+            if(!finishState){
+                // Always publish own global map if it is not empty
+                Global_Publish.header.frame_id = "/map";
+                pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
+                own_publish.publish(Global_Publish);
+            }
+            
             if(otherUAV0InRange_)
             {
                 pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
