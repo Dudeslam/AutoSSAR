@@ -136,8 +136,8 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(${PROJECT_NAME}
-#  ${PROJECT_NAME}.cpp
-   src/test_coord_node.cpp
+ src/${PROJECT_NAME}.cpp
+  #  src/test_coord_node.cpp
   )
 
 ## Rename C++ executable without prefix
@@ -151,11 +151,10 @@ add_executable(${PROJECT_NAME}
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(
-  ${PROJECT_NAME}
+target_link_libraries(${PROJECT_NAME}
   # ${PROJECT_NAME}_node
   ${catkin_LIBRARIES}
-  ${PCL_LIBRARIES}
+  #${PCL_LIBRARIES}
 )
 
 
