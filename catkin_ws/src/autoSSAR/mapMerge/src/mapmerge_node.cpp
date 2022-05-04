@@ -28,7 +28,8 @@
 
 
 pcl::PointCloud<pcl::PointXYZ> own_globalMap_pcd;
-pcl::PointCloud<pcl::PointXYZ> local_map_pcd;
+pcl::PointCloud<pcl::PointXYZ> received_map_;
+size_t last_point_cloud_size_ = 0;
 sensor_msgs::PointCloud2 Global_Publish;
 geometry_msgs::PoseStamped UAV_pose;
 geometry_msgs::PoseStamped Global_Pose;
@@ -103,30 +104,24 @@ void downsample(pcl::PointCloud<pcl::PointXYZ>& cloud_in, pcl::PointCloud<pcl::P
 
 void getGlobalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
 {
-    //can only merge if other UAVs are in range
-        //conversations between octomap and pcl
+    if(!finishState){
+        // ROS_WARN("Received local map");
         pcl::PointCloud<pcl::PointXYZ> cloudMap;
         pcl::fromROSMsg(*msg, cloudMap);
-
-        if(own_globalMap_pcd.size() > 0)
-        {
-            // ROS_WARN("Own Global map is not empty");
-            mergeMaps(cloudMap, own_globalMap_pcd);
-            downsample(own_globalMap_pcd, own_globalMap_pcd);
+        std::vector<int> indices;
+        pcl::removeNaNFromPointCloud(cloudMap, cloudMap, indices);
+        if(cloudMap.size() != last_point_cloud_size_){
+            received_map_ = cloudMap;
+            last_point_cloud_size_ = cloudMap.size();
         }
-        else            
-        {
-            // ROS_WARN("Own Global map is empty");
-            own_globalMap_pcd = cloudMap;
-            downsample(own_globalMap_pcd, own_globalMap_pcd);
-        }
+    }
 }
 
 
 
 void getLocalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
 {
-    if(!finishState){
+        if(!finishState){
         // ROS_WARN("Received local map");
         pcl::PointCloud<pcl::PointXYZ> cloudMap;
         pcl::fromROSMsg(*msg, cloudMap);
@@ -135,14 +130,12 @@ void getLocalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
         if(cloudMap.size() > 0 && own_globalMap_pcd.size() > 0)
         {
             // ROS_WARN("Local map is not empty");
-            local_map_pcd = cloudMap;
             own_globalMap_pcd += cloudMap;
             downsample(own_globalMap_pcd, own_globalMap_pcd);
         }   
         else
         {
             // ROS_WARN("Local map is empty");
-            local_map_pcd = cloudMap;
             own_globalMap_pcd = cloudMap;
             downsample(own_globalMap_pcd, own_globalMap_pcd);
         }
@@ -200,21 +193,28 @@ int main (int argc, char* argv[]){
 
     ros::Publisher own_publish = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/pcl_render_node/cloud", 1000);
 
+    // ros::Publisher debugger_own = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/debugger/cloud", 1000);
     ros::Rate loop_rate(20);
-
+    Global_Publish.header.frame_id = "/map";
+    
     while(ros::ok())
     {
         if(own_globalMap_pcd.size() > 0)
         {
             if(!finishState){
                 // Always publish own global map if it is not empty
-                Global_Publish.header.frame_id = "/map";
+
                 pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
                 own_publish.publish(Global_Publish);
+                // debugger_own.publish(Global_Publish);
+                // ROS_WARN("Publish own global map");
             }
             
             if(otherUAV0InRange_)
             {
+                ROS_WARN("Other UAV0 is in range");
+                mergeMaps(received_map_, own_globalMap_pcd);
+                downsample(own_globalMap_pcd, own_globalMap_pcd);
                 pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
                 other_pub.publish(Global_Publish);
                 otherUAV0InRange_ = false;
@@ -222,6 +222,10 @@ int main (int argc, char* argv[]){
 
             if(otherUAV1InRange_)
             {
+                ROS_WARN("Other UAV1 is in range");
+                mergeMaps(received_map_, own_globalMap_pcd);
+                downsample(own_globalMap_pcd, own_globalMap_pcd);
+                pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
                 pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
                 other_pub.publish(Global_Publish);
                 otherUAV1InRange_ = false;
