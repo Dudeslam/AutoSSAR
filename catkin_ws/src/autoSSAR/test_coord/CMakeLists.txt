@@ -108,7 +108,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
  INCLUDE_DIRS include
- LIBRARIES test_coord
+ LIBRARIES ${PROJECT_NAME}
  CATKIN_DEPENDS PCL geometry_msgs plan_env plan_manage quadrotor_msgs roscpp std_msgs
  DEPENDS system_lib
 )
@@ -122,6 +122,8 @@ catkin_package(
 include_directories(
 include
   ${catkin_INCLUDE_DIRS}
+  ${PROJECT_SOURCE_DIR}/include
+  ${PCL_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -137,7 +139,10 @@ include
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/test_coord_node.cpp)
+add_executable(${PROJECT_NAME}
+  ${PROJECT_NAME}_node.cpp
+  # src/test_coord_node.cpp
+  )
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -151,9 +156,12 @@ include
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(
+  ${PROJECT_NAME}
   # ${PROJECT_NAME}_node
   ${catkin_LIBRARIES}
+  ${PCL_LIBRARIES}
 )
+
 
 #############
 ## Install ##

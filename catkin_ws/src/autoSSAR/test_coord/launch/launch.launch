@@ -1,0 +1,4 @@
+<launch>
+    <node pkg="test_coord" type="test_coord" name="test_coord" output="screen">
+
+</launch>
