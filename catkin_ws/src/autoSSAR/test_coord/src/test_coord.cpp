@@ -1,9 +1,10 @@
 #include <ros/ros.h>
-
+#include <std_msgs/String.h>
+#include <geometry_msgs/PoseStamped.h>
 
 int main(int argc, char **argv)
 {
-    ros::nodehandle nh;
+    ros::NodeHandle nh;
     ros::init(argc, argv, "test_coord_node");
 
     //publishers waypoint

@@ -8,11 +8,7 @@ project(test_coord)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  PCL
   geometry_msgs
-  plan_env
-  plan_manage
-  quadrotor_msgs
   roscpp
   std_msgs
 )
@@ -107,10 +103,10 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
- INCLUDE_DIRS include
- LIBRARIES ${PROJECT_NAME}
- CATKIN_DEPENDS PCL geometry_msgs plan_env plan_manage quadrotor_msgs roscpp std_msgs
- DEPENDS system_lib
+# INCLUDE_DIRS include
+# LIBRARIES ${PROJECT_NAME}
+ CATKIN_DEPENDS geometry_msgs roscpp std_msgs
+# DEPENDS system_lib
 )
 
 ###########
@@ -120,10 +116,10 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-include
-  ${catkin_INCLUDE_DIRS}
-  ${PROJECT_SOURCE_DIR}/include
-  ${PCL_INCLUDE_DIRS}
+# include
+ ${catkin_INCLUDE_DIRS}
+#  ${PROJECT_SOURCE_DIR}/include
+ # ${PCL_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -140,8 +136,8 @@ include
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(${PROJECT_NAME}
-  ${PROJECT_NAME}_node.cpp
-  # src/test_coord_node.cpp
+#  ${PROJECT_NAME}.cpp
+   src/test_coord_node.cpp
   )
 
 ## Rename C++ executable without prefix
