@@ -31,44 +31,44 @@
 
 
 <!-- Start traversal utils -->
-    <!-- <node pkg="dist_traversed" name="dist_traversed" type="dist_traversed" output="screen" ns="$(arg ns0)"/>
-    <node pkg="dist_traversed" name="dist_traversed" type="dist_traversed" output="screen" ns="$(arg ns1)"/>
-    <node pkg="dist_traversed" name="dist_traversed" type="dist_traversed" output="screen" ns="$(arg ns2)"/> -->
+    <!-- <node pkg="dist_traversed" name="dist_traversed" type="dist_traversed" output="screen" ns="$(arg ns0)"/> -->
+    <!-- <node pkg="dist_traversed" name="dist_traversed" type="dist_traversed" output="screen" ns="$(arg ns1)"/> -->
+    <!-- <node pkg="dist_traversed" name="dist_traversed" type="dist_traversed" output="screen" ns="$(arg ns2)"/> -->
     <node pkg="dist_traversed" name="dist_traversed" type="dist_traversed" ns="$(arg ns0)"/>
     <node pkg="dist_traversed" name="dist_traversed" type="dist_traversed" ns="$(arg ns1)"/>
     <node pkg="dist_traversed" name="dist_traversed" type="dist_traversed" ns="$(arg ns2)"/>
 
 
 <!-- Start mapmerge utils -->
-    <!-- <node pkg="mapmerge" name="mapmerge" type="mapmerge" output="screen" ns="$(arg ns0)"> -->
+    <!-- <node pkg="mapmerge" name="mapmerge" type="mapmerge" output="screen" ns="$(arg ns0)">
     <node pkg="mapmerge" name="mapmerge" type="mapmerge" ns="$(arg ns0)">
         <param name="otherUAV0" value="/$(arg ns1)"/>
         <param name="otherUAV1" value="/$(arg ns2)"/>
     </node>
 
-    <!-- <node pkg="mapmerge" name="mapmerge" type="mapmerge" output="screen" ns="$(arg ns1)"> -->
+    <node pkg="mapmerge" name="mapmerge" type="mapmerge" output="screen" ns="$(arg ns1)">
     <node pkg="mapmerge" name="mapmerge" type="mapmerge" ns="$(arg ns1)">
         <param name="otherUAV0" value="/$(arg ns0)"/>
         <param name="otherUAV1" value="/$(arg ns2)"/>
     </node>
 
-    <!-- <node pkg="mapmerge" name="mapmerge" type="mapmerge" output="screen" ns="$(arg ns2)"> -->
+    <node pkg="mapmerge" name="mapmerge" type="mapmerge" output="screen" ns="$(arg ns2)">
     <node pkg="mapmerge" name="mapmerge" type="mapmerge" ns="$(arg ns2)">
         <param name="otherUAV0" value="/$(arg ns0)"/>
         <param name="otherUAV1" value="/$(arg ns1)"/>
-    </node>
+    </node> -->
 
 <!-- Start coordination algorithm -->
     <node pkg="coordination" name="coordination" type="coordination" output="screen" ns="$(arg ns0)">
-        <param name="maxBattery" value="150"/>
+        <param name="maxBattery" value="20"/>
     </node>
 
-    <node pkg="coordination" name="coordination" type="coordination" output="screen" ns="$(arg ns1)">
-        <param name="maxBattery" value="150"/>
+    <node pkg="coordination" name="coordination" type="coordination" ns="$(arg ns1)">
+        <param name="maxBattery" value="20"/>
     </node>
 
-    <node pkg="coordination" name="coordination" type="coordination" output="screen" ns="$(arg ns2)">
-        <param name="maxBattery" value="150"/>
+    <node pkg="coordination" name="coordination" type="coordination" ns="$(arg ns2)">
+        <param name="maxBattery" value="20"/>
     </node>
 
 

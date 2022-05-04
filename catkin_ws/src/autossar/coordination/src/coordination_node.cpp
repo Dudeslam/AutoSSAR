@@ -13,20 +13,7 @@ int main(int argc, char **argv)
 
   coordinationAlgorithm coordAlgo;
   coordAlgo.init(nh);
-
-
-
-  // // Set rate
-  // ros::Rate r(10); // 10 hz
-
-  // while (ros::ok()) {
-
-  //   ros::spinOnce();
-  //   r.sleep();
-  // }
-
-
-
+  coordAlgo.runCoordinationAlgorithm();
 
   ros::Duration(1.0).sleep();
   ros::spin();
