@@ -50,12 +50,12 @@ target_link_libraries(exploration_node
   # -ldw
   )
 
-# add_library(exploration_manager
-#   src/fast_exploration_manager.cpp
-# )
-# target_link_libraries(exploration_manager
-#   ${catkin_LIBRARIES}
-# )
+add_library(exploration_manager
+  src/fast_exploration_manager.cpp
+)
+target_link_libraries(exploration_manager
+  ${catkin_LIBRARIES}
+)
 
 add_executable(write_tsp test/write_tsp.cpp)
 target_link_libraries(write_tsp

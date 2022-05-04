@@ -90,7 +90,8 @@ int main(int argc, char **argv){
 
             // Publish traversed distance
             std_msgs::String msg;
-            msg.data = ("Distance traversed by " + selfUAV + ": " + s);
+            // msg.data = ("Distance traversed by " + selfUAV + ": " + s);
+            msg.data = s;
             pub.publish(msg);
         }
 
