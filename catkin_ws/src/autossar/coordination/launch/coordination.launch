@@ -10,21 +10,21 @@
 <!-- Start range utils -->
     <!-- <node pkg="within_range" name="within_range" type="within_range" output="screen" ns="$(arg ns0)"> -->
     <node pkg="within_range" name="within_range" type="within_range" ns="$(arg ns0)">
-        <param name="maxRange" value="3"/>
+        <param name="maxRange" value="2"/>
         <param name="otherUAV0" value="/$(arg ns1)"/>
         <param name="otherUAV1" value="/$(arg ns2)"/>
     </node>
 
     <!-- <node pkg="within_range" name="within_range" type="within_range" output="screen" ns="$(arg ns1)"> -->
     <node pkg="within_range" name="within_range" type="within_range" ns="$(arg ns1)">
-        <param name="maxRange" value="3"/>
+        <param name="maxRange" value="2"/>
         <param name="otherUAV0" value="/$(arg ns0)"/>
         <param name="otherUAV1" value="/$(arg ns2)"/>
     </node>
 
     <!-- <node pkg="within_range" name="within_range" type="within_range" output="screen" ns="$(arg ns2)"> -->
     <node pkg="within_range" name="within_range" type="within_range" ns="$(arg ns2)">
-        <param name="maxRange" value="3"/>
+        <param name="maxRange" value="2"/>
         <param name="otherUAV0" value="/$(arg ns0)"/>
         <param name="otherUAV1" value="/$(arg ns1)"/>
     </node>
@@ -60,16 +60,16 @@
 
 <!-- Start coordination algorithm -->
     <node pkg="coordination" name="coordination" type="coordination" output="screen" ns="$(arg ns0)">
-        <param name="maxBattery" value="20"/>
+        <param name="maxBattery" value="60"/>
     </node>
 
-    <node pkg="coordination" name="coordination" type="coordination" ns="$(arg ns1)">
-        <param name="maxBattery" value="20"/>
+    <!-- <node pkg="coordination" name="coordination" type="coordination" ns="$(arg ns1)">
+        <param name="maxBattery" value="60"/>
     </node>
 
     <node pkg="coordination" name="coordination" type="coordination" ns="$(arg ns2)">
-        <param name="maxBattery" value="20"/>
-    </node>
+        <param name="maxBattery" value="60"/>
+    </node> -->
 
 
 </launch>

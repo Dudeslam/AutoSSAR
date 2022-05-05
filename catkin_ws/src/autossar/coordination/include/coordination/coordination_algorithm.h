@@ -66,17 +66,19 @@ private:
     double batteryCapasity_;
     double distTraversed_;
     double rangeLeft_;
+    double DEBUG_VAR;
 
     bool batteryHalfFlag_;
     bool batteryEmptyFlag_;
     bool nearUAVFlag_;
     bool atRelayPointFlag_;
     bool timerExpiredFlag_;
+    bool timerRunningFlag_;
     
     nav_msgs::Odometry baseStationOdom_;
     nav_msgs::Odometry currentOdom_;
 
-    ros::Timer timeoutTimer_;                         // Timer for triggering
+    ros::Timer run_timer_, timeoutTimer_;                         // Timer for triggering
     std::vector<std::string> coord_state_str_ = { "EXPLORE", "MEET", "SACRIFICE", "RELAY", "FINISH", "DEAD", "DONE" };
 
     // Util callbacks
@@ -96,7 +98,7 @@ public:
     ~coordinationAlgorithm() {
     }
     void init(ros::NodeHandle& nh);
-    void runCoordinationAlgorithm(void);
+    void runCoordinationAlgorithm(const ros::TimerEvent& e);
 
 };
 

@@ -14,7 +14,10 @@ find_package(PCL 1.7 REQUIRED)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
+  geometry_msgs
+  quadrotor_msgs
   PCL
+  tf
 )
 
 

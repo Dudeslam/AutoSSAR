@@ -154,7 +154,7 @@
     <!--param name="exploration/ydd" value="$(eval 90 * 3.1415926 / 180.0)" type="double"/-->
     <param name="exploration/ydd" value="1.570796327" type="double"/>
     <param name="exploration/w_dir" value="1.5" type="double"/>
-    <param name="exploration/tsp_dir" value="$(find lkh_tsp_solver)/resource" type="string"/>
+    <param name="exploration/tsp_dir" value="$(find lkh_tsp_solver)/resource/$(arg drone_index)" type="string"/>
     <param name="exploration/relax_time" value="1.0" type="double"/>
 
     <param name="frontier/cluster_min" value="100" type="int"/>

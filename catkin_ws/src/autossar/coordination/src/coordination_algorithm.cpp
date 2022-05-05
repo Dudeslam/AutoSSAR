@@ -24,6 +24,7 @@ int getUavNr(std::string uavName){
 
 
 
+
 void coordinationAlgorithm::init(ros::NodeHandle& nh) {
 
     // Init UAVdata state
@@ -40,22 +41,26 @@ void coordinationAlgorithm::init(ros::NodeHandle& nh) {
     battery_sub_      = nh.subscribe(selfUAV_.name+"/dist_traversed", 1, &coordinationAlgorithm::batteryCallback, this);
     odom_sub_         = nh.subscribe(selfUAV_.name+"/state_ukf/odom", 1, &coordinationAlgorithm::odometryCallback, this);
     cmd_pub_          = nh.advertise<nav_msgs::Odometry>(selfUAV_.name+"/commandTheShits", 10);
-    // Init state
+    
+    // Init main callback/loop
+    run_timer_ = nh.createTimer(ros::Duration(0.01), &coordinationAlgorithm::runCoordinationAlgorithm, this);
 
 
     // Timer for triggering MEET              1min
-    timeoutTimer_ = nh.createTimer(ros::Duration(60), &coordinationAlgorithm::triggerTimer, this);
+    timeoutTimer_ = nh.createTimer(ros::Duration(10), &coordinationAlgorithm::triggerTimer, this);
     timeoutTimer_.stop();   // Starts when
 
     // Init members
     //batteryCapasity_ is set from param;
     distTraversed_ = 0;
     rangeLeft_ = 0;
+    DEBUG_VAR = 0;
     batteryHalfFlag_ = false;
     batteryEmptyFlag_ = false;
     nearUAVFlag_ = false;
     atRelayPointFlag_ = false;
     timerExpiredFlag_ = false;
+    timerRunningFlag_ = false;
     
     std::cout << "coordinationAlgorithm::init" << std::endl;
     std::cout << "selfUAV_.name: " << selfUAV_.name << std::endl;
@@ -97,9 +102,9 @@ void coordinationAlgorithm::withinRangeCallback(const std_msgs::String& msg){
 
   nearUAVFlag_ = true;
   
-  std::cout << selfUAV_.name << std::endl;
-  std::cout << "nearUAV_ name: " << nearUAV_.name << std::endl;
-  std::cout << "nearUAVFlag_: " << nearUAVFlag_ << std::endl;
+  // std::cout << selfUAV_.name << std::endl;
+  // std::cout << "nearUAV_ name: " << nearUAV_.name << std::endl;
+  // std::cout << "nearUAVFlag_: " << nearUAVFlag_ << std::endl;
 }
 
 void coordinationAlgorithm::odometryCallback(const nav_msgs::Odometry::ConstPtr& msg){
@@ -129,33 +134,39 @@ void coordinationAlgorithm::odometryCallback(const nav_msgs::Odometry::ConstPtr&
 void coordinationAlgorithm::triggerTimer(const ros::TimerEvent& e){
   timerExpiredFlag_ = true;
   timeoutTimer_.stop(); // not sure if nessesary
+  timerRunningFlag_ = false;
   std::cout << "triggerTimer timerExpiredFlag_: " << timerExpiredFlag_ << std::endl;
 }
 
 void coordinationAlgorithm::transitState(COORD_STATE new_state, std::string pos_call) {
   int pre_s = int(state_);
   state_ = new_state;
-  std::cout << selfUAV_.name << " [" + pos_call + "]: from " + coord_state_str_[pre_s] + " to " + coord_state_str_[int(new_state)] << std::endl;
+  //std::cout << selfUAV_.name << " [" + pos_call + "]: from " + coord_state_str_[pre_s] + " to " + coord_state_str_[int(new_state)] << std::endl;
 }
 
 void coordinationAlgorithm::evaluateRoles(void){
   // If first meeting OR meeting the same UAV
   if ( pairedUAV_.name.empty() || pairedUAV_ == nearUAV_ ){
-    std::cout << "evaluateRoles pairedUAV_.name: " <<  pairedUAV_.name << std::endl;
     // Set pairedUAV_
     pairedUAV_ = nearUAV_;         // Note: relayPoint is updated from nearUAV_ set in withinRange
+    std::cout << "evaluateRoles pairedUAV_.name: " <<  pairedUAV_.name << std::endl;
 
     // Set roles = low id is RELAY
     if(pairedUAV_.id < selfUAV_.id){
       pairedUAV_.role = coord_state_str_[RELAY];
       selfUAV_.role = coord_state_str_[SACRIFICE];
+    } else {
+      pairedUAV_.role = coord_state_str_[SACRIFICE];
+      selfUAV_.role = coord_state_str_[RELAY];
     }
   }
 }
 
 
 
-void coordinationAlgorithm::runCoordinationAlgorithm(void){
+void coordinationAlgorithm::runCoordinationAlgorithm(const ros::TimerEvent& e){
+  //std::cout << selfUAV_.role << coord_state_str_[state_] << nearUAVFlag_ << batteryHalfFlag_ << batteryEmptyFlag_ << std::endl;
+  ROS_INFO_STREAM_THROTTLE(1.0, "State: " << coord_state_str_[state_] << " Role: " << selfUAV_.role << "\n"  << nearUAVFlag_ << batteryHalfFlag_ << batteryEmptyFlag_ << "\t" << distTraversed_ << std::endl);
 
   switch (state_) {
     case EXPLORE: {
@@ -168,10 +179,10 @@ void coordinationAlgorithm::runCoordinationAlgorithm(void){
         if(selfUAV_.role == coord_state_str_[RELAY]){
           transitState(RELAY, "State: RELAY");
         }
-      }
+      
 
       // If anyone is near while exploring
-      if(nearUAVFlag_){
+      }else if(nearUAVFlag_){
         nearUAVFlag_ = false;
         transitState(MEET, "State: EXPLORE");
       }
@@ -179,6 +190,8 @@ void coordinationAlgorithm::runCoordinationAlgorithm(void){
       // Just explore !!!
       break;
     }
+
+
 
     case MEET: {
       // If role is just explorer - do pairing
@@ -190,7 +203,6 @@ void coordinationAlgorithm::runCoordinationAlgorithm(void){
       // If we have paired + going home + met state
       if(nearUAV_ == pairedUAV_ && batteryHalfFlag_){
         // Map will be shared automatically
-        cmd_pub_.publish(baseStationOdom_);
         timeoutTimer_.stop();
         transitState(DONE, "State: MEET");
         } else {
@@ -201,23 +213,36 @@ void coordinationAlgorithm::runCoordinationAlgorithm(void){
       break;
     }
 
+
+
     case SACRIFICE: {
       // first call - go to relay point + start timer
       if(timerExpiredFlag_ == false){
         // Go to relay-point and wait for MEET
         cmd_pub_.publish(selfUAV_.relayPoint);
+        //std::cout << "SACRIFICE: cmd_pub_.publish(selfUAV_.relayPoint);" << std::endl;
 
-        if(atRelayPointFlag_){
-          timeoutTimer_.start();  // Wait for one minut   LOOP ??? restart???
+        // To simulate atRelayPointFlag_=true
+        //DEBUG_VAR++;
+        //if((atRelayPointFlag_ || DEBUG_VAR>20) && !timerRunningFlag_){
+        if(atRelayPointFlag_ && !timerRunningFlag_){
+          // Wait for XX minuts while publishing relay point
+          timeoutTimer_.start();  // Wait for one minut NOTE doesn't reset timer on re-call so timerRunningFlag_ isn't nessesary
+          //std::cout << "SACRIFICE: timeoutTimer_.start();" << std::endl;
         }
       }
 
       if(timerExpiredFlag_ == true){
         // Partner not comming - Go explore = find other UAVs
         selfUAV_.role = coord_state_str_[EXPLORE];
+        // Reset for next round (if new pair is found)
+        timerExpiredFlag_ = false;
+        std::cout << "SACRIFICE: no one likes me - restart!!!" << std::endl;
 
         // Clear pairedUAV_ to allow new mate?
-          // Not nessesary as it will relay it's map with anyone, so just searching is fine
+        // Not nessesary as it will relay it's map with anyone, so just roaming is fine
+        // If this isn't done it will Explore untill dead and never reach DONE
+        pairedUAV_.name.clear();
 
         // Set state explorer
         transitState(EXPLORE, "State: SACRIFICE");
@@ -232,20 +257,29 @@ void coordinationAlgorithm::runCoordinationAlgorithm(void){
       break;
     }
 
+
+
     case RELAY: {
       // first call - go to relay point + start timer
       if(timerExpiredFlag_ == false){
         // Go to relay-point and wait for MEET
         cmd_pub_.publish(selfUAV_.relayPoint);
-
-        if(atRelayPointFlag_){
-          timeoutTimer_.start();  // Wait for one minut
+        //std::cout << "RELAY: cmd_pub_.publish(selfUAV_.relayPoint);" << std::endl;
+        
+        // To simulate atRelayPointFlag_=true
+        //DEBUG_VAR++;
+        //if((atRelayPointFlag_ || DEBUG_VAR>20) && !timerRunningFlag_){
+        if(atRelayPointFlag_ && !timerRunningFlag_){
+          //std::cout << "RELAY: timeoutTimer_.start();" << std::endl;
+          timeoutTimer_.start();  // Wait for one minut NOTE doesn't reset timer on re-call so timerRunningFlag_ isn't nessesary
+          timerRunningFlag_ = true;
         }
       }
 
       if(timerExpiredFlag_ == true){
         // Go home, partner not comming
         cmd_pub_.publish(baseStationOdom_);
+        //std::cout << "RELAY: cmd_pub_.publish(baseStationOdom_);" << std::endl;
       }
 
       // If anyone is near while exploring
@@ -257,23 +291,35 @@ void coordinationAlgorithm::runCoordinationAlgorithm(void){
       break;
     }
 
+
+
     case DEAD: {
       // Stay here
+      std::cout << "DEAD: cmd_pub_.publish(currentOdom_);" << std::endl;
       while(1){
         cmd_pub_.publish(currentOdom_);
       }
       break;
     }
 
+
+
     case DONE: {
       // Stay here
+      std::cout << "DONE: cmd_pub_.publish(baseStationOdom_);" << std::endl;
       while(1){
-        cmd_pub_.publish(baseStationOdom_);
+        if(selfUAV_.role == coord_state_str_[RELAY]){
+          cmd_pub_.publish(baseStationOdom_);
+        }
+        // Else just derp... ie. explore til dead..
       }
       break;
     }
 
+
+
     default:{
+      std::cout << "\nDEFAULT REACHED =================================\n);" << std::endl;
       ROS_WARN("\nDEFAULT REACHED =================================\n");
     }
   }

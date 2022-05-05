@@ -1,0 +1,4 @@
+PROBLEM_FILE = /home/malle/AutoSSAR/catkin_ws/src/FUEL/fuel_planner/utils/lkh_tsp_solver/resource/UAV1/single.tsp
+GAIN23 = NO
+OUTPUT_TOUR_FILE =/home/malle/AutoSSAR/catkin_ws/src/FUEL/fuel_planner/utils/lkh_tsp_solver/resource/UAV1/single.txt
+RUNS = 1
