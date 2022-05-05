@@ -33,7 +33,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: depth
+    SyncSource: ""
 Preferences:
   PromptSaveOnExit: true
 Toolbars:
@@ -184,7 +184,7 @@ Visualization Manager:
           Color: 116; 116; 116
           Color Transformer: AxisColor
           Decay Time: 0
-          Enabled: true
+          Enabled: false
           Invert Rainbow: false
           Max Color: 0; 0; 0
           Min Color: 0; 0; 0
@@ -199,7 +199,7 @@ Visualization Manager:
           Unreliable: false
           Use Fixed Frame: true
           Use rainbow: true
-          Value: true
+          Value: false
         - Alpha: 1
           Autocompute Intensity Bounds: true
           Autocompute Value Bounds:
@@ -268,7 +268,7 @@ Visualization Manager:
           Color: 116; 116; 116
           Color Transformer: FlatColor
           Decay Time: 0
-          Enabled: true
+          Enabled: false
           Invert Rainbow: false
           Max Color: 0; 0; 0
           Min Color: 0; 0; 0
@@ -283,7 +283,7 @@ Visualization Manager:
           Unreliable: false
           Use Fixed Frame: true
           Use rainbow: true
-          Value: true
+          Value: false
         - Alpha: 1
           Autocompute Intensity Bounds: true
           Autocompute Value Bounds:
@@ -296,7 +296,7 @@ Visualization Manager:
           Color: 116; 116; 116
           Color Transformer: FlatColor
           Decay Time: 0
-          Enabled: true
+          Enabled: false
           Invert Rainbow: false
           Max Color: 0; 0; 0
           Min Color: 0; 0; 0
@@ -311,7 +311,7 @@ Visualization Manager:
           Unreliable: false
           Use Fixed Frame: true
           Use rainbow: true
-          Value: true
+          Value: false
         - Alpha: 1
           Autocompute Intensity Bounds: true
           Autocompute Value Bounds:
@@ -433,7 +433,7 @@ Visualization Manager:
           Marker Topic: /UAV0/odom_visualization/robot
           Name: robot0
           Namespaces:
-            mesh: true
+            {}
           Queue Size: 100
           Value: true
         - Class: rviz/Marker
@@ -441,7 +441,7 @@ Visualization Manager:
           Marker Topic: /UAV1/odom_visualization/robot
           Name: robot1
           Namespaces:
-            mesh: true
+            {}
           Queue Size: 100
           Value: true
         - Class: rviz/Marker
@@ -649,6 +649,6 @@ Window Geometry:
     collapsed: false
   Width: 1379
   X: 299
-  Y: 173
+  Y: 143
   depth:
     collapsed: false
