@@ -6,9 +6,8 @@ Panels:
       Expanded:
         - /active_perception1/frontier1/Namespaces1
         - /active_perception1/viewpoint1/Namespaces1
+        - /LocalMap1
         - /LocalMap1/occupied_local1/Autocompute Value Bounds1
-        - /LocalMap1/occupied_all1
-        - /LocalMap1/occupied_all1/Autocompute Value Bounds1
         - /Simulation1/robot01
         - /Simulation1/robot11
         - /Simulation1/robot21
@@ -74,7 +73,7 @@ Visualization Manager:
           Marker Topic: /UAV0/planning_vis/trajectory
           Name: bspline_traj
           Namespaces:
-            B-Spline: true
+            {}
           Queue Size: 100
           Value: true
         - Class: rviz/Marker
@@ -98,7 +97,7 @@ Visualization Manager:
           Marker Topic: /UAV0/planning/travel_traj
           Name: executed_traj
           Namespaces:
-            "": true
+            {}
           Queue Size: 100
           Value: true
         - Class: rviz/Marker
@@ -106,7 +105,7 @@ Visualization Manager:
           Marker Topic: /UAV0/planning/position_cmd_vis
           Name: position_cmd
           Namespaces:
-            current_pose: true
+            {}
           Queue Size: 100
           Value: true
       Enabled: true
@@ -189,7 +188,7 @@ Visualization Manager:
           Invert Rainbow: false
           Max Color: 0; 0; 0
           Min Color: 0; 0; 0
-          Name: occupied_all
+          Name: UAV0_FUEL
           Position Transformer: XYZ
           Queue Size: 10
           Selectable: true
@@ -197,6 +196,146 @@ Visualization Manager:
           Size (m): 0.125
           Style: Flat Squares
           Topic: /UAV0/sdf_map/occupancy_all
+          Unreliable: false
+          Use Fixed Frame: true
+          Use rainbow: true
+          Value: true
+        - Alpha: 1
+          Autocompute Intensity Bounds: true
+          Autocompute Value Bounds:
+            Max Value: 1.25
+            Min Value: -2
+            Value: false
+          Axis: Z
+          Channel Name: intensity
+          Class: rviz/PointCloud2
+          Color: 116; 116; 116
+          Color Transformer: AxisColor
+          Decay Time: 0
+          Enabled: true
+          Invert Rainbow: false
+          Max Color: 0; 0; 0
+          Min Color: 0; 0; 0
+          Name: UAV1_FUEL
+          Position Transformer: XYZ
+          Queue Size: 10
+          Selectable: true
+          Size (Pixels): 15
+          Size (m): 0.125
+          Style: Flat Squares
+          Topic: /UAV1/sdf_map/occupancy_all
+          Unreliable: false
+          Use Fixed Frame: true
+          Use rainbow: true
+          Value: true
+        - Alpha: 1
+          Autocompute Intensity Bounds: true
+          Autocompute Value Bounds:
+            Max Value: 1.25
+            Min Value: -2
+            Value: false
+          Axis: Z
+          Channel Name: intensity
+          Class: rviz/PointCloud2
+          Color: 116; 116; 116
+          Color Transformer: FlatColor
+          Decay Time: 0
+          Enabled: true
+          Invert Rainbow: false
+          Max Color: 0; 0; 0
+          Min Color: 0; 0; 0
+          Name: UAV0_MergedMap
+          Position Transformer: ""
+          Queue Size: 10
+          Selectable: true
+          Size (Pixels): 15
+          Size (m): 0.125
+          Style: Spheres
+          Topic: /UAV0/pcl_render_node/cloud
+          Unreliable: false
+          Use Fixed Frame: true
+          Use rainbow: true
+          Value: true
+        - Alpha: 1
+          Autocompute Intensity Bounds: true
+          Autocompute Value Bounds:
+            Max Value: 1.25
+            Min Value: -2
+            Value: false
+          Axis: Z
+          Channel Name: intensity
+          Class: rviz/PointCloud2
+          Color: 116; 116; 116
+          Color Transformer: FlatColor
+          Decay Time: 0
+          Enabled: true
+          Invert Rainbow: false
+          Max Color: 0; 0; 0
+          Min Color: 0; 0; 0
+          Name: UAV1_MergedMap
+          Position Transformer: XYZ
+          Queue Size: 10
+          Selectable: true
+          Size (Pixels): 15
+          Size (m): 0.125
+          Style: Flat Squares
+          Topic: /UAV1/pcl_render_node/cloud
+          Unreliable: false
+          Use Fixed Frame: true
+          Use rainbow: true
+          Value: true
+        - Alpha: 1
+          Autocompute Intensity Bounds: true
+          Autocompute Value Bounds:
+            Max Value: 1.25
+            Min Value: -2
+            Value: false
+          Axis: Z
+          Channel Name: intensity
+          Class: rviz/PointCloud2
+          Color: 116; 116; 116
+          Color Transformer: FlatColor
+          Decay Time: 0
+          Enabled: true
+          Invert Rainbow: false
+          Max Color: 0; 0; 0
+          Min Color: 0; 0; 0
+          Name: UAV2_MergedMap
+          Position Transformer: XYZ
+          Queue Size: 10
+          Selectable: true
+          Size (Pixels): 15
+          Size (m): 0.125
+          Style: Flat Squares
+          Topic: /UAV2/pcl_render_node/cloud
+          Unreliable: false
+          Use Fixed Frame: true
+          Use rainbow: true
+          Value: true
+        - Alpha: 1
+          Autocompute Intensity Bounds: true
+          Autocompute Value Bounds:
+            Max Value: 1.25
+            Min Value: -2
+            Value: false
+          Axis: Z
+          Channel Name: intensity
+          Class: rviz/PointCloud2
+          Color: 116; 116; 116
+          Color Transformer: FlatColor
+          Decay Time: 0
+          Enabled: true
+          Invert Rainbow: false
+          Max Color: 0; 0; 0
+          Min Color: 0; 0; 0
+          Name: UAV0_Debugger
+          Position Transformer: XYZ
+          Queue Size: 10
+          Selectable: true
+          Size (Pixels): 15
+          Size (m): 0.125
+          Style: Flat Squares
+          Topic: /UAV0/debugger/cloud
           Unreliable: false
           Use Fixed Frame: true
           Use rainbow: true
@@ -257,7 +396,7 @@ Visualization Manager:
           Use Fixed Frame: true
           Use rainbow: true
           Value: false
-      Enabled: false
+      Enabled: true
       Name: LocalMap
     - Class: rviz/Group
       Displays:
@@ -310,7 +449,7 @@ Visualization Manager:
           Marker Topic: /UAV2/odom_visualization/robot
           Name: robot2
           Namespaces:
-            mesh: true
+            {}
           Queue Size: 100
           Value: true
       Enabled: true
@@ -509,7 +648,7 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1379
-  X: 296
-  Y: 0
+  X: 299
+  Y: 173
   depth:
     collapsed: false
