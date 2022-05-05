@@ -36,6 +36,8 @@ private:
   void cloudPoseCallback(const sensor_msgs::PointCloud2ConstPtr& msg,
                          const geometry_msgs::PoseStampedConstPtr& pose);
   void updateESDFCallback(const ros::TimerEvent& /*event*/);
+  void mergeMapPoseCallback(const sensor_msgs::PointCloud2ConstPtr& msg,
+                          const geometry_msgs::PoseStampedConstPtr& pose);
   void visCallback(const ros::TimerEvent& /*event*/);
 
   void publishMapAll();
@@ -59,10 +61,11 @@ private:
 
   ros::NodeHandle node_;
   shared_ptr<message_filters::Subscriber<sensor_msgs::Image>> depth_sub_;
-  shared_ptr<message_filters::Subscriber<sensor_msgs::PointCloud2>> cloud_sub_;
+  shared_ptr<message_filters::Subscriber<sensor_msgs::PointCloud2>> cloud_sub_, mergeMap_sub_;
   shared_ptr<message_filters::Subscriber<geometry_msgs::PoseStamped>> pose_sub_;
   SynchronizerImagePose sync_image_pose_;
   SynchronizerCloudPose sync_cloud_pose_;
+  SynchronizerCloudPose sync_mergeMap_pose_;
 
   ros::Publisher map_local_pub_, map_local_inflate_pub_, esdf_pub_, map_all_pub_, unknown_pub_,
       update_range_pub_, depth_pub_;

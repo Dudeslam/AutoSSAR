@@ -344,6 +344,11 @@ void SDFMap::inputPointCloud(
   }
 }
 
+void SDFMap::addPointCloud(const pcl::PointCloud<pcl::PointXYZ>& points, const int& point_num,){
+  if (point_num == 0) return;
+  
+}
+
 Eigen::Vector3d
 SDFMap::closetPointInMap(const Eigen::Vector3d& pt, const Eigen::Vector3d& camera_pt) {
   Eigen::Vector3d diff = pt - camera_pt;
