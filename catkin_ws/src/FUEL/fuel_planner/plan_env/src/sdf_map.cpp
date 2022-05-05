@@ -1,6 +1,8 @@
 #include "plan_env/sdf_map.h"
 #include "plan_env/map_ros.h"
 #include <plan_env/raycast.h>
+#include <std_msgs/String.h>
+
 
 namespace fast_planner {
 SDFMap::SDFMap() {
@@ -90,6 +92,7 @@ void SDFMap::initMap(ros::NodeHandle& nh) {
 
   caster_.reset(new RayCaster);
   caster_->setParams(mp_->resolution_, mp_->map_origin_);
+  errorMSG_ = nh.advertise<std_msgs::String>("/ErrorMSG", 10);
 }
 
 void SDFMap::resetBuffer() {
@@ -346,6 +349,14 @@ void SDFMap::inputPointCloud(
 
 void SDFMap::addPointCloud(const pcl::PointCloud<pcl::PointXYZ>& points, const int& point_num){
   if (point_num == 0) return;
+    md_->raycast_num_ += 1;
+
+
+  std::stringstream ss;
+  std_msgs::String msg;
+  ss << "Enter addPointCloud";
+  msg.data = ss.str();
+  errorMSG_.publish(msg);
 
 }
 

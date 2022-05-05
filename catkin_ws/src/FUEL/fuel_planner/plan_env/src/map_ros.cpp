@@ -73,7 +73,7 @@ void MapROS::init() {
       new message_filters::Subscriber<sensor_msgs::PointCloud2>(node_, "/map_ros/cloud", 50));
   pose_sub_.reset(
       new message_filters::Subscriber<geometry_msgs::PoseStamped>(node_, "/map_ros/pose", 25));
-  mergeMap_sub_.reset(new message_filters::Subscriber<sensor_msgs::PointCloud2>(node_, "/map_ros/merge", 50));
+  mergeMap_sub_.reset(new message_filters::Subscriber<sensor_msgs::PointCloud2>(node_, "/MergedMap", 50));
 
   sync_image_pose_.reset(new message_filters::Synchronizer<MapROS::SyncPolicyImagePose>(
       MapROS::SyncPolicyImagePose(100), *depth_sub_, *pose_sub_));
@@ -126,13 +126,14 @@ void MapROS::mergeMapPoseCallback(const sensor_msgs::PointCloud2ConstPtr& cloud,
   camera_pos_(0) = pose->pose.position.x;
   camera_pos_(1) = pose->pose.position.y;
   camera_pos_(2) = pose->pose.position.z;
-  if (!map_->isInMap(camera_pos_))  // exceed mapped region
-    return;
+  // if (!map_->isInMap(camera_pos_))  // exceed mapped region
+  //   return;
 
 
+  auto t1 = ros::Time::now();
   pcl::PointCloud<pcl::PointXYZ> cloudMap;
-  pcl::fromROSMsg(*cloud, cloud);
-  map->inputPointCloud(cloudMap, cloudMap.size(), camera_pos_);
+  pcl::fromROSMsg(*cloud, cloudMap);
+  map_->inputPointCloud(cloudMap, cloudMap.size(), camera_pos_);
   if(local_updated_){
     map_->clearAndInflateLocalMap();
     local_updated_ = false;

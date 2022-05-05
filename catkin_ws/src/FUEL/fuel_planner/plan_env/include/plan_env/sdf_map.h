@@ -76,7 +76,7 @@ private:
   unique_ptr<MapData> md_;
   unique_ptr<MapROS> mr_;
   unique_ptr<RayCaster> caster_;
-
+  ros::Publisher errorMSG_;
   friend MapROS;
 
 public:

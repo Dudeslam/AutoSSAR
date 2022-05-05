@@ -73,7 +73,7 @@
     </node> -->
 
 <!-- Start coordination algorithm -->
-    <node pkg="coordination" name="coordination" type="coordination" output="screen" ns="$(arg ns0)">
+    <node pkg="coordination" name="coordination" type="coordination" ns="$(arg ns0)">
         <param name="maxBattery" value="20"/>
     </node>
 
