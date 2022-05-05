@@ -71,10 +71,11 @@ private:
   SynchronizerCloudPose sync_mergeMap_pose_;
 
   ros::Publisher map_local_pub_, map_local_inflate_pub_, esdf_pub_, map_all_pub_, unknown_pub_,
-      update_range_pub_, depth_pub_;
+      update_range_pub_, depth_pub_, errorMSG_pub_;
   ros::Timer esdf_timer_, vis_timer_;
 
   // params, depth projection
+  string UAVName_;
   double cx_, cy_, fx_, fy_;
   double depth_filter_maxdist_, depth_filter_mindist_;
   int depth_filter_margin_;
