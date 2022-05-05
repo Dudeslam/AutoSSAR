@@ -344,9 +344,9 @@ void SDFMap::inputPointCloud(
   }
 }
 
-void SDFMap::addPointCloud(const pcl::PointCloud<pcl::PointXYZ>& points, const int& point_num,){
+void SDFMap::addPointCloud(const pcl::PointCloud<pcl::PointXYZ>& points, const int& point_num){
   if (point_num == 0) return;
-  
+
 }
 
 Eigen::Vector3d

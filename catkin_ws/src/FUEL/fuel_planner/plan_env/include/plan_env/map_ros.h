@@ -58,6 +58,9 @@ private:
                                                           geometry_msgs::PoseStamped>
       SyncPolicyCloudPose;
   typedef shared_ptr<message_filters::Synchronizer<SyncPolicyCloudPose>> SynchronizerCloudPose;
+  
+  // typedef shared_ptr<message_filters::Synchronizer<SyncPolicyCloudPose>> SynchronizerMergeM
+
 
   ros::NodeHandle node_;
   shared_ptr<message_filters::Subscriber<sensor_msgs::Image>> depth_sub_;

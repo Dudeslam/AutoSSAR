@@ -81,8 +81,8 @@ void MapROS::init() {
   sync_cloud_pose_.reset(new message_filters::Synchronizer<MapROS::SyncPolicyCloudPose>(
       MapROS::SyncPolicyCloudPose(100), *cloud_sub_, *pose_sub_));
   sync_cloud_pose_->registerCallback(boost::bind(&MapROS::cloudPoseCallback, this, _1, _2));
-  sync_mergeMap_pose_.reset(new message_filters::Synchronizer<MapROS::SyncPolicyMergeMapPose>(
-      MapROS::SyncPolicyMergeMapPose(100), *mergeMap_sub_, *pose_sub_));
+  sync_mergeMap_pose_.reset(new message_filters::Synchronizer<MapROS::SyncPolicyCloudPose>(
+      MapROS::SyncPolicyCloudPose(100), *mergeMap_sub_, *pose_sub_));
   sync_mergeMap_pose_->registerCallback(boost::bind(&MapROS::mergeMapPoseCallback, this, _1, _2));
   map_start_time_ = ros::Time::now();
 }
