@@ -4,6 +4,7 @@
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 #include <visualization_msgs/Marker.h>
+#include <std_msgs/String.h>
 
 #include <fstream>
 
@@ -41,7 +42,6 @@ void MapROS::init() {
   point_cloud_.points.resize(640 * 480 / (skip_pixel_ * skip_pixel_));
   // proj_points_.reserve(640 * 480 / map_->mp_->skip_pixel_ / map_->mp_->skip_pixel_);
   proj_points_cnt = 0;
-  UAVName_ = node_.namespace_.c_str();
   local_updated_ = false;
   esdf_need_update_ = false;
   fuse_time_ = 0.0;
@@ -67,7 +67,7 @@ void MapROS::init() {
   esdf_pub_ = node_.advertise<sensor_msgs::PointCloud2>("/sdf_map/esdf", 10);
   update_range_pub_ = node_.advertise<visualization_msgs::Marker>("/sdf_map/update_range", 10);
   depth_pub_ = node_.advertise<sensor_msgs::PointCloud2>("/sdf_map/depth_cloud", 10);
-  errorMSG_pub_ = node_.advertise<std_msgs::String>(UAVName_+"/ErrorMSG", 10);
+  errorMSG_pub_ = node_.advertise<std_msgs::String>("/ErrorMSG", 10);
 
   depth_sub_.reset(new message_filters::Subscriber<sensor_msgs::Image>(node_, "/map_ros/depth", 50));
   cloud_sub_.reset(

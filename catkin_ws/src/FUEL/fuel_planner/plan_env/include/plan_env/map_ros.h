@@ -75,7 +75,6 @@ private:
   ros::Timer esdf_timer_, vis_timer_;
 
   // params, depth projection
-  string UAVName_;
   double cx_, cy_, fx_, fy_;
   double depth_filter_maxdist_, depth_filter_mindist_;
   int depth_filter_margin_;
