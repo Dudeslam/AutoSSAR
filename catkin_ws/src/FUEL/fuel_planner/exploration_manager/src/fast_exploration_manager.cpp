@@ -83,7 +83,30 @@ void FastExplorationManager::initialize(ros::NodeHandle& nh) {
   // ofstream fout;
   // fout.open("/home/boboyu/Desktop/RAL_Time/frontier.txt");
   // fout.close();
+
+
+
+
+  // EDIT*******************************************************
+  // std::string selfUAV = nh.getNamespace().c_str();
+  // TRUNCATE_sub_ = nh.subscribe(selfUAV+"/pub_man_pos", 1, &FastExplorationManager::truncateCallback, this);
+  // ROS_WARN_STREAM("\n"+selfUAV+"/pub_man_pos **********************************");
+  // EDIT end*******************************************************
 }
+
+// EDIT*******************************************************
+// Global vector;
+// Vector3d TRUNCATE_next_pos;
+// void FastExplorationManager::truncateCallback(const std_msgs::Float32MultiArray::ConstPtr& array){
+//   TRUNCATE_next_pos(0) = array->data.at(0);
+//   TRUNCATE_next_pos(1) = array->data.at(1);
+//   TRUNCATE_next_pos(2) = array->data.at(2);
+// 	ROS_WARN_STREAM("truncateCallback: " << TRUNCATE_next_pos(0) << " " << TRUNCATE_next_pos(1) << " " << TRUNCATE_next_pos(2));
+// }
+// EDIT end*******************************************************
+
+
+
 
 int FastExplorationManager::planExploreMotion(
     const Vector3d& pos, const Vector3d& vel, const Vector3d& acc, const Vector3d& yaw) {

@@ -38,14 +38,77 @@ void FastExplorationFSM::init(ros::NodeHandle& nh) {
   safety_timer_ = nh.createTimer(ros::Duration(0.05), &FastExplorationFSM::safetyCallback, this);
   frontier_timer_ = nh.createTimer(ros::Duration(0.5), &FastExplorationFSM::frontierCallback, this);
 
-  trigger_sub_ =
-      nh.subscribe("/waypoint_generator/waypoints", 1, &FastExplorationFSM::triggerCallback, this);
+  trigger_sub_ = nh.subscribe("/waypoint_generator/waypoints", 1, &FastExplorationFSM::triggerCallback, this);
   odom_sub_ = nh.subscribe("/odom_world", 1, &FastExplorationFSM::odometryCallback, this);
 
   replan_pub_ = nh.advertise<std_msgs::Empty>("/planning/replan", 10);
   new_pub_ = nh.advertise<std_msgs::Empty>("/planning/new", 10);
   bspline_pub_ = nh.advertise<bspline::Bspline>("/planning/bspline", 10);
+
+
+  // EDIT*******************************************************
+  std::string selfUAV = nh.getNamespace().c_str();
+  TRUNCATE_sub_ = nh.subscribe(selfUAV+"/pub_man_pos", 1, &FastExplorationFSM::truncateCallback, this);
+  ROS_WARN_STREAM("\n"+selfUAV+"/pub_man_pos ************ FastExplorationFSM **************");
+  // EDIT end***************************************
+
 }
+
+// EDIT*******************************************
+bool TRUNCATE_flag = false;
+void FastExplorationFSM::truncateCallback(const nav_msgs::Odometry::ConstPtr& msg) {
+  TRUNCATE_flag = true;
+  
+  
+  //std::cout << "Position-> \tx: [" <<(*msg).pose.pose.position.x<<"], \ty: ["<<(*msg).pose.pose.position.y<<"], \tz: ["<<(*msg).pose.pose.position.z<<"]" << std::endl;
+  ROS_WARN_STREAM("truncateCallback: \tx: [" <<(*msg).pose.pose.position.x<<"], \ty: ["<<(*msg).pose.pose.position.y<<"], \tz: ["<<(*msg).pose.pose.position.z<<"] Flag: " << TRUNCATE_flag );
+
+
+
+  // Set stuff 3)
+  //expl_manager_->planner_manager_->local_data_.
+
+
+
+  /*
+  // Set stuff 2)
+  if ((*msg).pose.pose.position.z < -0.1) return;
+  if (state_ != WAIT_TRIGGER) return;
+  cout << "TESTING MANUAL COMMAND!" << endl;
+
+  Vector3d myGoal((*msg).pose.pose.position.x, (*msg).pose.pose.position.y, (*msg).pose.pose.position.z);
+  expl_manager_->ed_->next_goal_ = myGoal;
+  //*/
+
+
+
+  /*
+  // Set stuff 1)
+  if ((*msg).pose.pose.position.z < -0.1) return;
+  if (state_ != WAIT_TRIGGER) return;
+  cout << "TESTING MANUAL COMMAND!" << endl;
+
+
+  Eigen::Vector3d target_point_;
+  vector<Eigen::Vector3d> global_wp;
+  target_point_(0) = (*msg).pose.pose.position.x;
+  target_point_(1) = (*msg).pose.pose.position.y;
+  target_point_(2) = 1.0;
+  std::cout << "manual: " << target_point_.transpose() << std::endl;
+
+  global_wp.push_back(target_point_);
+  //visualization_->drawGoal(target_point_, 0.3, Eigen::Vector4d(1, 0, 0, 1.0));
+  
+  planner_manager_->setGlobalWaypoints(global_wp);
+
+  // Start calculation
+  fd_->trigger_ = true;
+  transitState(PLAN_TRAJ, "truncateCallback");
+  //*/
+}
+// EDIT end***************************************
+
+
 
 void FastExplorationFSM::FSMCallback(const ros::TimerEvent& e) {
   ROS_INFO_STREAM_THROTTLE(1.0, "[FSM]: state: " << fd_->state_str_[int(state_)]);
@@ -181,6 +244,18 @@ int FastExplorationFSM::callExplorationPlanner() {
       pt.z = pos_pts(i, 2);
       bspline.pos_pts.push_back(pt);
     }
+    // EDIT **********************************
+    if(TRUNCATE_flag){
+      geometry_msgs::Point p;
+      p.x=0;
+      p.y=0;
+      p.z=0;
+      bspline.pos_pts.back().x=0;
+      bspline.pos_pts.back().y=0;
+      bspline.pos_pts.back().z=1;
+    }
+    // EDIT end***********************************
+
     Eigen::VectorXd knots = info->position_traj_.getKnot();
     for (int i = 0; i < knots.rows(); ++i) {
       bspline.knots.push_back(knots(i));
@@ -284,7 +359,7 @@ void FastExplorationFSM::frontierCallback(const ros::TimerEvent& e) {
     ft->computeFrontiersToVisit();
     ft->updateFrontierCostMatrix();
 
-    ft->getFrontiers(ed->frontiers_);
+    ft->getFrontiers(ed->frontiers_);           // returns all frontiers in list
     ft->getFrontierBoxes(ed->frontier_boxes_);
 
     // Draw frontier and bounding box
