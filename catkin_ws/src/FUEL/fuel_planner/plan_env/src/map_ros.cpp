@@ -68,13 +68,13 @@ void MapROS::init() {
   update_range_pub_ = node_.advertise<visualization_msgs::Marker>("/sdf_map/update_range", 10);
   depth_pub_ = node_.advertise<sensor_msgs::PointCloud2>("/sdf_map/depth_cloud", 10);
   errorMSG_pub_ = node_.advertise<std_msgs::String>("/ErrorMSG", 10);
+  mergeMap_sub_ = node_.subscribe("/MergedMap", 10, &MapROS::mergeMapCallback, this);
 
   depth_sub_.reset(new message_filters::Subscriber<sensor_msgs::Image>(node_, "/map_ros/depth", 50));
   cloud_sub_.reset(
       new message_filters::Subscriber<sensor_msgs::PointCloud2>(node_, "/map_ros/cloud", 50));
   pose_sub_.reset(
       new message_filters::Subscriber<geometry_msgs::PoseStamped>(node_, "/map_ros/pose", 25));
-  mergeMap_sub_.reset(new message_filters::Subscriber<sensor_msgs::PointCloud2>(node_, "/MergedMap", 50));
 
   sync_image_pose_.reset(new message_filters::Synchronizer<MapROS::SyncPolicyImagePose>(
       MapROS::SyncPolicyImagePose(100), *depth_sub_, *pose_sub_));
@@ -82,9 +82,6 @@ void MapROS::init() {
   sync_cloud_pose_.reset(new message_filters::Synchronizer<MapROS::SyncPolicyCloudPose>(
       MapROS::SyncPolicyCloudPose(100), *cloud_sub_, *pose_sub_));
   sync_cloud_pose_->registerCallback(boost::bind(&MapROS::cloudPoseCallback, this, _1, _2));
-  sync_mergeMap_pose_.reset(new message_filters::Synchronizer<MapROS::SyncPolicyCloudPose>(
-      MapROS::SyncPolicyCloudPose(100), *mergeMap_sub_, *pose_sub_));
-  sync_mergeMap_pose_->registerCallback(boost::bind(&MapROS::mergeMapPoseCallback, this, _1, _2));
   map_start_time_ = ros::Time::now();
 }
 
@@ -122,13 +119,7 @@ void MapROS::updateESDFCallback(const ros::TimerEvent& /*event*/) {
              max_esdf_time_);
 }
 
-void MapROS::mergeMapPoseCallback(const sensor_msgs::PointCloud2ConstPtr& cloud,
-                                  const geometry_msgs::PoseStampedConstPtr& pose) {
-  camera_pos_(0) = pose->pose.position.x;
-  camera_pos_(1) = pose->pose.position.y;
-  camera_pos_(2) = pose->pose.position.z;
-  // if (!map_->isInMap(camera_pos_))  // exceed mapped region
-  //   return;
+void MapROS::mergeMapCallback(const sensor_msgs::PointCloud2ConstPtr& cloud) {
   std::stringstream ss;
   ss << "Enter MergeMapPoseCallback";
   std_msgs::String msg;
