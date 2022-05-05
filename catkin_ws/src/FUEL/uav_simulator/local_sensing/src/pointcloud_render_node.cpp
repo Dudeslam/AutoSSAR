@@ -94,6 +94,8 @@ pcl::search::KdTree<pcl::PointXYZ> _kdtreeLocalMap;
 vector<int> pointIdxRadiusSearch;
 vector<float> pointRadiusSquaredDistance;
 
+
+
 void rcvGlobalPointCloudCallBack(const sensor_msgs::PointCloud2& pointcloud_map)
 {
   if (has_global_map)
@@ -103,7 +105,8 @@ void rcvGlobalPointCloudCallBack(const sensor_msgs::PointCloud2& pointcloud_map)
 
   pcl::PointCloud<pcl::PointXYZ> cloud_input;
   pcl::fromROSMsg(pointcloud_map, cloud_input);
-
+  ROS_WARN("Size of Global_map");
+  ROS_WARN(cloud_input.size());
   _voxel_sampler.setLeafSize(0.1f, 0.1f, 0.1f);
   _voxel_sampler.setInputCloud(cloud_input.makeShared());
   _voxel_sampler.filter(cloud_all_map);
@@ -113,12 +116,14 @@ void rcvGlobalPointCloudCallBack(const sensor_msgs::PointCloud2& pointcloud_map)
   has_global_map = true;
 }
 
-void rcvMapReceivedCallback(const sensor_msgs::PointCloud2& msg){
-  pcl::fromROSMsg(msg, local_map);
-  local_map_pcd.header = odom_.header;
-  pcl::toROSMsg(local_map, local_map_pcd);
-  pub_cloud.publish(local_map_pcd);
-}
+// void rcvMapReceivedCallback(const sensor_msgs::PointCloud2& msg){
+//   pcl::PointCloud<pcl::PointXYZ> cloud_input;
+//   pcl::fromROSMsg(msg, cloud_input);
+//   local_map_pcd.header = odom_.header;
+//   pcl::toROSMsg(cloud_input, local_map_pcd);
+//   pub_cloud.publish(local_map_pcd);
+//   ROS_WARN("Publishing local_map from PCL_Render_node");
+// }
 
 void renderSensedPoints(const ros::TimerEvent& event)
 {
@@ -206,8 +211,7 @@ int main(int argc, char** argv)
   // subscribe point cloud
   global_map_sub = nh.subscribe("global_map", 1, rcvGlobalPointCloudCallBack);
   odom_sub = nh.subscribe("odometry", 50, rcvOdometryCallbck);
-  map_received_sub = nh.subscribe("/MergedMap", 10, rcvMapReceivedCallback);
-
+  // map_received_sub = nh.subscribe("/MergedMap", 10, rcvMapReceivedCallback);
   
   // publisher depth image and color image
   pub_cloud = nh.advertise<sensor_msgs::PointCloud2>("/pcl_render_node/cloud", 10);

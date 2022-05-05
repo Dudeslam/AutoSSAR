@@ -61,7 +61,7 @@ sensor_msgs::PointCloud2 local_map_pcl;
 sensor_msgs::PointCloud2 local_depth_pcl;
 
 ros::Subscriber odom_sub;
-ros::Subscriber global_map_sub, local_map_sub;
+ros::Subscriber global_map_sub, local_map_sub, rcv_map_sub;
 
 ros::Timer local_sensing_timer, estimation_timer;
 
@@ -201,6 +201,26 @@ void rcvGlobalPointCloudCallBack(const sensor_msgs::PointCloud2& pointcloud_map)
   depth_hostptr = (int*)malloc(width * height * sizeof(int));
 
   has_global_map = true;
+}
+
+void rcvSharedMapCallBack(const sensor_msgs::PointCloud2& pc_msg)
+{
+  pcl::PointCloud<pcl::PointXYZ> cloudIn;
+  pcl::PointXYZ pt_in;
+  // transform map to point cloud format
+  pcl::fromROSMsg(pc_msg, cloudIn);
+  for (int i = 0; i < int(cloudIn.points.size()); i++)
+  {
+    pt_in = cloudIn.points[i];
+    cloud_data.push_back(pt_in.x);
+    cloud_data.push_back(pt_in.y);
+    cloud_data.push_back(pt_in.z);
+  }
+  printf("local map has points: %d.\n", (int)cloud_data.size() / 3);
+  // pass cloud_data to depth render
+  depthrender.set_data(cloud_data);
+  depth_hostptr = (int*)malloc(width * height * sizeof(int));
+
 }
 
 void rcvLocalPointCloudCallBack(const sensor_msgs::PointCloud2& pointcloud_map)
@@ -388,6 +408,7 @@ int main(int argc, char** argv)
   global_map_sub = nh.subscribe("global_map", 1, rcvGlobalPointCloudCallBack);
   local_map_sub = nh.subscribe("local_map", 1, rcvLocalPointCloudCallBack);
   odom_sub = nh.subscribe("odometry", 50, rcvOdometryCallbck);
+  rcv_map_sub = nh.subscribe("/MergedMap", 1, rcvSharedMapCallBack);
 
   // publisher depth image and color image
   pub_depth = nh.advertise<sensor_msgs::Image>("/pcl_render_node/depth", 1000);
