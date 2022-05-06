@@ -390,24 +390,22 @@ void SDFMap::addPointCloud(const pcl::PointCloud<pcl::PointXYZ>& points, const i
   //   caster_->nextId(idx);
   //   while (caster_->nextId(idx))
   //     setCacheOccupancy(toAddress(idx), 0);
-  }
+  // }
 
-  mr_->local_updated_ = true;
+  // mr_->local_updated_ = true;
 
-  while (!md_->cache_voxel_.empty()) {
-  int adr = md_->cache_voxel_.front();
-  md_->cache_voxel_.pop();
-  double log_odds_update =
-      md_->count_hit_[adr] >= md_->count_miss_[adr] ? mp_->prob_hit_log_ : mp_->prob_miss_log_;
-  md_->count_hit_[adr] = md_->count_miss_[adr] = 0;
-  if (md_->occupancy_buffer_[adr] < mp_->clamp_min_log_ - 1e-3)
-    md_->occupancy_buffer_[adr] = mp_->min_occupancy_log_;
+  // while (!md_->cache_voxel_.empty()) {
+  // int adr = md_->cache_voxel_.front();
+  // md_->cache_voxel_.pop();
+  // double log_odds_update =
+  //     md_->count_hit_[adr] >= md_->count_miss_[adr] ? mp_->prob_hit_log_ : mp_->prob_miss_log_;
+  // md_->count_hit_[adr] = md_->count_miss_[adr] = 0;
+  // if (md_->occupancy_buffer_[adr] < mp_->clamp_min_log_ - 1e-3)
+  //   md_->occupancy_buffer_[adr] = mp_->min_occupancy_log_;
 
-  md_->occupancy_buffer_[adr] = std::min(
-      std::max(md_->occupancy_buffer_[adr] + log_odds_update, mp_->clamp_min_log_),
-      mp_->clamp_max_log_);
-}
-
+  // md_->occupancy_buffer_[adr] = std::min(
+  //     std::max(md_->occupancy_buffer_[adr] + log_odds_update, mp_->clamp_min_log_),
+  //     mp_->clamp_max_log_);
 }
 
 Eigen::Vector3d
