@@ -6,6 +6,7 @@ project(coordination)
 set(CMAKE_BUILD_TYPE "Release")
 set(CMAKE_CXX_FLAGS "-std=c++11")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Wall")
+find_package(Eigen3 REQUIRED)
 find_package(PCL 1.7 REQUIRED)
 
 ## Find catkin macros and libraries
@@ -14,7 +15,10 @@ find_package(PCL 1.7 REQUIRED)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
+  geometry_msgs
+  quadrotor_msgs
   PCL
+  tf
 )
 
 
@@ -44,7 +48,9 @@ include_directories(
   include
   ${PROJECT_SOURCE_DIR}/include
   ${catkin_INCLUDE_DIRS}
+  ${EIGEN3_INCLUDE_DIR}
   ${PCL_INCLUDE_DIRS}
+  #/home/malle/AutoSSAR/catkin_ws/src/FUEL/fuel_planner/plan_manage/include/
 )
 
 ## Declare a C++ library
@@ -64,6 +70,7 @@ include_directories(
 add_executable(coordination
   src/coordination_node.cpp
   src/coordination_algorithm.cpp
+  #/home/malle/AutoSSAR/catkin_ws/src/FUEL/fuel_planner/plan_manage/src/topo_replan_fsm.cpp
   )
 
 ## Rename C++ executable without prefix

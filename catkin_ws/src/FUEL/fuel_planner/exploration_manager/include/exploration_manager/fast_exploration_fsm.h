@@ -17,6 +17,12 @@
 #include <string>
 #include <thread>
 
+// EDIT*************************************
+#include "std_msgs/MultiArrayLayout.h"
+#include "std_msgs/MultiArrayDimension.h"
+#include "std_msgs/Float32MultiArray.h"
+// EDIT end*********************************
+
 using Eigen::Vector3d;
 using std::vector;
 using std::shared_ptr;
@@ -64,6 +70,10 @@ private:
   void visualize();
   void clearVisMarker();
 
+  // EDIT*************************************
+  ros::Subscriber TRUNCATE_sub_;
+  void truncateCallback(const nav_msgs::Odometry::ConstPtr& msg);
+  // EDIT end*********************************
 public:
   FastExplorationFSM(/* args */) {
   }

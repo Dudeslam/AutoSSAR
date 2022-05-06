@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 NAME : single.2742.tour
 COMMENT : Length = 2742
 COMMENT : Found by LKH [Keld Helsgaun] Fri Apr 29 14:58:14 2022
@@ -21,5 +22,34 @@ TOUR_SECTION
 5
 7
 6
+=======
+NAME : single.3257.tour
+COMMENT : Length = 3257
+COMMENT : Found by LKH [Keld Helsgaun] Thu May  5 16:45:59 2022
+TYPE : TOUR
+DIMENSION : 21
+TOUR_SECTION
+1
+19
+20
+21
+18
+17
+14
+16
+15
+12
+11
+10
+9
+13
+8
+6
+7
+2
+3
+4
+5
+>>>>>>> dev/Mads
 -1
 EOF

@@ -1,4 +1,10 @@
+<<<<<<< HEAD
 PROBLEM_FILE = /home/malle/AutoSSAR/catkin_ws/src/FUEL/fuel_planner/utils/lkh_tsp_solver/resource/single.tsp
 GAIN23 = NO
 OUTPUT_TOUR_FILE =/home/malle/AutoSSAR/catkin_ws/src/FUEL/fuel_planner/utils/lkh_tsp_solver/resource/single.txt
+=======
+PROBLEM_FILE = /home/malle/AutoSSAR/catkin_ws/src/FUEL/fuel_planner/utils/lkh_tsp_solver/resource/UAV2/single.tsp
+GAIN23 = NO
+OUTPUT_TOUR_FILE =/home/malle/AutoSSAR/catkin_ws/src/FUEL/fuel_planner/utils/lkh_tsp_solver/resource/UAV2/single.txt
+>>>>>>> dev/Mads
 RUNS = 1

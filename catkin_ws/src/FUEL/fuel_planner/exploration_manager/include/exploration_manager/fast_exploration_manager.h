@@ -6,6 +6,12 @@
 #include <memory>
 #include <vector>
 
+// EDIT*************************************
+#include "std_msgs/MultiArrayLayout.h"
+#include "std_msgs/MultiArrayDimension.h"
+#include "std_msgs/Float32MultiArray.h"
+// EDIT end*********************************
+
 using Eigen::Vector3d;
 using std::shared_ptr;
 using std::unique_ptr;
@@ -40,8 +46,14 @@ public:
   shared_ptr<FastPlannerManager> planner_manager_;
   shared_ptr<FrontierFinder> frontier_finder_;
   // unique_ptr<ViewFinder> view_finder_;
+  
 
 private:
+  // EDIT*************************************
+  // ros::Subscriber TRUNCATE_sub_;
+  // void truncateCallback(const std_msgs::Float32MultiArray::ConstPtr& array);
+  // EDIT end*********************************
+
   shared_ptr<EDTEnvironment> edt_environment_;
   shared_ptr<SDFMap> sdf_map_;
 
