@@ -170,11 +170,6 @@ void getFinishCallback(const std_msgs::String& msg){
     }
 }
 
-void getErrorCallback(const std_msgs::String& msg){
-    std::string str = msg.data;
-    std::cout << "Error: " << str << std::endl;
-}
-
 
 int main (int argc, char* argv[]){
     ros::init(argc, argv, "map_merger");
@@ -192,7 +187,6 @@ int main (int argc, char* argv[]){
     ros::Subscriber map_global_uav2 = nh.subscribe(otherUAV1+"/MergedMap", 10, getGlobalMapCallback); 
     ros::Subscriber within_range = nh.subscribe(selfUAV+"/within_range", 10, getWithinRangeCallback);
     ros::Subscriber finish = nh.subscribe(selfUAV+"/planning/state", 10, getFinishCallback);
-    ros::Subscriber errorMSG = nh.subscribe("exploration_node/ErrorMSG", 10, getErrorCallback);
     ROS_WARN("Have subscribed");
 
     ros::Publisher other_pub = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/MergedMap", 1000);

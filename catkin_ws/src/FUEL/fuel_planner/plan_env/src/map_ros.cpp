@@ -120,16 +120,11 @@ void MapROS::updateESDFCallback(const ros::TimerEvent& /*event*/) {
 }
 
 void MapROS::mergeMapCallback(const sensor_msgs::PointCloud2ConstPtr& cloud) {
-  std::stringstream ss;
-  ss << "Enter MergeMapPoseCallback";
-  std_msgs::String msg;
-  msg.data = ss.str();
-  errorMSG_pub_.publish(msg);
 
   auto t1 = ros::Time::now();
   pcl::PointCloud<pcl::PointXYZ> cloudMap;
   pcl::fromROSMsg(*cloud, cloudMap);
-  map_->inputPointCloud(cloudMap, cloudMap.size(), camera_pos_);
+  map_->addPointCloud(cloudMap, cloudMap.size(), camera_pos_);
   if(local_updated_){
     map_->clearAndInflateLocalMap();
     local_updated_ = false;
@@ -140,7 +135,7 @@ void MapROS::mergeMapCallback(const sensor_msgs::PointCloud2ConstPtr& cloud) {
   max_fuse_time_ = max(max_fuse_time_, (t2 - t1).toSec());
   fuse_num_ += 1;
   if (show_occ_time_)
-    ROS_WARN("Fusion t: cur: %lf, avg: %lf, max: %lf", (t2 - t1).toSec(), fuse_time_ / fuse_num_,
+    ROS_WARN("MergeMap t: cur: %lf, avg: %lf, max: %lf", (t2 - t1).toSec(), fuse_time_ / fuse_num_,
              max_fuse_time_);
 }
 

@@ -44,6 +44,7 @@ void FastExplorationFSM::init(ros::NodeHandle& nh) {
   replan_pub_ = nh.advertise<std_msgs::Empty>("/planning/replan", 10);
   new_pub_ = nh.advertise<std_msgs::Empty>("/planning/new", 10);
   bspline_pub_ = nh.advertise<bspline::Bspline>("/planning/bspline", 10);
+  state_pub_ = nh.advertise<std_msgs::String>("/planning/state", 10);
 
 
   // EDIT*******************************************************
