@@ -69,6 +69,7 @@ void MapROS::init() {
   depth_pub_ = node_.advertise<sensor_msgs::PointCloud2>("/sdf_map/depth_cloud", 10);
   errorMSG_pub_ = node_.advertise<std_msgs::String>("/ErrorMSG", 10);
   mergeMap_sub_ = node_.subscribe("/MergedMap", 10, &MapROS::mergeMapCallback, this);
+  mergeCompl_pub_ = node_.advertise<std_msgs::String>("/MergeComplete", 10);
 
   depth_sub_.reset(new message_filters::Subscriber<sensor_msgs::Image>(node_, "/map_ros/depth", 50));
   cloud_sub_.reset(
@@ -137,6 +138,11 @@ void MapROS::mergeMapCallback(const sensor_msgs::PointCloud2ConstPtr& cloud) {
   if (show_occ_time_)
     ROS_WARN("MergeMap t: cur: %lf, avg: %lf, max: %lf", (t2 - t1).toSec(), fuse_time_ / fuse_num_,
              max_fuse_time_);
+
+  //publish merged map complete message
+  std_msgs::String msg;
+  msg.data = "MergeMapComplete";
+  mergeCompl_pub_.publish(msg.data);
 }
 
 void MapROS::depthPoseCallback(const sensor_msgs::ImageConstPtr& img,

@@ -70,7 +70,7 @@ private:
 
   ros::Subscriber  mergeMap_sub_;
   ros::Publisher map_local_pub_, map_local_inflate_pub_, esdf_pub_, map_all_pub_, unknown_pub_,
-      update_range_pub_, depth_pub_, errorMSG_pub_;
+      update_range_pub_, depth_pub_, mergeCompl_pub_;
   ros::Timer esdf_timer_, vis_timer_;
 
   // params, depth projection

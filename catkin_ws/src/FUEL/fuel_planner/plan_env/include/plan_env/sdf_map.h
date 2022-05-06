@@ -34,7 +34,7 @@ public:
   void initMap(ros::NodeHandle& nh);
   void inputPointCloud(const pcl::PointCloud<pcl::PointXYZ>& points, const int& point_num,
                        const Eigen::Vector3d& camera_pos);
-  void addPointCloud(const pcl::PointCloud<pcl::PointXYZ>& points, const int& point_num
+  void addPointCloud(const pcl::PointCloud<pcl::PointXYZ>& points, const int& point_num,
                       const Eigen::Vector3d& camera_pos);
 
   void posToIndex(const Eigen::Vector3d& pos, Eigen::Vector3i& id);
@@ -64,6 +64,7 @@ public:
   void getUpdatedBox(Eigen::Vector3d& bmin, Eigen::Vector3d& bmax, bool reset = false);
   double getResolution();
   int getVoxelNum();
+
 
 private:
   void clearAndInflateLocalMap();
