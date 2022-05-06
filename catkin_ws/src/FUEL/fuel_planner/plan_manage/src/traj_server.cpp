@@ -434,7 +434,7 @@ void test() {
     tn = (ros::Time::now() - t1).toSec();
   }
 }
-
+//ss
 int main(int argc, char** argv) {
   ros::init(argc, argv, "traj_server");
   ros::NodeHandle node;
