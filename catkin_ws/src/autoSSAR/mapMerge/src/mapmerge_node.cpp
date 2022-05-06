@@ -218,7 +218,7 @@ int main (int argc, char* argv[]){
             
             if(otherUAV0InRange_)
             {
-                ROS_WARN("Other UAV0 is in range");
+                // ROS_WARN("Other UAV0 is in range");
                 mergeMaps(received_map_, own_globalMap_pcd);
                 downsample(own_globalMap_pcd, own_globalMap_pcd);
                 pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
@@ -228,7 +228,7 @@ int main (int argc, char* argv[]){
 
             if(otherUAV1InRange_)
             {
-                ROS_WARN("Other UAV1 is in range");
+                // ROS_WARN("Other UAV1 is in range");
                 mergeMaps(received_map_, own_globalMap_pcd);
                 downsample(own_globalMap_pcd, own_globalMap_pcd);
                 pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
