@@ -67,7 +67,6 @@ void MapROS::init() {
   esdf_pub_ = node_.advertise<sensor_msgs::PointCloud2>("/sdf_map/esdf", 10);
   update_range_pub_ = node_.advertise<visualization_msgs::Marker>("/sdf_map/update_range", 10);
   depth_pub_ = node_.advertise<sensor_msgs::PointCloud2>("/sdf_map/depth_cloud", 10);
-  errorMSG_pub_ = node_.advertise<std_msgs::String>("/ErrorMSG", 10);
   mergeMap_sub_ = node_.subscribe("/MergedMap", 10, &MapROS::mergeMapCallback, this);
   mergeCompl_pub_ = node_.advertise<std_msgs::String>("/MergeComplete", 10);
 
@@ -125,7 +124,7 @@ void MapROS::mergeMapCallback(const sensor_msgs::PointCloud2ConstPtr& cloud) {
   auto t1 = ros::Time::now();
   pcl::PointCloud<pcl::PointXYZ> cloudMap;
   pcl::fromROSMsg(*cloud, cloudMap);
-  map_->addPointCloud(cloudMap, cloudMap.size(), camera_pos_);
+  map_->inputPointCloud(cloudMap, cloudMap.size(), camera_pos_);
   if(local_updated_){
     map_->clearAndInflateLocalMap();
     local_updated_ = false;

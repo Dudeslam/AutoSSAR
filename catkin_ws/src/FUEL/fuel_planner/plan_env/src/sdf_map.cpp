@@ -348,48 +348,48 @@ void SDFMap::inputPointCloud(
 
 void SDFMap::addPointCloud(const pcl::PointCloud<pcl::PointXYZ>& points, const int& point_num, const Eigen::Vector3d& camera_pos) {
   if (point_num == 0) return;
-  md_->raycast_num_ += 1;
+  // md_->raycast_num_ += 1;
 
-  Eigen::Vector3d pt_w, tmp;
-  Eigen::Vector3i idx;
-  int vox_adr;
-  double length;
-  for (int i = 0; i < point_num; ++i) {
-    auto& pt = points.points[i];
-    pt_w << pt.x, pt.y, pt.z;
-    int tmp_flag;
-    // Set flag for projected point
-    if (!isInMap(pt_w)) {
-      // Find closest point in map and set free
-      pt_w = closetPointInMap(pt_w, camera_pos);
-      length = (pt_w - camera_pos).norm();
-      if (length > mp_->max_ray_length_)
-        pt_w = (pt_w - camera_pos) / length * mp_->max_ray_length_ + camera_pos;
-      if (pt_w[2] < 0.2) continue;
-      tmp_flag = 0;
-    } else {
-      length = (pt_w - camera_pos).norm();
-      if (length > mp_->max_ray_length_) {
-        pt_w = (pt_w - camera_pos) / length * mp_->max_ray_length_ + camera_pos;
-        if (pt_w[2] < 0.2) continue;
-        tmp_flag = 0;
-      } else
-        tmp_flag = 1;
-    }
-    posToIndex(pt_w, idx);
-    vox_adr = toAddress(idx);
-    setCacheOccupancy(vox_adr, tmp_flag);
+  // Eigen::Vector3d pt_w, tmp;
+  // Eigen::Vector3i idx;
+  // int vox_adr;
+  // double length;
+  // for (int i = 0; i < point_num; ++i) {
+  //   auto& pt = points.points[i];
+  //   pt_w << pt.x, pt.y, pt.z;
+  //   int tmp_flag;
+  //   // Set flag for projected point
+  //   if (!isInMap(pt_w)) {
+  //     // Find closest point in map and set free
+  //     pt_w = closetPointInMap(pt_w, camera_pos);
+  //     length = (pt_w - camera_pos).norm();
+  //     if (length > mp_->max_ray_length_)
+  //       pt_w = (pt_w - camera_pos) / length * mp_->max_ray_length_ + camera_pos;
+  //     if (pt_w[2] < 0.2) continue;
+  //     tmp_flag = 0;
+  //   } else {
+  //     length = (pt_w - camera_pos).norm();
+  //     if (length > mp_->max_ray_length_) {
+  //       pt_w = (pt_w - camera_pos) / length * mp_->max_ray_length_ + camera_pos;
+  //       if (pt_w[2] < 0.2) continue;
+  //       tmp_flag = 0;
+  //     } else
+  //       tmp_flag = 1;
+  //   }
+  //   posToIndex(pt_w, idx);
+  //   vox_adr = toAddress(idx);
+  //   setCacheOccupancy(vox_adr, tmp_flag);
 
 
-    if (md_->flag_rayend_[vox_adr] == md_->raycast_num_)
-      continue;
-    else
-      md_->flag_rayend_[vox_adr] = md_->raycast_num_;
+  //   if (md_->flag_rayend_[vox_adr] == md_->raycast_num_)
+  //     continue;
+  //   else
+  //     md_->flag_rayend_[vox_adr] = md_->raycast_num_;
 
-    caster_->input(pt_w, camera_pos);
-    caster_->nextId(idx);
-    while (caster_->nextId(idx))
-      setCacheOccupancy(toAddress(idx), 0);
+  //   caster_->input(pt_w, camera_pos);
+  //   caster_->nextId(idx);
+  //   while (caster_->nextId(idx))
+  //     setCacheOccupancy(toAddress(idx), 0);
   }
 
   mr_->local_updated_ = true;

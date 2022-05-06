@@ -35,7 +35,7 @@ bool receive_traj_ = false;
 double replan_time_;
 
 // Executed traj, commanded and real ones
-vector<Eigen::Vector3d> traj_cmd_, traj_real_;
+vector<Eigen::Vector3d> traj_cmd_, traj_real_, traj_cmd_backup, traj_real_backup;
 
 // Data for benchmark comparison
 ros::Time start_time, end_time, last_time;
@@ -173,7 +173,9 @@ void replanCallback(std_msgs::Empty msg) {
 
 void newCallback(std_msgs::Empty msg) {
   // Clear the executed traj data
+  traj_cmd_backup=traj_cmd_;
   traj_cmd_.clear();
+  traj_real_backup=traj_real_;
   traj_real_.clear();
 }
 
