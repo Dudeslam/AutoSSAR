@@ -31,11 +31,32 @@ void KinoReplanFSM::init(ros::NodeHandle& nh) {
 
   waypoint_sub_ =
       nh.subscribe("/waypoint_generator/waypoints", 1, &KinoReplanFSM::waypointCallback, this);
+
+  manual_waypoint_sub_ = nh.subscribe("/waypoint_generator/Manualwaypoints", 1, &KinoReplanFSM::ManualwaypointCallback, this);
   odom_sub_ = nh.subscribe("/odom_world", 1, &KinoReplanFSM::odometryCallback, this);
 
   replan_pub_ = nh.advertise<std_msgs::Empty>("/planning/replan", 10);
   new_pub_ = nh.advertise<std_msgs::Empty>("/planning/new", 10);
   bspline_pub_ = nh.advertise<bspline::Bspline>("/planning/bspline", 10);
+}
+
+
+void KinoReplanFSM::ManualwaypointCallback(const nav_msgs::PathConstPtr& msg) {
+  if (msg->poses[0].pose.position.z < -0.1) return;
+
+  cout << "Triggered!" << endl;
+  trigger_ = true;
+
+  end_pt_ << msg->poses[0].pose.position.x, msg->poses[0].pose.position.y, 1.0;
+
+  visualization_->drawGoal(end_pt_, 0.3, Eigen::Vector4d(1, 0, 0, 1.0));
+  end_vel_.setZero();
+  have_target_ = true;
+
+  if (exec_state_ == WAIT_TARGET)
+    changeFSMExecState(GEN_NEW_TRAJ, "TRIG");
+  else if (exec_state_ == EXEC_TRAJ)
+    changeFSMExecState(REPLAN_TRAJ, "TRIG");
 }
 
 void KinoReplanFSM::waypointCallback(const nav_msgs::PathConstPtr& msg) {
