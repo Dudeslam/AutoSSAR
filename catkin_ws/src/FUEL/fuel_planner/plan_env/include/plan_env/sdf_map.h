@@ -34,7 +34,7 @@ public:
   void initMap(ros::NodeHandle& nh);
   void inputPointCloud(const pcl::PointCloud<pcl::PointXYZ>& points, const int& point_num,
                        const Eigen::Vector3d& camera_pos);
-  void addPointCloud(const pcl::PointCloud<pcl::PointXYZ>& points, const int& point_num,
+  void OverWriteMap(const pcl::PointCloud<pcl::PointXYZ>& points, const int& point_num,
                       const Eigen::Vector3d& camera_pos);
 
   void posToIndex(const Eigen::Vector3d& pos, Eigen::Vector3i& id);
@@ -73,7 +73,7 @@ private:
   Eigen::Vector3d closetPointInMap(const Eigen::Vector3d& pt, const Eigen::Vector3d& camera_pt);
   template <typename F_get_val, typename F_set_val>
   void fillESDF(F_get_val f_get_val, F_set_val f_set_val, int start, int end, int dim);
-
+  void clearMap();
   unique_ptr<MapParam> mp_;
   unique_ptr<MapData> md_;
   unique_ptr<MapROS> mr_;

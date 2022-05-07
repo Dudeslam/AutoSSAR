@@ -346,66 +346,14 @@ void SDFMap::inputPointCloud(
   }
 }
 
-void SDFMap::addPointCloud(const pcl::PointCloud<pcl::PointXYZ>& points, const int& point_num, const Eigen::Vector3d& camera_pos) {
+void SDFMap::OverWriteMap(const pcl::PointCloud<pcl::PointXYZ>& points, const int& point_num, const Eigen::Vector3d& camera_pos) {
   if (point_num == 0) return;
-  // md_->raycast_num_ += 1;
+  md_->raycast_num_ += 1;
 
-  // Eigen::Vector3d pt_w, tmp;
-  // Eigen::Vector3i idx;
-  // int vox_adr;
-  // double length;
-  // for (int i = 0; i < point_num; ++i) {
-  //   auto& pt = points.points[i];
-  //   pt_w << pt.x, pt.y, pt.z;
-  //   int tmp_flag;
-  //   // Set flag for projected point
-  //   if (!isInMap(pt_w)) {
-  //     // Find closest point in map and set free
-  //     pt_w = closetPointInMap(pt_w, camera_pos);
-  //     length = (pt_w - camera_pos).norm();
-  //     if (length > mp_->max_ray_length_)
-  //       pt_w = (pt_w - camera_pos) / length * mp_->max_ray_length_ + camera_pos;
-  //     if (pt_w[2] < 0.2) continue;
-  //     tmp_flag = 0;
-  //   } else {
-  //     length = (pt_w - camera_pos).norm();
-  //     if (length > mp_->max_ray_length_) {
-  //       pt_w = (pt_w - camera_pos) / length * mp_->max_ray_length_ + camera_pos;
-  //       if (pt_w[2] < 0.2) continue;
-  //       tmp_flag = 0;
-  //     } else
-  //       tmp_flag = 1;
-  //   }
-  //   posToIndex(pt_w, idx);
-  //   vox_adr = toAddress(idx);
-  //   setCacheOccupancy(vox_adr, tmp_flag);
+  clearMap();
+  Eigen::Vector3d pt_w, tmp;
+  Eigen::Vector3i idx;
 
-
-  //   if (md_->flag_rayend_[vox_adr] == md_->raycast_num_)
-  //     continue;
-  //   else
-  //     md_->flag_rayend_[vox_adr] = md_->raycast_num_;
-
-  //   caster_->input(pt_w, camera_pos);
-  //   caster_->nextId(idx);
-  //   while (caster_->nextId(idx))
-  //     setCacheOccupancy(toAddress(idx), 0);
-  // }
-
-  // mr_->local_updated_ = true;
-
-  // while (!md_->cache_voxel_.empty()) {
-  // int adr = md_->cache_voxel_.front();
-  // md_->cache_voxel_.pop();
-  // double log_odds_update =
-  //     md_->count_hit_[adr] >= md_->count_miss_[adr] ? mp_->prob_hit_log_ : mp_->prob_miss_log_;
-  // md_->count_hit_[adr] = md_->count_miss_[adr] = 0;
-  // if (md_->occupancy_buffer_[adr] < mp_->clamp_min_log_ - 1e-3)
-  //   md_->occupancy_buffer_[adr] = mp_->min_occupancy_log_;
-
-  // md_->occupancy_buffer_[adr] = std::min(
-  //     std::max(md_->occupancy_buffer_[adr] + log_odds_update, mp_->clamp_min_log_),
-  //     mp_->clamp_max_log_);
 }
 
 Eigen::Vector3d
@@ -425,22 +373,40 @@ SDFMap::closetPointInMap(const Eigen::Vector3d& pt, const Eigen::Vector3d& camer
   return camera_pt + (min_t - 1e-3) * diff;
 }
 
-// Eigen::Vector3d
-// SDFMap::closetPointInMap(const Eigen::Vector3d& pt) {
-//   Eigen::Vector3d diff = pt - camera_pt;
-//   Eigen::Vector3d max_tc = mp_->map_max_boundary_ - camera_pt;
-//   Eigen::Vector3d min_tc = mp_->map_min_boundary_ - camera_pt;
-//   double min_t = 1000000;
-//   for (int i = 0; i < 3; ++i) {
-//     if (fabs(diff[i]) > 0) {
-//       double t1 = max_tc[i] / diff[i];
-//       if (t1 > 0 && t1 < min_t) min_t = t1;
-//       double t2 = min_tc[i] / diff[i];
-//       if (t2 > 0 && t2 < min_t) min_t = t2;
-//     }
-//   }
-//   return camera_pt + (min_t - 1e-3) * diff;
-// }
+void SDFMap::clearMap()
+{
+    if (md_->reset_updated_box_) {
+    return;
+  }
+  
+  md_->raycast_num_ = 0;
+  md_->reset_updated_box_ = true;
+  md_->count_hit_.clear();
+  md_->count_miss_.clear();
+  md_->occupancy_buffer_.clear();
+  md_->flag_rayend_.clear();
+  md_->cache_voxel_.clear();
+  md_->local_bound_min_.clear();
+  md_->local_bound_max_.clear();
+  md_->update_min_.clear();
+  md_->update_max_.clear();
+  md_->local_updated_ = false;
+  md_->reset_updated_box_ = false;
+
+  int buffer_size = mp_->map_voxel_num_(0) * mp_->map_voxel_num_(1) * mp_->map_voxel_num_(2);
+  md_->occupancy_buffer_ = vector<double>(buffer_size, mp_->clamp_min_log_ - mp_->unknown_flag_);
+  md_->occupancy_buffer_inflate_ = vector<char>(buffer_size, 0);
+  md_->distance_buffer_neg_ = vector<double>(buffer_size, mp_->default_dist_);
+  md_->distance_buffer_ = vector<double>(buffer_size, mp_->default_dist_);
+  md_->count_hit_and_miss_ = vector<short>(buffer_size, 0);
+  md_->count_hit_ = vector<short>(buffer_size, 0);
+  md_->count_miss_ = vector<short>(buffer_size, 0);
+  md_->tmp_buffer1_ = vector<double>(buffer_size, 0);
+  md_->tmp_buffer2_ = vector<double>(buffer_size, 0);
+  md_->update_min_ = md_->update_max_ = Eigen::Vector3d(0, 0, 0);
+}
+
+
 
 void SDFMap::clearAndInflateLocalMap() {
   // /*clear outside local*/

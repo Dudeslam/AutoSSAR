@@ -404,7 +404,7 @@ void FastExplorationFSM::frontierCallback(const ros::TimerEvent& e) {
 }
 
 void FastExplorationFSM::triggerCallback(const nav_msgs::PathConstPtr& msg) {
-  if(!fd_trigger_){
+  if(!fd_->trigger_){
     if (msg->poses[0].pose.position.z < -0.1) return;
     if (state_ != WAIT_TRIGGER) return;
     fd_->trigger_ = true;
