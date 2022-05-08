@@ -124,6 +124,8 @@ void MapROS::mergeMapCallback(const sensor_msgs::PointCloud2ConstPtr& cloud) {
   auto t1 = ros::Time::now();
   pcl::PointCloud<pcl::PointXYZ> cloudMap;
   pcl::fromROSMsg(*cloud, cloudMap);
+
+
   if(!recently_merged_){
     map_->OverWriteMap(cloudMap, cloudMap.size(), camera_pos_);
     recently_merged_ = true;
@@ -131,12 +133,12 @@ void MapROS::mergeMapCallback(const sensor_msgs::PointCloud2ConstPtr& cloud) {
   }
 
 
-  map_->inputPointCloud(cloudMap, cloudMap.size(), camera_pos_);
-  if(local_updated_){
-    map_->clearAndInflateLocalMap();
-    local_updated_ = false;
-  }
-
+  //Using regular method
+  // map_->inputPointCloud(cloudMap, cloudMap.size(), camera_pos_);
+  // if(local_updated_){
+  //   map_->clearAndInflateLocalMap();
+  //   local_updated_ = false;
+  // }
   auto t2 = ros::Time::now();
   fuse_time_ += (t2 - t1).toSec();
   max_fuse_time_ = max(max_fuse_time_, (t2 - t1).toSec());

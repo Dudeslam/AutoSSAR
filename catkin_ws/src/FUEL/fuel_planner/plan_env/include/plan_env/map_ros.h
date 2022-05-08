@@ -85,10 +85,10 @@ private:
   double visualization_truncate_height_, visualization_truncate_low_;
   bool show_esdf_time_, show_occ_time_;
   bool show_all_map_;
-
+  ros::Time lastMergeTime_;
   // data
   // flags of map state
-  bool local_updated_, esdf_need_update_;
+  bool local_updated_, esdf_need_update_, recently_merged_;
   // input
   Eigen::Vector3d camera_pos_;
   Eigen::Quaterniond camera_q_;

@@ -353,8 +353,63 @@ void SDFMap::OverWriteMap(const pcl::PointCloud<pcl::PointXYZ>& points, const in
   clearMap();
   Eigen::Vector3d pt_w, tmp;
   Eigen::Vector3i idx;
+  int vox_adr;
+  double length;
+  for (int i = 0; i < point_num; ++i) {
+    auto& pt = points.points[i];
+    pt_w << pt.x, pt.y, pt.z;
+    int tmp_flag;
+    // Set flag for projected point
+    if (!isInMap(pt_w)) {
+      // Find closest point in map and set free
+      pt_w = closetPointInMap(pt_w, camera_pos);
+      length = (pt_w - camera_pos).norm();
+      if (length > mp_->max_ray_length_)
+        pt_w = (pt_w - camera_pos) / length * mp_->max_ray_length_ + camera_pos;
+      if (pt_w[2] < 0.2) continue;
+      tmp_flag = 0;
+    } else {
+      length = (pt_w - camera_pos).norm();
+      if (length > mp_->max_ray_length_) {
+        pt_w = (pt_w - camera_pos) / length * mp_->max_ray_length_ + camera_pos;
+        if (pt_w[2] < 0.2) continue;
+        tmp_flag = 0;
+      } else
+        tmp_flag = 1;
+    }
+    posToIndex(pt_w, idx);
+    vox_adr = toAddress(idx);
+    setCacheOccupancy(vox_adr, tmp_flag);
+    for (int k = 0; k < 3; ++k) {
+      update_min[k] = min(update_min[k], pt_w[k]);
+      update_max[k] = max(update_max[k], pt_w[k]);
+    }
+    // Raycasting between camera center and point
+    if (md_->flag_rayend_[vox_adr] == md_->raycast_num_)
+      continue;
+    else
+      md_->flag_rayend_[vox_adr] = md_->raycast_num_;
 
-  mr_->local_updated_ = true;
+    caster_->input(pt_w, camera_pos);
+    caster_->nextId(idx);
+    while (caster_->nextId(idx))
+      setCacheOccupancy(toAddress(idx), 0);
+  }
+
+  while (!md_->cache_voxel_.empty()) {
+    int adr = md_->cache_voxel_.front();
+    md_->cache_voxel_.pop();
+    double log_odds_update =
+        md_->count_hit_[adr] >= md_->count_miss_[adr] ? mp_->prob_hit_log_ : mp_->prob_miss_log_;
+    md_->count_hit_[adr] = md_->count_miss_[adr] = 0;
+    if (md_->occupancy_buffer_[adr] < mp_->clamp_min_log_ - 1e-3)
+      md_->occupancy_buffer_[adr] = mp_->min_occupancy_log_;
+
+    md_->occupancy_buffer_[adr] = std::min(
+        std::max(md_->occupancy_buffer_[adr] + log_odds_update, mp_->clamp_min_log_),
+        mp_->clamp_max_log_);
+  }
+
 
 }
 
@@ -377,9 +432,6 @@ SDFMap::closetPointInMap(const Eigen::Vector3d& pt, const Eigen::Vector3d& camer
 
 void SDFMap::clearMap()
 {
-    if (md_->recently_merged_) {
-    return;
-  }
 
   std::queue<int> q;
   md_->raycast_num_ = 0;
@@ -399,12 +451,11 @@ void SDFMap::clearMap()
   md_->occupancy_buffer_inflate_ = vector<char>(buffer_size, 0);
   md_->distance_buffer_neg_ = vector<double>(buffer_size, mp_->default_dist_);
   md_->distance_buffer_ = vector<double>(buffer_size, mp_->default_dist_);
-  // md_->count_hit_and_miss_ = vector<short>(buffer_size, 0);
-  // md_->count_hit_ = vector<short>(buffer_size, 0);
-  // md_->count_miss_ = vector<short>(buffer_size, 0);
+  md_->count_hit_and_miss_ = vector<short>(buffer_size, 0);
+  md_->count_hit_ = vector<short>(buffer_size, 0);
+  md_->count_miss_ = vector<short>(buffer_size, 0);
   md_->tmp_buffer1_ = vector<double>(buffer_size, 0);
   md_->tmp_buffer2_ = vector<double>(buffer_size, 0);
-  md_->recently_merged_ = true;
 }
 
 
