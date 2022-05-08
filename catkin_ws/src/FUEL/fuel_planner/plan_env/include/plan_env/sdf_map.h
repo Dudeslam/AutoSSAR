@@ -70,6 +70,7 @@ private:
   void clearAndInflateLocalMap();
   void inflatePoint(const Eigen::Vector3i& pt, int step, vector<Eigen::Vector3i>& pts);
   void setCacheOccupancy(const int& adr, const int& occ);
+  void setCacheOccupancyNoUpdate(const int& adr, const int& occ);
   Eigen::Vector3d closetPointInMap(const Eigen::Vector3d& pt, const Eigen::Vector3d& camera_pt);
   template <typename F_get_val, typename F_set_val>
   void fillESDF(F_get_val f_get_val, F_set_val f_set_val, int start, int end, int dim);
@@ -122,8 +123,7 @@ struct MapData {
   Eigen::Vector3i local_bound_min_, local_bound_max_;
   Eigen::Vector3d update_min_, update_max_;
   bool reset_updated_box_;
-  bool recently_merged_;
-  ros::Time lastMergeTime_;
+
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };

@@ -381,8 +381,8 @@ void SDFMap::OverWriteMap(const pcl::PointCloud<pcl::PointXYZ>& points, const in
     vox_adr = toAddress(idx);
     setCacheOccupancy(vox_adr, tmp_flag);
     for (int k = 0; k < 3; ++k) {
-      update_min[k] = min(update_min[k], pt_w[k]);
-      update_max[k] = max(update_max[k], pt_w[k]);
+      md_->update_min_[k] = 1;
+      md_->update_max_[k] = 9999;
     }
     // Raycasting between camera center and point
     if (md_->flag_rayend_[vox_adr] == md_->raycast_num_)
@@ -402,7 +402,6 @@ void SDFMap::OverWriteMap(const pcl::PointCloud<pcl::PointXYZ>& points, const in
     double log_odds_update =
         md_->count_hit_[adr] >= md_->count_miss_[adr] ? mp_->prob_hit_log_ : mp_->prob_miss_log_;
     md_->count_hit_[adr] = md_->count_miss_[adr] = 0;
-    if (md_->occupancy_buffer_[adr] < mp_->clamp_min_log_ - 1e-3)
       md_->occupancy_buffer_[adr] = mp_->min_occupancy_log_;
 
     md_->occupancy_buffer_[adr] = std::min(
@@ -446,16 +445,16 @@ void SDFMap::clearMap()
 
 
 
-  int buffer_size = mp_->map_voxel_num_(0) * mp_->map_voxel_num_(1) * mp_->map_voxel_num_(2);
-  md_->occupancy_buffer_ = vector<double>(buffer_size, mp_->clamp_min_log_ - mp_->unknown_flag_);
-  md_->occupancy_buffer_inflate_ = vector<char>(buffer_size, 0);
-  md_->distance_buffer_neg_ = vector<double>(buffer_size, mp_->default_dist_);
-  md_->distance_buffer_ = vector<double>(buffer_size, mp_->default_dist_);
-  md_->count_hit_and_miss_ = vector<short>(buffer_size, 0);
-  md_->count_hit_ = vector<short>(buffer_size, 0);
-  md_->count_miss_ = vector<short>(buffer_size, 0);
-  md_->tmp_buffer1_ = vector<double>(buffer_size, 0);
-  md_->tmp_buffer2_ = vector<double>(buffer_size, 0);
+  //int buffer_size = mp_->map_voxel_num_(0) * mp_->map_voxel_num_(1) * mp_->map_voxel_num_(2);
+  //md_->occupancy_buffer_ = vector<double>(buffer_size, mp_->clamp_min_log_ - mp_->unknown_flag_);
+  //md_->occupancy_buffer_inflate_ = vector<char>(buffer_size, 0);
+  //md_->distance_buffer_neg_ = vector<double>(buffer_size, mp_->default_dist_);
+  //md_->distance_buffer_ = vector<double>(buffer_size, mp_->default_dist_);
+  //md_->count_hit_and_miss_ = vector<short>(buffer_size, 0);
+  //md_->count_hit_ = vector<short>(buffer_size, 0);
+  //md_->count_miss_ = vector<short>(buffer_size, 0);
+  //md_->tmp_buffer1_ = vector<double>(buffer_size, 0);
+  //md_->tmp_buffer2_ = vector<double>(buffer_size, 0);
 }
 
 
