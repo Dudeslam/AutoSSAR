@@ -378,20 +378,19 @@ void SDFMap::clearMap()
     if (md_->reset_updated_box_) {
     return;
   }
-  
+
+  std::queue<int> q;
   md_->raycast_num_ = 0;
   md_->reset_updated_box_ = true;
   md_->count_hit_.clear();
   md_->count_miss_.clear();
   md_->occupancy_buffer_.clear();
   md_->flag_rayend_.clear();
-  md_->cache_voxel_.clear();
-  md_->local_bound_min_.clear();
-  md_->local_bound_max_.clear();
-  md_->update_min_.clear();
-  md_->update_max_.clear();
+  //this for clearing
+  std::swap(md_->cache_voxel_, q);
+  resetBuffer();
   md_->local_updated_ = false;
-  md_->reset_updated_box_ = false;
+
 
   int buffer_size = mp_->map_voxel_num_(0) * mp_->map_voxel_num_(1) * mp_->map_voxel_num_(2);
   md_->occupancy_buffer_ = vector<double>(buffer_size, mp_->clamp_min_log_ - mp_->unknown_flag_);
@@ -403,7 +402,7 @@ void SDFMap::clearMap()
   md_->count_miss_ = vector<short>(buffer_size, 0);
   md_->tmp_buffer1_ = vector<double>(buffer_size, 0);
   md_->tmp_buffer2_ = vector<double>(buffer_size, 0);
-  md_->update_min_ = md_->update_max_ = Eigen::Vector3d(0, 0, 0);
+  md_->reset_updated_box_ = false;
 }
 
 
