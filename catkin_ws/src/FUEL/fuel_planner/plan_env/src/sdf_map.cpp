@@ -354,6 +354,8 @@ void SDFMap::OverWriteMap(const pcl::PointCloud<pcl::PointXYZ>& points, const in
   Eigen::Vector3d pt_w, tmp;
   Eigen::Vector3i idx;
 
+  mr_->local_updated_ = true;
+
 }
 
 Eigen::Vector3d
@@ -375,13 +377,13 @@ SDFMap::closetPointInMap(const Eigen::Vector3d& pt, const Eigen::Vector3d& camer
 
 void SDFMap::clearMap()
 {
-    if (md_->reset_updated_box_) {
-    return;
-  }
+  //   if (mr_->reset_updated_box_) {
+  //   return;
+  // }
 
   std::queue<int> q;
   md_->raycast_num_ = 0;
-  md_->reset_updated_box_ = true;
+
   md_->count_hit_.clear();
   md_->count_miss_.clear();
   md_->occupancy_buffer_.clear();
@@ -389,7 +391,7 @@ void SDFMap::clearMap()
   //this for clearing
   std::swap(md_->cache_voxel_, q);
   resetBuffer();
-  md_->local_updated_ = false;
+
 
 
   int buffer_size = mp_->map_voxel_num_(0) * mp_->map_voxel_num_(1) * mp_->map_voxel_num_(2);
@@ -397,9 +399,9 @@ void SDFMap::clearMap()
   md_->occupancy_buffer_inflate_ = vector<char>(buffer_size, 0);
   md_->distance_buffer_neg_ = vector<double>(buffer_size, mp_->default_dist_);
   md_->distance_buffer_ = vector<double>(buffer_size, mp_->default_dist_);
-  md_->count_hit_and_miss_ = vector<short>(buffer_size, 0);
-  md_->count_hit_ = vector<short>(buffer_size, 0);
-  md_->count_miss_ = vector<short>(buffer_size, 0);
+  // md_->count_hit_and_miss_ = vector<short>(buffer_size, 0);
+  // md_->count_hit_ = vector<short>(buffer_size, 0);
+  // md_->count_miss_ = vector<short>(buffer_size, 0);
   md_->tmp_buffer1_ = vector<double>(buffer_size, 0);
   md_->tmp_buffer2_ = vector<double>(buffer_size, 0);
   md_->reset_updated_box_ = false;

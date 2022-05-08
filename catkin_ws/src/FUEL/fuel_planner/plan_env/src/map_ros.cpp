@@ -124,7 +124,7 @@ void MapROS::mergeMapCallback(const sensor_msgs::PointCloud2ConstPtr& cloud) {
   auto t1 = ros::Time::now();
   pcl::PointCloud<pcl::PointXYZ> cloudMap;
   pcl::fromROSMsg(*cloud, cloudMap);
-  map_->clearMap();
+  map_->OverWriteMap();
   map_->inputPointCloud(cloudMap, cloudMap.size(), camera_pos_);
   if(local_updated_){
     map_->clearAndInflateLocalMap();
@@ -142,7 +142,7 @@ void MapROS::mergeMapCallback(const sensor_msgs::PointCloud2ConstPtr& cloud) {
   //publish merged map complete message
   std_msgs::String msg;
   msg.data = "MergeMapComplete";
-  mergeCompl_pub_.publish(msg.data);
+  mergeCompl_pub_.publish(msg);
 }
 
 void MapROS::depthPoseCallback(const sensor_msgs::ImageConstPtr& img,
