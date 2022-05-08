@@ -377,9 +377,9 @@ SDFMap::closetPointInMap(const Eigen::Vector3d& pt, const Eigen::Vector3d& camer
 
 void SDFMap::clearMap()
 {
-  //   if (mr_->reset_updated_box_) {
-  //   return;
-  // }
+    if (md_->recently_merged_) {
+    return;
+  }
 
   std::queue<int> q;
   md_->raycast_num_ = 0;
@@ -404,7 +404,7 @@ void SDFMap::clearMap()
   // md_->count_miss_ = vector<short>(buffer_size, 0);
   md_->tmp_buffer1_ = vector<double>(buffer_size, 0);
   md_->tmp_buffer2_ = vector<double>(buffer_size, 0);
-  md_->reset_updated_box_ = false;
+  md_->recently_merged_ = true;
 }
 
 

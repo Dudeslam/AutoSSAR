@@ -122,6 +122,8 @@ struct MapData {
   Eigen::Vector3i local_bound_min_, local_bound_max_;
   Eigen::Vector3d update_min_, update_max_;
   bool reset_updated_box_;
+  bool recently_merged_;
+  ros::Time lastMergeTime_;
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
