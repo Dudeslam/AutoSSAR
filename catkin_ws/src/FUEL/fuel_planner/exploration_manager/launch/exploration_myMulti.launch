@@ -90,8 +90,8 @@
   </node>
 
 
-  <node pkg="waypoint_generator" name="waypoint_generator" type="waypoint_generator" output="screen" ns="$(arg ns0)">
-  <!-- <node pkg="waypoint_generator" name="waypoint_generator" type="waypoint_generator" ns="$(arg ns0)"> -->
+  <!-- <node pkg="waypoint_generator" name="waypoint_generator" type="waypoint_generator" output="screen" ns="$(arg ns0)"> -->
+  <node pkg="waypoint_generator" name="waypoint_generator" type="waypoint_generator" ns="$(arg ns0)">
     <remap from="~odom" to="/$(arg ns0)/state_ukf/odom"/>        
     <remap from="~goal" to="/move_base_simple/goal"/>
     <remap from="~traj_start_trigger" to="/$(arg ns0)/traj_start_trigger" />
@@ -165,8 +165,8 @@
   </node>
 
 
-  <node pkg="waypoint_generator" name="waypoint_generator" type="waypoint_generator" output="screen" ns="$(arg ns1)">
-  <!-- <node pkg="waypoint_generator" name="waypoint_generator" type="waypoint_generator" ns="$(arg ns1)"> -->
+  <!-- <node pkg="waypoint_generator" name="waypoint_generator" type="waypoint_generator" output="screen" ns="$(arg ns1)"> -->
+  <node pkg="waypoint_generator" name="waypoint_generator" type="waypoint_generator" ns="$(arg ns1)">
     <remap from="~odom" to="/$(arg ns1)/state_ukf/odom"/>        
     <remap from="~goal" to="/move_base_simple/goal"/>
     <remap from="~traj_start_trigger" to="/$(arg ns1)/traj_start_trigger" />
@@ -243,8 +243,8 @@
   </node>
 
 
-  <node pkg="waypoint_generator" name="waypoint_generator" type="waypoint_generator" output="screen" ns="$(arg ns2)">
-  <!-- <node pkg="waypoint_generator" name="waypoint_generator" type="waypoint_generator" ns="$(arg ns2)"> -->
+  <!-- <node pkg="waypoint_generator" name="waypoint_generator" type="waypoint_generator" output="screen" ns="$(arg ns2)"> -->
+  <node pkg="waypoint_generator" name="waypoint_generator" type="waypoint_generator" ns="$(arg ns2)">
     <remap from="~odom" to="/$(arg ns2)/state_ukf/odom"/>        
     <remap from="~goal" to="/move_base_simple/goal"/>
     <remap from="~traj_start_trigger" to="/$(arg ns2)/traj_start_trigger" />

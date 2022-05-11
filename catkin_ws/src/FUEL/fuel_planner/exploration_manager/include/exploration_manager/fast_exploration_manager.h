@@ -5,12 +5,8 @@
 #include <Eigen/Eigen>
 #include <memory>
 #include <vector>
+#include <nav_msgs/Odometry.h>
 
-// EDIT*************************************
-#include "std_msgs/MultiArrayLayout.h"
-#include "std_msgs/MultiArrayDimension.h"
-#include "std_msgs/Float32MultiArray.h"
-// EDIT end*********************************
 
 using Eigen::Vector3d;
 using std::shared_ptr;
@@ -50,8 +46,10 @@ public:
 
 private:
   // EDIT*************************************
-  // ros::Subscriber TRUNCATE_sub_;
-  // void truncateCallback(const std_msgs::Float32MultiArray::ConstPtr& array);
+  ros::Subscriber TRUNCATE_sub_;
+  void truncateCallback(const nav_msgs::Odometry::ConstPtr& msg);
+  bool TRUNCATE_flag;
+  nav_msgs::Odometry TRUNCATE_msg;
   // EDIT end*********************************
 
   shared_ptr<EDTEnvironment> edt_environment_;

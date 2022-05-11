@@ -27,20 +27,22 @@
 #include <visualization_msgs/Marker.h>
 
 
-pcl::PointCloud<pcl::PointXYZ> ownGlobalMap_;
-pcl::PointCloud<pcl::PointXYZ> otherGlobalMap_;
-
-pcl::PointCloud<pcl::PointXYZ> other0GlobalMap_;
-pcl::PointCloud<pcl::PointXYZ> other1GlobalMap_;
+pcl::PointCloud<pcl::PointXYZ> own_globalMap_pcd;
+pcl::PointCloud<pcl::PointXYZ> received_map_;
+size_t last_point_cloud_size_ = 0;
 sensor_msgs::PointCloud2 Global_Publish;
+geometry_msgs::PoseStamped UAV_pose;
+geometry_msgs::PoseStamped Global_Pose;
+
+//placeholder for inRange flag, to be set
+bool otherUAV0InRange_  = false;
+bool otherUAV1InRange_  = false;
+bool finishState = false;
+
 
 std::string selfUAV;
 std::string otherUAV0 = "nan";
 std::string otherUAV1 = "nan";
-
-//placeholder for inRange flag, to be set
-bool otherUAV0InRange_ = false;
-bool otherUAV1InRange_ = false;
 
 //functions here
 bool concatePCL(pcl::PointCloud<pcl::PointXYZ> cloud1, pcl::PointCloud<pcl::PointXYZ> cloud2, pcl::PointCloud<pcl::PointXYZ>& cloud_out)
@@ -90,51 +92,54 @@ void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, pcl::PointCloud<pcl::Poin
 
 void downsample(pcl::PointCloud<pcl::PointXYZ>& cloud_in, pcl::PointCloud<pcl::PointXYZ>& cloud_out)
 {
-    //std::cout << "Cloud in before downsample: " << cloud_in.size() << std::endl;
+    // std::cout << "Cloud in before downsample: " << cloud_in.size() << std::endl;
     pcl::VoxelGrid<pcl::PointXYZ> sor;
     sor.setInputCloud (cloud_in.makeShared());
     sor.setLeafSize (0.1, 0.1, 0.1);
     sor.filter (cloud_out);
-    //std::cout << "Cloud in after downsample: " << cloud_out.size() << std::endl;
+    // std::cout << "Cloud in after downsample: " << cloud_out.size() << std::endl;
 }
-
 
 //Callbacks
-void getOtherGlobalCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
-    pcl::PointCloud<pcl::PointXYZ> cloudMap;
-    pcl::fromROSMsg(*msg, cloudMap);
-    std::vector<int> indices;
-    pcl::removeNaNFromPointCloud(cloudMap, cloudMap, indices);
-    otherGlobalMap_ = cloudMap;
-    downsample(otherGlobalMap_, otherGlobalMap_);
-}
 
-void getOtherUAV0GlobalCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
-    pcl::PointCloud<pcl::PointXYZ> cloudMap;
-    pcl::fromROSMsg(*msg, cloudMap);
-    std::vector<int> indices;
-    pcl::removeNaNFromPointCloud(cloudMap, cloudMap, indices);
-    other0GlobalMap_ = cloudMap;
-    downsample(other0GlobalMap_, other0GlobalMap_);
-}
-
-void getOtherUAV1GlobalCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
-    pcl::PointCloud<pcl::PointXYZ> cloudMap;
-    pcl::fromROSMsg(*msg, cloudMap);
-    std::vector<int> indices;
-    pcl::removeNaNFromPointCloud(cloudMap, cloudMap, indices);
-    other1GlobalMap_ = cloudMap;
-    downsample(other1GlobalMap_, other1GlobalMap_);
-}
-
-void getOwnGlobalCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
+void getGlobalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
 {
-    pcl::PointCloud<pcl::PointXYZ> cloudMap;
-    pcl::fromROSMsg(*msg, cloudMap);
-    std::vector<int> indices;
-    pcl::removeNaNFromPointCloud(cloudMap, cloudMap, indices);
-    ownGlobalMap_ = cloudMap;
-    downsample(ownGlobalMap_, ownGlobalMap_);
+    if(!finishState){
+        // ROS_WARN("Received local map");
+        pcl::PointCloud<pcl::PointXYZ> cloudMap;
+        pcl::fromROSMsg(*msg, cloudMap);
+        std::vector<int> indices;
+        pcl::removeNaNFromPointCloud(cloudMap, cloudMap, indices);
+        if(cloudMap.size() != last_point_cloud_size_){
+            received_map_ = cloudMap;
+            last_point_cloud_size_ = cloudMap.size();
+        }
+    }
+}
+
+
+
+void getLocalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
+{
+        if(!finishState){
+        // ROS_WARN("Received local map");
+        pcl::PointCloud<pcl::PointXYZ> cloudMap;
+        pcl::fromROSMsg(*msg, cloudMap);
+        std::vector<int> indices;
+        pcl::removeNaNFromPointCloud(cloudMap, cloudMap, indices);
+        if(cloudMap.size() > 0 && own_globalMap_pcd.size() > 0)
+        {
+            // ROS_WARN("Local map is not empty");
+            own_globalMap_pcd += cloudMap;
+            downsample(own_globalMap_pcd, own_globalMap_pcd);
+        }   
+        else
+        {
+            // ROS_WARN("Local map is empty");
+            own_globalMap_pcd = cloudMap;
+            downsample(own_globalMap_pcd, own_globalMap_pcd);
+        }
+    }
 }
 
 void getWithinRangeCallback(const std_msgs::String& msg){
@@ -158,7 +163,17 @@ void getWithinRangeCallback(const std_msgs::String& msg){
 
 }
 
+void getFinishCallback(const std_msgs::String& msg){
+    std::string str = msg.data;
+    if(str == "finish"){
+        finishState = true;
+    }
+}
 
+void getErrorCallback(const std_msgs::String& msg){
+    std::string str = msg.data;
+    std::cout << "Error: " << str << std::endl;
+}
 
 
 int main (int argc, char* argv[]){
@@ -166,75 +181,69 @@ int main (int argc, char* argv[]){
     ros::NodeHandle nh;
 
 
+
     selfUAV = nh.getNamespace().c_str();
     nh.getParam(selfUAV+"/mapmerge/otherUAV0", otherUAV0);
     nh.getParam(selfUAV+"/mapmerge/otherUAV1", otherUAV1);
-  
-    std::cout << "*************************************************************" << std::endl;
-    std::cout << "MapMerge Node" << std::endl;
-    std::cout << selfUAV << std::endl;
-    std::cout << otherUAV0 << std::endl;
-    std::cout << otherUAV1 << std::endl;
-    std::cout << "*************************************************************" << std::endl;
 
 	ROS_WARN("Trying to subscribe");
-    ros::Subscriber map_global_own = nh.subscribe(selfUAV+"/sdf_map/occupancy_all", 10, getOwnGlobalCallback);
-    ros::Subscriber map_global_uav1 = nh.subscribe(otherUAV0+"/map_Global", 10, getOtherUAV0GlobalCallback);
-    ros::Subscriber map_global_uav2 = nh.subscribe(otherUAV1+"/map_Global", 10, getOtherUAV1GlobalCallback);
-
+    ros::Subscriber map_global_own = nh.subscribe(selfUAV+"/sdf_map/occupancy_all", 10, getLocalMapCallback);
+    ros::Subscriber map_global_uav1 = nh.subscribe(otherUAV0+"/MergedMap", 10, getGlobalMapCallback);
+    ros::Subscriber map_global_uav2 = nh.subscribe(otherUAV1+"/MergedMap", 10, getGlobalMapCallback); 
     ros::Subscriber within_range = nh.subscribe(selfUAV+"/within_range", 10, getWithinRangeCallback);
+    ros::Subscriber finish = nh.subscribe(selfUAV+"/planning/state", 10, getFinishCallback);
+    ros::Subscriber errorMSG = nh.subscribe("exploration_node/ErrorMSG", 10, getErrorCallback);
+    ROS_WARN("Have subscribed");
 
-    ros::Publisher map_pub = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/map_Global", 10);
-    ros::Publisher map_pub2 = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/debugOther0Map", 10);
-    ros::Publisher map_pub3 = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/debugOther1Map", 10);
+    ros::Publisher other_pub = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/MergedMap", 1000);
 
+    ros::Publisher own_publish = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/pcl_render_node/cloud", 1000);
+
+    // ros::Publisher debugger_own = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/debugger/cloud", 1000);
     ros::Rate loop_rate(20);
-    //merge local received map with own global map
-	ROS_WARN("Have subscribed");
+    Global_Publish.header.frame_id = "/map";
+    
+    while(ros::ok())
+    {
+        if(own_globalMap_pcd.size() > 0)
+        {
+            if(!finishState){
+                // Always publish own global map if it is not empty
 
+                pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
+                own_publish.publish(Global_Publish);
+                // debugger_own.publish(Global_Publish);
+                // ROS_WARN("Publish own global map");
+            }
+            
+            if(otherUAV0InRange_)
+            {
+                // ROS_WARN("Other UAV0 is in range");
+                mergeMaps(received_map_, own_globalMap_pcd);
+                downsample(own_globalMap_pcd, own_globalMap_pcd);
+                pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
+                other_pub.publish(Global_Publish);
+                otherUAV0InRange_ = false;
+            }
 
-    while(ros::ok()) {
-        if(otherUAV0InRange_){
-            // Publish own
-            Global_Publish.header.frame_id = "/map";
-            pcl::toROSMsg(ownGlobalMap_, Global_Publish);
-            map_pub.publish(Global_Publish);
-            // Merge
-            //mergeMaps(ownGlobalMap_, other0GlobalMap_);
-            // Reset flag
-            otherUAV0InRange_ = false;
-
-
-            // Publish debug
-            pcl::toROSMsg(other0GlobalMap_, Global_Publish);
-            map_pub2.publish(Global_Publish);
+            if(otherUAV1InRange_)
+            {
+                // ROS_WARN("Other UAV1 is in range");
+                mergeMaps(received_map_, own_globalMap_pcd);
+                downsample(own_globalMap_pcd, own_globalMap_pcd);
+                pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
+                pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
+                other_pub.publish(Global_Publish);
+                otherUAV1InRange_ = false;
+            }
         }
-
-
-
-        if(otherUAV1InRange_){
-            // Publish own
-            Global_Publish.header.frame_id = "/map";
-            pcl::toROSMsg(ownGlobalMap_, Global_Publish);
-            map_pub.publish(Global_Publish);
-            // Merge
-            //mergeMaps(ownGlobalMap_, other1GlobalMap_);
-            // Reset flag
-            otherUAV1InRange_ = false;
-
-            // Publish debug
-            pcl::toROSMsg(other1GlobalMap_, Global_Publish);
-            map_pub3.publish(Global_Publish);
-        }
-
-
-
         ros::spinOnce();
         loop_rate.sleep();
+        
     }
     
-
-
     ros::spin();
+
+
     return 0;
 }

@@ -63,12 +63,12 @@
         <param name="maxBattery" value="60"/>
     </node>
 
-    <!-- <node pkg="coordination" name="coordination" type="coordination" ns="$(arg ns1)">
+    <!-- <node pkg="coordination" name="coordination" type="coordination" output="screen" ns="$(arg ns1)">
         <param name="maxBattery" value="60"/>
     </node>
 
-    <node pkg="coordination" name="coordination" type="coordination" ns="$(arg ns2)">
-        <param name="maxBattery" value="60"/>
+    <node pkg="coordination" name="coordination" type="coordination" output="screen" ns="$(arg ns2)">
+        <param name="maxBattery" value="60"/> 
     </node> -->
 
 

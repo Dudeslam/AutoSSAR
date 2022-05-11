@@ -78,7 +78,7 @@ private:
     nav_msgs::Odometry baseStationOdom_;
     nav_msgs::Odometry currentOdom_;
 
-    ros::Timer run_timer_, timeoutTimer_;                         // Timer for triggering
+    ros::Timer run_timer_, timeoutTimer_; // Timer for triggering
     std::vector<std::string> coord_state_str_ = { "EXPLORE", "MEET", "SACRIFICE", "RELAY", "FINISH", "DEAD", "DONE" };
 
     // Util callbacks

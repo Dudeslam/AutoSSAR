@@ -40,7 +40,7 @@ void coordinationAlgorithm::init(ros::NodeHandle& nh) {
     within_range_sub_ = nh.subscribe(selfUAV_.name+"/within_range", 1, &coordinationAlgorithm::withinRangeCallback, this);
     battery_sub_      = nh.subscribe(selfUAV_.name+"/dist_traversed", 1, &coordinationAlgorithm::batteryCallback, this);
     odom_sub_         = nh.subscribe(selfUAV_.name+"/state_ukf/odom", 1, &coordinationAlgorithm::odometryCallback, this);
-    cmd_pub_          = nh.advertise<nav_msgs::Odometry>(selfUAV_.name+"/commandTheShits", 10);
+    cmd_pub_          = nh.advertise<nav_msgs::Odometry>(selfUAV_.name+"/exploration_node/pub_manual_pos", 10);
     
     // Init main callback/loop
     run_timer_ = nh.createTimer(ros::Duration(0.01), &coordinationAlgorithm::runCoordinationAlgorithm, this);

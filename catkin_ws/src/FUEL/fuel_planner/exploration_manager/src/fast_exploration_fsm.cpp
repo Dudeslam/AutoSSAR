@@ -29,7 +29,7 @@ void FastExplorationFSM::init(ros::NodeHandle& nh) {
   planner_manager_ = expl_manager_->planner_manager_;
   state_ = EXPL_STATE::INIT;
   fd_->have_odom_ = false;
-  fd_->state_str_ = { "INIT", "WAIT_TRIGGER", "PLAN_TRAJ", "PUB_TRAJ", "EXEC_TRAJ", "FINISH" };
+  fd_->state_str_ = { "INIT", "WAIT_TRIGGER", "PLAN_TRAJ", "PUB_TRAJ", "EXEC_TRAJ", "FINISH", "MANUAL" };
   fd_->static_state_ = true;
   fd_->trigger_ = false;
 
@@ -48,65 +48,20 @@ void FastExplorationFSM::init(ros::NodeHandle& nh) {
 
   // EDIT*******************************************************
   std::string selfUAV = nh.getNamespace().c_str();
-  TRUNCATE_sub_ = nh.subscribe(selfUAV+"/pub_man_pos", 1, &FastExplorationFSM::truncateCallback, this);
-  ROS_WARN_STREAM("\n"+selfUAV+"/pub_man_pos ************ FastExplorationFSM **************");
+  ROS_WARN_STREAM(""+selfUAV+"/pub_manual_pos *** FastExplorationFSM");
+  TRUNCATE_sub_ = nh.subscribe(selfUAV+"/pub_manual_pos", 1, &FastExplorationFSM::truncateCallback, this);
+  TRUNCATE_flag = false;
   // EDIT end***************************************
-
 }
 
 // EDIT*******************************************
-bool TRUNCATE_flag = false;
 void FastExplorationFSM::truncateCallback(const nav_msgs::Odometry::ConstPtr& msg) {
-  TRUNCATE_flag = true;
-  
-  
+  //TRUNCATE_flag = true;
   //std::cout << "Position-> \tx: [" <<(*msg).pose.pose.position.x<<"], \ty: ["<<(*msg).pose.pose.position.y<<"], \tz: ["<<(*msg).pose.pose.position.z<<"]" << std::endl;
-  ROS_WARN_STREAM("truncateCallback: \tx: [" <<(*msg).pose.pose.position.x<<"], \ty: ["<<(*msg).pose.pose.position.y<<"], \tz: ["<<(*msg).pose.pose.position.z<<"] Flag: " << TRUNCATE_flag );
-
-
-
-  // Set stuff 3)
-  //expl_manager_->planner_manager_->local_data_.
-
-
-
-  /*
-  // Set stuff 2)
-  if ((*msg).pose.pose.position.z < -0.1) return;
-  if (state_ != WAIT_TRIGGER) return;
-  cout << "TESTING MANUAL COMMAND!" << endl;
-
-  Vector3d myGoal((*msg).pose.pose.position.x, (*msg).pose.pose.position.y, (*msg).pose.pose.position.z);
-  expl_manager_->ed_->next_goal_ = myGoal;
-  //*/
-
-
-
-  /*
-  // Set stuff 1)
-  if ((*msg).pose.pose.position.z < -0.1) return;
-  if (state_ != WAIT_TRIGGER) return;
-  cout << "TESTING MANUAL COMMAND!" << endl;
-
-
-  Eigen::Vector3d target_point_;
-  vector<Eigen::Vector3d> global_wp;
-  target_point_(0) = (*msg).pose.pose.position.x;
-  target_point_(1) = (*msg).pose.pose.position.y;
-  target_point_(2) = 1.0;
-  std::cout << "manual: " << target_point_.transpose() << std::endl;
-
-  global_wp.push_back(target_point_);
-  //visualization_->drawGoal(target_point_, 0.3, Eigen::Vector4d(1, 0, 0, 1.0));
-  
-  planner_manager_->setGlobalWaypoints(global_wp);
-
-  // Start calculation
-  fd_->trigger_ = true;
-  transitState(PLAN_TRAJ, "truncateCallback");
-  //*/
+  ROS_WARN_STREAM("\n FastExplorationFSM truncateCallback: \t\tx: [" <<(*msg).pose.pose.position.x<<"], \ty: ["<<(*msg).pose.pose.position.y<<"], \tz: ["<<(*msg).pose.pose.position.z<<"] Flag: " << TRUNCATE_flag );
+  //transitState(MANUAL, "truncateCallback");
 }
-// EDIT end***************************************
+// EDIT end***************************************/
 
 
 
@@ -133,6 +88,11 @@ void FastExplorationFSM::FSMCallback(const ros::TimerEvent& e) {
 
     case FINISH: {
       ROS_INFO_THROTTLE(1.0, "finish exploration.");
+      break;
+    }
+
+    case MANUAL: {
+      ROS_INFO_THROTTLE(1.0, "manual trajectory.");
       break;
     }
 
@@ -196,19 +156,19 @@ void FastExplorationFSM::FSMCallback(const ros::TimerEvent& e) {
       double time_to_end = info->duration_ - t_cur;
       if (time_to_end < fp_->replan_thresh1_) {
         transitState(PLAN_TRAJ, "FSM");
-        ROS_WARN("Replan: traj fully executed=================================");
+        //ROS_WARN("Replan: traj fully executed=================================");
         return;
       }
       // Replan if next frontier to be visited is covered
       if (t_cur > fp_->replan_thresh2_ && expl_manager_->frontier_finder_->isFrontierCovered()) {
         transitState(PLAN_TRAJ, "FSM");
-        ROS_WARN("Replan: cluster covered=====================================");
+        //ROS_WARN("Replan: cluster covered=====================================");
         return;
       }
       // Replan after some time
       if (t_cur > fp_->replan_thresh3_ && !classic_) {
         transitState(PLAN_TRAJ, "FSM");
-        ROS_WARN("Replan: periodic call=======================================");
+        //ROS_WARN("Replan: periodic call=======================================");
       }
       break;
     }
@@ -237,6 +197,7 @@ int FastExplorationFSM::callExplorationPlanner() {
     bspline.start_time = info->start_time_;
     bspline.traj_id = info->traj_id_;
     Eigen::MatrixXd pos_pts = info->position_traj_.getControlPoint();
+
     for (int i = 0; i < pos_pts.rows(); ++i) {
       geometry_msgs::Point pt;
       pt.x = pos_pts(i, 0);
@@ -244,17 +205,6 @@ int FastExplorationFSM::callExplorationPlanner() {
       pt.z = pos_pts(i, 2);
       bspline.pos_pts.push_back(pt);
     }
-    // EDIT **********************************
-    if(TRUNCATE_flag){
-      geometry_msgs::Point p;
-      p.x=0;
-      p.y=0;
-      p.z=0;
-      bspline.pos_pts.back().x=0;
-      bspline.pos_pts.back().y=0;
-      bspline.pos_pts.back().z=1;
-    }
-    // EDIT end***********************************
 
     Eigen::VectorXd knots = info->position_traj_.getKnot();
     for (int i = 0; i < knots.rows(); ++i) {
@@ -377,7 +327,7 @@ void FastExplorationFSM::frontierCallback(const ros::TimerEvent& e) {
       // "frontier_boxes", i, 4);
     }
   }
-
+  
   // if (!fd_->static_state_)
   // {
   //   static double astar_time = 0.0;

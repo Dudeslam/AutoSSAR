@@ -108,6 +108,7 @@ bool FastPlannerManager::checkTrajCollision(double& distance) {
       distance = radius;
       // std::cout << "collision at: " << fut_pt.transpose() << ", dist: " << dist << std::endl;
       std::cout << "collision at: " << fut_pt.transpose() << std::endl;
+      ROS_WARN("COLLISION DETECTED");
       return false;
     }
     radius = (fut_pt - cur_pt).norm();
@@ -191,7 +192,7 @@ bool FastPlannerManager::kinodynamicReplan(const Eigen::Vector3d& start_pt,
             << std::endl;
 
   double t_opt = (ros::Time::now() - t1).toSec();
-  ROS_WARN("Kino t: %lf, opt: %lf", t_search, t_opt);
+  // EDIT ROS_WARN("Kino t: %lf, opt: %lf", t_search, t_opt);
 
   // t1 = ros::Time::now();
 
