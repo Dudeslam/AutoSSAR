@@ -38,6 +38,103 @@
 
 
 
+#include <ros/ros.h>
+#include <tf/transform_broadcaster.h>
+#include "nav_msgs/Odometry.h"
+
+
+
+int main(int argc, char **argv){
+  ROS_INFO("\n test started started");
+  ros::init(argc, argv, "coordination");
+  ros::NodeHandle nh;
+  std::string selfUAV = nh.getNamespace().c_str();
+
+  
+  
+  ros::Publisher point_pub = nh.advertise<const nav_msgs::Odometry>("exploration_node/pub_manual_pos", 50);
+  
+  nav_msgs::Odometry odom_;
+  odom_.pose.pose.position.x = 4.0;
+  odom_.pose.pose.position.y = 1.6;
+
+  // Sleep before first run
+  ros::Duration(2).sleep();
+
+
+  while ( !ros::ok() ){}; // Wait til OK
+
+
+
+
+
+  ros::Time startTime = ros::Time::now();
+  ros::Duration loopDuration(1); // X seconds
+
+
+  std::cout << "Run GOTO: " << std::endl;
+  odom_.child_frame_id = "GOTO";
+
+  while ( ros::Time::now() < startTime+loopDuration ){
+    //std::cout << "Pub GOTO: " << std::endl;
+    point_pub.publish(odom_);
+  }
+  std::cout << "GOTO DONE: " << std::endl;
+
+
+
+
+
+  std::cout << "Wait: " << std::endl;
+  ros::Duration(10).sleep();
+
+
+
+
+
+
+  std::cout << "Run HALT: " << std::endl;
+  odom_.child_frame_id = "HALT";
+  // reset start
+  startTime = ros::Time::now();
+  while ( ros::Time::now() < startTime+loopDuration ){
+    //std::cout << "Pub HALT: " << std::endl;
+    point_pub.publish(odom_);
+  }
+  std::cout << "HALT DONE: " << std::endl;
+
+
+
+
+
+
+  std::cout << "Wait: " << std::endl;
+  ros::Duration(10).sleep();
+
+
+
+
+
+
+  std::cout << "Run RAND: " << std::endl;
+  odom_.child_frame_id = "RAND";
+  // reset start
+  startTime = ros::Time::now();
+  while ( ros::Time::now() < startTime+loopDuration ){
+    //std::cout << "Pub RAND: " << std::endl;
+    point_pub.publish(odom_);
+  }
+  std::cout << "RAND DONE: " << std::endl;
+
+
+
+
+
+  ros::spin();
+  std::cout << "Closing test" << std::endl;  
+  return 0;
+}
+//*/
 
 
 
@@ -47,7 +144,8 @@
 
 
 
-
+// Continous calls
+/*
 #include <ros/ros.h>
 #include <tf/transform_broadcaster.h>
 #include "nav_msgs/Odometry.h"
@@ -189,24 +287,29 @@ int main(int argc, char **argv){
   ros::Publisher point_pub = nh.advertise<const nav_msgs::Odometry>("exploration_node/pub_manual_pos", 50);
   
   //setupGoal();
-  setupOdom(4.0, 1.6);      // Set x,y
-
+  //setupOdom(4.0, 1.6);      // Set x,y
+  odom_.pose.pose.position.x = 4.0;
+  odom_.pose.pose.position.y = 1.6;
+  odom_.child_frame_id = "HALT";
 
   // Set rate Hz
-  ros::Rate r(0.2);
+  ros::Rate r(0.1);
   int i = 0;
 
+  // Sleep before first run
+  ros::Duration(2).sleep();
+  ros::Duration loopDuration(1); // X seconds
+
   while ( ros::ok() ) {
+    ros::Time startTime = ros::Time::now();
     
     std::cout << "Run: " << i << std::endl;
-    for(int j=0; j<10; j++){
-      std::cout << "publish: " << j+(i*10) << std::endl;
-      //way_pub.publish(goal_);
+    while ( ros::Time::now() < startTime+loopDuration ){
+      //std::cout << "Pub: " << i << std::endl;
       point_pub.publish(odom_);
     }
-    std::cout << "\n" << std::endl;
+    std::cout << "Run done\n" << std::endl;
     i++;
-
     ros::spinOnce();
     r.sleep();
   }
@@ -219,35 +322,3 @@ int main(int argc, char **argv){
 
 
 
-
-
-
-
-
-
-
-
-// #include <ros/ros.h>
-// #include "coordination/coordination_algorithm.h"
-// #include <plan_manage/topo_replan_fsm.h>
-
-
-// int main(int argc, char **argv)
-// {
-//   ROS_INFO("coordination_node started");
-//   ros::init(argc, argv, "coordination_node");
-//   ros::NodeHandle nh;
-
-
-//   TopoReplanFSM topoFSM_;
-//   topoFSM_.init(nh);
-
-//   ros::Duration(1.0).sleep();
-
-//   while ( ros::ok() ) {
-//     ros::spin();
-//   }
-
-
-//   return 0;
-// }

@@ -30,7 +30,7 @@ class LocalExploreFSM;
 struct FSMParam;
 struct FSMData;
 
-enum EXPL_STATE { INIT, WAIT_TRIGGER, PLAN_TRAJ, PUB_TRAJ, EXEC_TRAJ, FINISH, MANUAL};
+enum EXPL_STATE { INIT, WAIT_TRIGGER, PLAN_TRAJ, PUB_TRAJ, EXEC_TRAJ, FINISH, WAIT_PARTNER}; // EDIT added state
 
 class FastExplorationFSM {
 private:
@@ -67,7 +67,9 @@ private:
   // EDIT*************************************
   ros::Subscriber TRUNCATE_sub_;
   void truncateCallback(const nav_msgs::Odometry::ConstPtr& msg);
-  bool TRUNCATE_flag; 
+  bool TRUNCATE_flag;
+  //nav_msgs::Odometry TRUNCATE_msg;
+  Eigen::Vector3d TRUNCATE_pos;
   // EDIT end*********************************
 public:
   FastExplorationFSM(/* args */) {

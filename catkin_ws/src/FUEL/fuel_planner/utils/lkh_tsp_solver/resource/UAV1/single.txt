@@ -1,11 +1,20 @@
-NAME : single.50320.tour
-COMMENT : Length = 50320
-COMMENT : Found by LKH [Keld Helsgaun] Wed May 11 18:10:04 2022
+NAME : single.2425.tour
+COMMENT : Length = 2425
+COMMENT : Found by LKH [Keld Helsgaun] Fri May 13 16:32:22 2022
 TYPE : TOUR
-DIMENSION : 3
+DIMENSION : 12
 TOUR_SECTION
 1
+12
+9
+8
+7
+5
+6
 3
+10
+11
+4
 2
 -1
 EOF

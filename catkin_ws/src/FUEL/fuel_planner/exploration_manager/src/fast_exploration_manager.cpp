@@ -92,15 +92,33 @@ void FastExplorationManager::initialize(ros::NodeHandle& nh) {
   ROS_WARN_STREAM(""+selfUAV+"/pub_manual_pos *** FastExplorationManager");
   TRUNCATE_sub_ = nh.subscribe(selfUAV+"/pub_manual_pos", 1, &FastExplorationManager::truncateCallback, this);
   TRUNCATE_flag = false;
+  TRUNCATE_pos.setZero();
   // EDIT end***************************************
 }
 
 // EDIT*******************************************
 void FastExplorationManager::truncateCallback(const nav_msgs::Odometry::ConstPtr& msg) {
+  ROS_WARN_STREAM_THROTTLE(1.0, "\n FastExplorationManager truncateCallback: \tx: [" <<(*msg).pose.pose.position.x<<"], \ty: ["<<(*msg).pose.pose.position.y<<"], \tz: ["<<(*msg).pose.pose.position.z<<"] CMD: " << (*msg).child_frame_id );
+
+  if((*msg).child_frame_id == "GOTO"){
+    TRUNCATE_flag = true;
+    TRUNCATE_pos(0) = (*msg).pose.pose.position.x;
+    TRUNCATE_pos(1) = (*msg).pose.pose.position.y;
+    TRUNCATE_pos(2) = (*msg).pose.pose.position.z;
+  } else {
+    TRUNCATE_flag = false;
+  }
+  
+  
+  
   //TRUNCATE_flag = true;
-  TRUNCATE_msg = *(msg);
+  //TRUNCATE_msg = *(msg);
   //std::cout << "Position-> \tx: [" <<(*msg).pose.pose.position.x<<"], \ty: ["<<(*msg).pose.pose.position.y<<"], \tz: ["<<(*msg).pose.pose.position.z<<"]" << std::endl;
-  ROS_WARN_STREAM("\n FastExplorationManager truncateCallback: \tx: [" <<(*msg).pose.pose.position.x<<"], \ty: ["<<(*msg).pose.pose.position.y<<"], \tz: ["<<(*msg).pose.pose.position.z<<"] Flag: " << TRUNCATE_flag );
+  //ROS_WARN_STREAM("\n FastExplorationManager truncateCallback: \tx: [" <<(*msg).pose.pose.position.x<<"], \ty: ["<<(*msg).pose.pose.position.y<<"], \tz: ["<<(*msg).pose.pose.position.z<<"] Flag: " << TRUNCATE_flag );
+  // TRUNCATE_pos(0) = (*msg).pose.pose.position.x;
+  // TRUNCATE_pos(1) = (*msg).pose.pose.position.y;
+  // TRUNCATE_pos(2) = (*msg).pose.pose.position.z;
+  // ROS_WARN_STREAM_THROTTLE(1.0, "\n FastExplorationManager truncateCallback: \tx: [" <<TRUNCATE_pos(0)<<"], \ty: ["<<TRUNCATE_pos(1)<<"], \tz: ["<<TRUNCATE_pos(2)<<"] Flag: " << TRUNCATE_flag );
 }
 // EDIT end*******************************************************
 
@@ -152,10 +170,10 @@ int FastExplorationManager::planExploreMotion(
   if(TRUNCATE_flag){
     TRUNCATE_flag = false;
     auto tmp = ed_->points_.back();
+    tmp(0) = TRUNCATE_pos(0);
+    tmp(1) = TRUNCATE_pos(1);
+    tmp(2) = TRUNCATE_pos(2);
     ed_->points_.clear();
-    tmp(0) = 0;//TRUNCATE_msg.pose.pose.position.x;
-    tmp(1) = 0;//TRUNCATE_msg.pose.pose.position.y;
-    tmp(2) = 1;
     ed_->points_.push_back(tmp);
   }
   // EDIT end**********************
