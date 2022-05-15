@@ -21,8 +21,9 @@ int getUavNr(std::string uavName){
   return num[0];
 }
 
-
-
+float roundf1(double original){
+  return truncf(original * 10) / 10;
+}
 
 
 void coordinationAlgorithm::init(ros::NodeHandle& nh) {
@@ -33,6 +34,7 @@ void coordinationAlgorithm::init(ros::NodeHandle& nh) {
     selfUAV_.role = coord_state_str_[EXPLORE];
     // Odometry is set in callback
     selfUAV_.id = getUavNr(selfUAV_.name);
+    selfUAV_.relayPoint.setZero();
     state_ = COORD_STATE::EXPLORE;
 
     
@@ -61,6 +63,8 @@ void coordinationAlgorithm::init(ros::NodeHandle& nh) {
     atRelayPointFlag_ = false;
     timerExpiredFlag_ = false;
     timerRunningFlag_ = false;
+    pairedUAV_.name.clear();
+    nearUAV_.name.clear();
     
     std::cout << "coordinationAlgorithm::init" << std::endl;
     std::cout << "selfUAV_.name: " << selfUAV_.name << std::endl;
@@ -73,15 +77,31 @@ void coordinationAlgorithm::init(ros::NodeHandle& nh) {
 
 
 
-void coordinationAlgorithm::batteryCallback(const std_msgs::String& msg){
-  distTraversed_ = std::stod(msg.data);
+//void coordinationAlgorithm::batteryCallback(const std_msgs::String& msg){
+void coordinationAlgorithm::batteryCallback(const std_msgs::Float64& msg){
+  //distTraversed_ = std::stod(msg.data);
+  distTraversed_ = msg.data;
   rangeLeft_ = batteryCapasity_ - distTraversed_;
 
-  // Raise batteryHalfFlag_ if 50% distance left
-  if(rangeLeft_ < (batteryCapasity_/2) ){
+
+  // Raise batteryHalfFlag_ if 50% distance left and NOT a sacrifice
+  if( (rangeLeft_ < (batteryCapasity_/2)) ){
     batteryHalfFlag_ = true;
     //std::cout << "batteryCallback batteryHalfFlag_: " << batteryHalfFlag_ << std::endl;
   }
+
+
+  /*/ Raise batteryHalfFlag_ if 50% distance left and NOT a sacrifice
+  if( (rangeLeft_ < (batteryCapasity_/2)) && state_!= SACRIFICE ){
+    batteryHalfFlag_ = true;
+    //std::cout << "batteryCallback batteryHalfFlag_: " << batteryHalfFlag_ << std::endl;
+  }
+
+  if( (rangeLeft_ < (batteryCapasity_*2/3)) && state_== SACRIFICE ){
+    batteryHalfFlag_ = true;
+    //std::cout << "batteryCallback batteryHalfFlag_: " << batteryHalfFlag_ << std::endl;
+  }//*/
+
 
   if(rangeLeft_ <= 0){
     batteryEmptyFlag_ = true;
@@ -93,15 +113,17 @@ void coordinationAlgorithm::batteryCallback(const std_msgs::String& msg){
   // std::cout << "rangeLeft_: " << rangeLeft_ << std::endl;
 }
 
-void coordinationAlgorithm::withinRangeCallback(const std_msgs::String& msg){
+void coordinationAlgorithm::withinRangeCallback(const nav_msgs::Odometry::ConstPtr& msg){
 
   // Get info of who is near
-  nearUAV_.name = msg.data;
-  nearUAV_.id = getUavNr(msg.data);
+  nearUAV_.name = (*msg).child_frame_id;
+  nearUAV_.id = getUavNr((*msg).child_frame_id);
   nearUAV_.relayPoint = currentOdom_;
 
+
+
+
   nearUAVFlag_ = true;
-  
   // std::cout << selfUAV_.name << std::endl;
   // std::cout << "nearUAV_ name: " << nearUAV_.name << std::endl;
   // std::cout << "nearUAVFlag_: " << nearUAVFlag_ << std::endl;
@@ -149,7 +171,11 @@ void coordinationAlgorithm::evaluateRoles(void){
   if ( pairedUAV_.name.empty() || pairedUAV_ == nearUAV_ ){
     // Set pairedUAV_
     pairedUAV_ = nearUAV_;         // Note: relayPoint is updated from nearUAV_ set in withinRange
-    std::cout << "evaluateRoles pairedUAV_.name: " <<  pairedUAV_.name << std::endl;
+    // Update internal relay-point
+    selfUAV_.relayPoint = pairedUAV_.relayPoint;
+
+
+    std::cout << selfUAV_.name << " EvaluateRoles() paired with: " << pairedUAV_.name << std::endl;
 
     // Set roles = low id is RELAY
     if(pairedUAV_.id < selfUAV_.id){
@@ -166,7 +192,14 @@ void coordinationAlgorithm::evaluateRoles(void){
 
 void coordinationAlgorithm::runCoordinationAlgorithm(const ros::TimerEvent& e){
   //std::cout << selfUAV_.role << coord_state_str_[state_] << nearUAVFlag_ << batteryHalfFlag_ << batteryEmptyFlag_ << std::endl;
-  ROS_INFO_STREAM_THROTTLE(1.0, "State: " << coord_state_str_[state_] << " Role: " << selfUAV_.role << "\n"  << nearUAVFlag_ << batteryHalfFlag_ << batteryEmptyFlag_ << "\t" << distTraversed_ << std::endl);
+  ROS_INFO_STREAM_THROTTLE(0.5, ""<< selfUAV_.name <<" State: " << coord_state_str_[state_] << " Role: " << selfUAV_.role
+  << "\tFlags: "  << nearUAVFlag_ << batteryHalfFlag_ << batteryEmptyFlag_ << " Dist: " << distTraversed_
+  << " Pos: " << roundf1(currentOdom_.pose.pose.position.x) << " " << roundf1(currentOdom_.pose.pose.position.y)
+  << "\tRelaypoint: " << roundf1(selfUAV_.relayPoint.pose.pose.position.x) << " " << roundf1(selfUAV_.relayPoint.pose.pose.position.y) );
+
+
+
+
 
   switch (state_) {
     case EXPLORE: {
@@ -195,20 +228,24 @@ void coordinationAlgorithm::runCoordinationAlgorithm(const ros::TimerEvent& e){
 
     case MEET: {
       // If role is just explorer - do pairing
-      if(selfUAV_.role == coord_state_str_[EXPLORE]){
-        evaluateRoles();
-        transitState(EXPLORE, "State: MEET");
-      }
+      // if(selfUAV_.role == coord_state_str_[EXPLORE]){
+      //   evaluateRoles();
+      //   transitState(EXPLORE, "State: MEET");
+      // }
 
       // If we have paired + going home + met state
       if(nearUAV_ == pairedUAV_ && batteryHalfFlag_){
         // Map will be shared automatically
         timeoutTimer_.stop();
         transitState(DONE, "State: MEET");
-        } else {
-          // If another is met - go back to explore
-          transitState(EXPLORE, "State: MEET");
-        }
+      }
+        // } else {
+        //   // If another is met - go back to explore
+        //   transitState(EXPLORE, "State: MEET");
+        // }
+
+      evaluateRoles();
+      transitState(EXPLORE, "State: MEET");
 
       break;
     }
@@ -219,6 +256,7 @@ void coordinationAlgorithm::runCoordinationAlgorithm(const ros::TimerEvent& e){
       // first call - go to relay point + start timer
       if(timerExpiredFlag_ == false){
         // Go to relay-point and wait for MEET
+        selfUAV_.relayPoint.child_frame_id = "GOTO";
         cmd_pub_.publish(selfUAV_.relayPoint);
         //std::cout << "SACRIFICE: cmd_pub_.publish(selfUAV_.relayPoint);" << std::endl;
 
@@ -263,6 +301,7 @@ void coordinationAlgorithm::runCoordinationAlgorithm(const ros::TimerEvent& e){
       // first call - go to relay point + start timer
       if(timerExpiredFlag_ == false){
         // Go to relay-point and wait for MEET
+        selfUAV_.relayPoint.child_frame_id = "GOTO";
         cmd_pub_.publish(selfUAV_.relayPoint);
         //std::cout << "RELAY: cmd_pub_.publish(selfUAV_.relayPoint);" << std::endl;
         
@@ -278,6 +317,7 @@ void coordinationAlgorithm::runCoordinationAlgorithm(const ros::TimerEvent& e){
 
       if(timerExpiredFlag_ == true){
         // Go home, partner not comming
+        baseStationOdom_.child_frame_id = "GOTO";
         cmd_pub_.publish(baseStationOdom_);
         //std::cout << "RELAY: cmd_pub_.publish(baseStationOdom_);" << std::endl;
       }
@@ -295,7 +335,8 @@ void coordinationAlgorithm::runCoordinationAlgorithm(const ros::TimerEvent& e){
 
     case DEAD: {
       // Stay here
-      std::cout << "DEAD: cmd_pub_.publish(currentOdom_);" << std::endl;
+      std::cout << selfUAV_.name << " DEAD: cmd_pub_.publish(baseStationOdom_);" << std::endl;
+      currentOdom_.child_frame_id = "HALT";
       while(1){
         cmd_pub_.publish(currentOdom_);
       }
@@ -306,7 +347,8 @@ void coordinationAlgorithm::runCoordinationAlgorithm(const ros::TimerEvent& e){
 
     case DONE: {
       // Stay here
-      std::cout << "DONE: cmd_pub_.publish(baseStationOdom_);" << std::endl;
+      std::cout << selfUAV_.name << " DONE: cmd_pub_.publish(baseStationOdom_);" << std::endl;
+      baseStationOdom_.child_frame_id = "GOTO";
       while(1){
         if(selfUAV_.role == coord_state_str_[RELAY]){
           cmd_pub_.publish(baseStationOdom_);

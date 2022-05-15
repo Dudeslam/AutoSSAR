@@ -1,28 +1,23 @@
-// #include <ros/ros.h>
-// #include "coordination/coordination_algorithm.h"
+#include <ros/ros.h>
+#include "coordination/coordination_algorithm.h"
 
 
 
 
-// int main(int argc, char **argv)
-// {
-//   ROS_INFO("coordination_node started");
-//   ros::init(argc, argv, "coordination_node");
-//   ros::NodeHandle nh;
+int main(int argc, char **argv)
+{
+  ROS_INFO("coordination_node started");
+  ros::init(argc, argv, "coordination_node");
+  ros::NodeHandle nh;
 
-//   coordinationAlgorithm coordAlgo;
-//   coordAlgo.init(nh);
+  coordinationAlgorithm coordAlgo;
+  coordAlgo.init(nh);
 
-//   ros::Duration(1.0).sleep();
+  ros::Duration(1.0).sleep();
 
-//   while ( ros::ok() ) {
-//     ros::spin();
-//   }
-//   std::cout << "Closing coordination_node" << std::endl;
-//   return 0;
-// }
-
-
+  while ( ros::ok() ) {
+    ros::spin();
+  }
 
 
 
@@ -30,6 +25,51 @@
 
 
 
+  // Testing struct overloads
+  /*
+  nav_msgs::Odometry odom_;
+  odom_.pose.pose.position.x = 4.0;
+  odom_.pose.pose.position.y = 1.6;
+
+  UAVdata anUAV;
+  anUAV.name = "GG";
+  anUAV.role = "[EXPLORE]";
+  anUAV.id = 99;
+  anUAV.relayPoint = odom_;
+
+  UAVdata anotherUAV;
+  anotherUAV.name = "BG";
+
+  if(anUAV == anotherUAV){
+    std::cout << "==" << std::endl;
+  }
+
+  if(anUAV != anotherUAV){
+    std::cout << "!=" << std::endl;
+  }
+
+  anotherUAV = anUAV;
+  std::cout << anotherUAV.name << std::endl;
+  std::cout << anotherUAV.role << std::endl;
+  std::cout << anotherUAV.id << std::endl;
+  std::cout << anotherUAV.relayPoint.pose.pose.position.x << std::endl;
+  std::cout << anotherUAV.relayPoint.pose.pose.position.y << std::endl;
+  
+  if(anUAV == anotherUAV){
+    std::cout << "==" << std::endl;
+  }
+
+  if(anUAV != anotherUAV){
+    std::cout << "!=" << std::endl;
+  }
+  //*/
+
+
+
+
+  std::cout << "Closing coordination_node" << std::endl;
+  return 0;
+}
 
 
 
@@ -38,6 +78,15 @@
 
 
 
+
+
+
+
+
+
+
+// test HALT and GOTO cmd's (WORKS)
+/*
 #include <ros/ros.h>
 #include <tf/transform_broadcaster.h>
 #include "nav_msgs/Odometry.h"
@@ -45,7 +94,7 @@
 
 
 int main(int argc, char **argv){
-  ROS_INFO("\n test started started");
+  ROS_INFO("\n test HALT and GOTO started");
   ros::init(argc, argv, "coordination");
   ros::NodeHandle nh;
   std::string selfUAV = nh.getNamespace().c_str();
@@ -60,21 +109,19 @@ int main(int argc, char **argv){
 
   // Sleep before first run
   ros::Duration(2).sleep();
-
-
+  ros::Time startTime = ros::Time::now();
+  // loop callbacks for X seconds
+  ros::Duration loopDuration(1);
   while ( !ros::ok() ){}; // Wait til OK
 
 
 
 
 
-  ros::Time startTime = ros::Time::now();
-  ros::Duration loopDuration(1); // X seconds
-
-
+  // reset start
+  startTime = ros::Time::now();
   std::cout << "Run GOTO: " << std::endl;
   odom_.child_frame_id = "GOTO";
-
   while ( ros::Time::now() < startTime+loopDuration ){
     //std::cout << "Pub GOTO: " << std::endl;
     point_pub.publish(odom_);
@@ -86,7 +133,7 @@ int main(int argc, char **argv){
 
 
   std::cout << "Wait: " << std::endl;
-  ros::Duration(10).sleep();
+  ros::Duration(6).sleep();
 
 
 
@@ -135,6 +182,9 @@ int main(int argc, char **argv){
   return 0;
 }
 //*/
+
+
+
 
 
 

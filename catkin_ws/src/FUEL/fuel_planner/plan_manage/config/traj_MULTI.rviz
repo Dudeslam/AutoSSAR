@@ -74,7 +74,7 @@ Visualization Manager:
           Marker Topic: /UAV0/planning_vis/trajectory
           Name: bspline_traj
           Namespaces:
-            B-Spline: true
+            {}
           Queue Size: 100
           Value: true
         - Class: rviz/Marker
@@ -98,7 +98,7 @@ Visualization Manager:
           Marker Topic: /UAV0/planning/travel_traj
           Name: executed_traj
           Namespaces:
-            "": true
+            {}
           Queue Size: 100
           Value: true
         - Class: rviz/Marker
@@ -106,7 +106,7 @@ Visualization Manager:
           Marker Topic: /UAV0/planning/position_cmd_vis
           Name: position_cmd
           Namespaces:
-            current_pose: true
+            {}
           Queue Size: 100
           Value: true
       Enabled: true
@@ -310,7 +310,7 @@ Visualization Manager:
           Marker Topic: /UAV2/odom_visualization/robot
           Name: robot2
           Namespaces:
-            mesh: true
+            {}
           Queue Size: 100
           Value: true
       Enabled: true
@@ -438,15 +438,15 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/ThirdPersonFollower
-      Distance: 21.29136848449707
+      Distance: 26.70789337158203
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -4.4694108963012695
-        Y: 0.12123686075210571
+        X: 0.8956961631774902
+        Y: -1.6743700504302979
         Z: -2.5082706997636706e-5
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
@@ -510,6 +510,6 @@ Window Geometry:
     collapsed: false
   Width: 1379
   X: 296
-  Y: 0
+  Y: 27
   depth:
     collapsed: false

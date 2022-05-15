@@ -86,7 +86,7 @@ int main(int argc, char **argv)
   ros::Subscriber sub0 = nh.subscribe(selfUAV+"/state_ukf/odom", 100, getOdomCallback0);
   ros::Subscriber sub1 = nh.subscribe(otherUAV0+"/state_ukf/odom", 100, getOdomCallback1);
   ros::Subscriber sub2 = nh.subscribe(otherUAV1+"/state_ukf/odom", 100, getOdomCallback2);
-  ros::Publisher pub = nh.advertise<nav_msgs::Odometry>("within_range", 100);
+  ros::Publisher pub = nh.advertise<std_msgs::String>("within_range", 100);
 
   // For nice printin
   std::cout << std::setfill ('0') << std::setw (6);
@@ -94,6 +94,7 @@ int main(int argc, char **argv)
 
   // Set rate
   ros::Rate r(10); // 10 hz
+
 
 
 
@@ -114,8 +115,9 @@ int main(int argc, char **argv)
       std::cout << selfUAV << std::endl;
       std::cout << "Dist to " << otherUAV0 << ": " << dist(odomSelf, odomOtherUAV0) << " " << within_range(odomSelf, odomOtherUAV0) << std::endl;
 
-      odomOtherUAV0.child_frame_id = otherUAV0;
-      pub.publish(odomOtherUAV0);
+      std_msgs::String msg;
+      msg.data = otherUAV0;
+      pub.publish(msg);
     }
 
     
@@ -123,8 +125,9 @@ int main(int argc, char **argv)
       std::cout << selfUAV << std::endl;
       std::cout << "Dist to " << otherUAV1 << ": " << dist(odomSelf, odomOtherUAV1) << " " << within_range(odomSelf, odomOtherUAV1) << std::endl;
 
-      odomOtherUAV0.child_frame_id = otherUAV1;
-      pub.publish(odomOtherUAV1);
+      std_msgs::String msg;
+      msg.data = otherUAV1;
+      pub.publish(msg);
     }
 
     ros::spinOnce();

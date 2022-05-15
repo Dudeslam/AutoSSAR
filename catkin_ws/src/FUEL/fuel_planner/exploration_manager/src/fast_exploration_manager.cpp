@@ -88,7 +88,7 @@ void FastExplorationManager::initialize(ros::NodeHandle& nh) {
 
 
   // EDIT*******************************************************
-  std::string selfUAV = nh.getNamespace().c_str();
+  selfUAV = nh.getNamespace().c_str();
   ROS_WARN_STREAM(""+selfUAV+"/pub_manual_pos *** FastExplorationManager");
   TRUNCATE_sub_ = nh.subscribe(selfUAV+"/pub_manual_pos", 1, &FastExplorationManager::truncateCallback, this);
   TRUNCATE_flag = false;
@@ -98,7 +98,7 @@ void FastExplorationManager::initialize(ros::NodeHandle& nh) {
 
 // EDIT*******************************************
 void FastExplorationManager::truncateCallback(const nav_msgs::Odometry::ConstPtr& msg) {
-  ROS_WARN_STREAM_THROTTLE(1.0, "\n FastExplorationManager truncateCallback: \tx: [" <<(*msg).pose.pose.position.x<<"], \ty: ["<<(*msg).pose.pose.position.y<<"], \tz: ["<<(*msg).pose.pose.position.z<<"] CMD: " << (*msg).child_frame_id );
+  ROS_WARN_STREAM_THROTTLE(1.0, "\n FastExplorationManager:" << selfUAV <<"\tx: [" <<(*msg).pose.pose.position.x<<"], \ty: ["<<(*msg).pose.pose.position.y<<"], \tz: ["<<(*msg).pose.pose.position.z<<"] CMD: " << (*msg).child_frame_id );
 
   if((*msg).child_frame_id == "GOTO"){
     TRUNCATE_flag = true;
@@ -135,48 +135,55 @@ int FastExplorationManager::planExploreMotion(
   std::cout << "start pos: " << pos.transpose() << ", vel: " << vel.transpose()
             << ", acc: " << acc.transpose() << std::endl;
 
-  // Search frontiers and group them into clusters
-  // EDIT*****************************
-  frontier_finder_->searchFrontiers();
-  //ed_->frontiers_.pop_back()
-  // EDIT end*************************
 
-  double frontier_time = (ros::Time::now() - t1).toSec();
-  t1 = ros::Time::now();
-
-  // Find viewpoints (x,y,z,yaw) for all frontier clusters and get visible ones' info
-  frontier_finder_->computeFrontiersToVisit();
-  frontier_finder_->getFrontiers(ed_->frontiers_);
-  frontier_finder_->getFrontierBoxes(ed_->frontier_boxes_);
-  frontier_finder_->getDormantFrontiers(ed_->dead_frontiers_);
-
-  if (ed_->frontiers_.empty()) {
-    ROS_WARN("No coverable frontier.");
-    return NO_FRONTIER;
-  }
-  frontier_finder_->getTopViewpointsInfo(pos, ed_->points_, ed_->yaws_, ed_->averages_);
-  for (int i = 0; i < ed_->points_.size(); ++i)
-    ed_->views_.push_back(
-        ed_->points_[i] + 2.0 * Vector3d(cos(ed_->yaws_[i]), sin(ed_->yaws_[i]), 0));
-
-  double view_time = (ros::Time::now() - t1).toSec();
-  // EDIT ROS_WARN("Frontier: %d, t: %lf, viewpoint: %d, t: %lf", ed_->frontiers_.size(), frontier_time, ed_->points_.size(), view_time);
-
-  // Do global and local tour planning and retrieve the next viewpoint
-  Vector3d next_pos;
-  double next_yaw;
-
-  // EDIT ***************************
+    // EDIT ***************************
   if(TRUNCATE_flag){
     TRUNCATE_flag = false;
     auto tmp = ed_->points_.back();
     tmp(0) = TRUNCATE_pos(0);
     tmp(1) = TRUNCATE_pos(1);
     tmp(2) = TRUNCATE_pos(2);
+
+    // This generates - free invalid pointer when called !!!
     ed_->points_.clear();
     ed_->points_.push_back(tmp);
+
+    //std::fill(ed_->points_.begin(), ed_->points_.end(), tmp);
+  } else {
+
+    // ORIGINAL************************
+    // Search frontiers and group them into clusters
+    frontier_finder_->searchFrontiers();
+
+    double frontier_time = (ros::Time::now() - t1).toSec();
+    t1 = ros::Time::now();
+
+    // Find viewpoints (x,y,z,yaw) for all frontier clusters and get visible ones' info
+    frontier_finder_->computeFrontiersToVisit();
+    frontier_finder_->getFrontiers(ed_->frontiers_);
+    frontier_finder_->getFrontierBoxes(ed_->frontier_boxes_);
+    frontier_finder_->getDormantFrontiers(ed_->dead_frontiers_);
+
+    if (ed_->frontiers_.empty()) {
+      ROS_WARN("No coverable frontier.");
+      return NO_FRONTIER;
+    }
+    frontier_finder_->getTopViewpointsInfo(pos, ed_->points_, ed_->yaws_, ed_->averages_);
+    for (int i = 0; i < ed_->points_.size(); ++i)
+      ed_->views_.push_back(
+          ed_->points_[i] + 2.0 * Vector3d(cos(ed_->yaws_[i]), sin(ed_->yaws_[i]), 0));
+
+    double view_time = (ros::Time::now() - t1).toSec();
+    // EDIT ROS_WARN("Frontier: %d, t: %lf, viewpoint: %d, t: %lf", ed_->frontiers_.size(), frontier_time, ed_->points_.size(), view_time);
+
   }
   // EDIT end**********************
+
+
+  // Do global and local tour planning and retrieve the next viewpoint
+  Vector3d next_pos;
+  double next_yaw;
+
   if (ed_->points_.size() > 1) {
     // Find the global tour passing through all viewpoints
     // Create TSP and solve by LKH
