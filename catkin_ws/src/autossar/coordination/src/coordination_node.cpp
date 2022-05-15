@@ -85,6 +85,159 @@ int main(int argc, char **argv)
 
 
 
+
+
+
+
+
+
+
+/*/ test proximity
+
+#include <ros/ros.h>
+#include <tf/transform_broadcaster.h>
+#include "nav_msgs/Odometry.h"
+
+nav_msgs::Odometry currentOdom_;
+void getOdomCallback(const nav_msgs::Odometry::ConstPtr& msg){
+  //ROS_INFO("Seq: [%d]", msg->header.seq);
+  ROS_INFO_STREAM_THROTTLE(1.0, "Position x: " <<msg->pose.pose.position.x<< " y: " <<msg->pose.pose.position.y );
+  currentOdom_ = *msg;
+}
+
+int main(int argc, char **argv){
+  ROS_INFO("\n test HALT and GOTO started");
+  ros::init(argc, argv, "coordination");
+  ros::NodeHandle nh;
+  std::string selfUAV = nh.getNamespace().c_str();
+
+  
+  ros::Subscriber sub_odom = nh.subscribe(selfUAV+"/state_ukf/odom", 100, getOdomCallback);
+  ros::Publisher point_pub = nh.advertise<const nav_msgs::Odometry>("exploration_node/pub_manual_pos", 50);
+  
+  
+  nav_msgs::Odometry odom_;
+  odom_.pose.pose.position.x = 8.0;
+  odom_.pose.pose.position.y = 0.0;
+
+  // Sleep before first run
+  ros::Duration(2).sleep();
+  ros::Time startTime = ros::Time::now();
+  
+  // loop callbacks for X seconds
+  ros::Duration loopDuration(1);
+
+
+  // Wait til OK
+  while ( !ros::ok() ){}
+
+
+  std::cout << "Halt at Odom: " << std::endl;
+  while ( ros::ok() ){
+
+    if( (round(currentOdom_.pose.pose.position.x) == round(odom_.pose.pose.position.x)) && (round(currentOdom_.pose.pose.position.y) == round(odom_.pose.pose.position.y)) ){
+      odom_.child_frame_id = "HALT";
+      point_pub.publish(odom_);
+      std::cout << "BREAK: " << std::endl;
+      break;
+    }
+    ros::spinOnce();
+  }
+
+
+
+  // // reset start
+  // startTime = ros::Time::now();
+  // std::cout << "Run GOTO: " << std::endl;
+  // odom_.child_frame_id = "GOTO";
+  // while ( ros::Time::now() < startTime+loopDuration ){
+  //   //std::cout << "Pub GOTO: " << std::endl;
+  //   point_pub.publish(odom_);
+  //   ros::spinOnce();
+  // }
+  // std::cout << "GOTO DONE: " << std::endl;
+
+
+
+
+
+  // std::cout << "Wait: " << std::endl;
+  // ros::Duration(6).sleep();
+
+
+
+
+
+
+  // std::cout << "Run HALT: " << std::endl;
+  // odom_.child_frame_id = "HALT";
+  // // reset start
+  // startTime = ros::Time::now();
+  // while ( ros::Time::now() < startTime+loopDuration ){
+  //   //std::cout << "Pub HALT: " << std::endl;
+  //   point_pub.publish(odom_);
+  //   ros::spinOnce();
+  // }
+  // std::cout << "HALT DONE: " << std::endl;
+
+
+
+
+
+
+  std::cout << "Wait: " << std::endl;
+  ros::Duration(10).sleep();
+
+
+
+
+
+
+  std::cout << "Run RAND: " << std::endl;
+  odom_.child_frame_id = "RAND";
+  // reset start
+  startTime = ros::Time::now();
+  while ( ros::Time::now() < startTime+loopDuration ){
+    //std::cout << "Pub RAND: " << std::endl;
+    point_pub.publish(odom_);
+    ros::spinOnce();
+  }
+  std::cout << "RAND DONE: " << std::endl;
+
+
+
+
+
+  ros::spin();
+  std::cout << "Closing test" << std::endl;  
+  return 0;
+}
+//*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // test HALT and GOTO cmd's (WORKS)
 /*
 #include <ros/ros.h>

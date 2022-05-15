@@ -47,7 +47,7 @@ void FastExplorationFSM::init(ros::NodeHandle& nh) {
 
 
   // EDIT*******************************************************
-  std::string selfUAV = nh.getNamespace().c_str();
+  selfUAV = nh.getNamespace().c_str();
   ROS_WARN_STREAM(""+selfUAV+"/pub_manual_pos *** FastExplorationFSM");
   TRUNCATE_sub_ = nh.subscribe(selfUAV+"/pub_manual_pos", 1, &FastExplorationFSM::truncateCallback, this);
   TRUNCATE_flag = false;
@@ -112,7 +112,7 @@ void FastExplorationFSM::FSMCallback(const ros::TimerEvent& e) {
 
     // EDIT added state
     case WAIT_PARTNER: {
-      ROS_WARN_THROTTLE(1.0, "waiting for partner.");
+      ROS_WARN_STREAM_THROTTLE(1.0, "" << selfUAV << ": waiting for partner.");
       // If flag false, restart planning
       if (!TRUNCATE_flag) { transitState(PLAN_TRAJ, "WAIT_PARTNER"); }
       break;

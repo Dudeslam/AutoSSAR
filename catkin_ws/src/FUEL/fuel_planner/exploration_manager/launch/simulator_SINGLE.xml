@@ -20,7 +20,7 @@
 
 
       <!-- <node pkg ="map_generator" name ="map_pub" type ="map_pub" output = "screen" args="$(find map_generator)/resource/office.pcd"/> -->
-      <node pkg ="map_generator" name ="map_pub" type ="map_pub" args="$(find map_generator)/resource/office.pcd"/>
+      <node pkg ="map_generator" name ="map_pub" type ="map_pub" args="$(find map_generator)/resource/tmp.pcd"/>
 
 
 

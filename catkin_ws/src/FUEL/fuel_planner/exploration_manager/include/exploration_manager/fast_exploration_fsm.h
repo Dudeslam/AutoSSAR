@@ -65,6 +65,7 @@ private:
   void clearVisMarker();
 
   // EDIT*************************************
+  std::string selfUAV;
   ros::Subscriber TRUNCATE_sub_;
   void truncateCallback(const nav_msgs::Odometry::ConstPtr& msg);
   bool TRUNCATE_flag;
