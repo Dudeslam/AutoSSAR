@@ -6,10 +6,12 @@
 #include <nav_msgs/Path.h>
 #include <std_msgs/Empty.h>
 #include "std_msgs/String.h"
+#include "std_msgs/Float64.h"
 #include <iostream>
 #include <string>
 #include <pcl_ros/point_cloud.h>
 #include <pcl/point_types.h>
+#include <algorithm>    // std::swap
 
 
 enum COORD_STATE { EXPLORE, MEET, SACRIFICE, RELAY, FINISH, DEAD, DONE};
@@ -23,24 +25,21 @@ struct UAVdata {
     //bool inRange;
 
 
-    // For compairing
-    public :
-    bool operator==( const UAVdata& other ) {
-        return name == other.name;
-            //    && role    == other.role
-            //    && relayPoint  == other.relayPoint
-            //    && id    == other.id;
+    const inline UAVdata& operator=(const UAVdata& other){
+        name=other.name;
+        role=other.role;
+        relayPoint=other.relayPoint;
+        id=other.id;
+        return *this;
     }
-    bool operator!=( const UAVdata& other ) {
-        return !(name != other.name);
+
+    const inline bool operator==(const UAVdata& other) const {
+        return (name==other.name);
     }
-    // Use default for =
-    // bool operator=( const UAVdata& other ) {
-    //     return name = other.name
-    //            && role    = other.role
-    //            && relayPoint  = other.relayPoint
-    //            && id    = other.id;
-    // }
+
+    const inline bool operator!=(const UAVdata& other) const {
+        return (name!=other.name);
+    }
 };
 
 
@@ -78,13 +77,14 @@ private:
     nav_msgs::Odometry baseStationOdom_;
     nav_msgs::Odometry currentOdom_;
 
-    ros::Timer run_timer_, timeoutTimer_;                         // Timer for triggering
+    ros::Timer run_timer_, timeoutTimer_; // Timer for triggering
     std::vector<std::string> coord_state_str_ = { "EXPLORE", "MEET", "SACRIFICE", "RELAY", "FINISH", "DEAD", "DONE" };
 
     // Util callbacks
     //void timerCallback(const ros::TimerEvent& e);
-    void batteryCallback(const std_msgs::String& msg);
-    void withinRangeCallback(const std_msgs::String& msg);
+    //void batteryCallback(const std_msgs::String& msg);
+    void batteryCallback(const std_msgs::Float64& msg);
+    void withinRangeCallback(const nav_msgs::Odometry::ConstPtr& msg);
     void odometryCallback(const nav_msgs::Odometry::ConstPtr& msg);
 
     // helper functions     (new state, whoCalled)

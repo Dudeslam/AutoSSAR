@@ -1,0 +1,145 @@
+@startuml
+skinparam monochrome true
+hide circle
+skinparam classAttributeIconSize 0
+
+
+
+/'
+class FastExplorationFSM {
+    -planner_manager_:  shared_ptr<FastPlannerManager>
+    -expl_manager_:     shared_ptr<FastExplorationManager>
+    -visualization_:    shared_ptr<PlanningVisualization>
+
+    -fp_: shared_ptr<FSMParam>
+    -fd_: shared_ptr<FSMData>
+    -state_: EXPL_STATE
+
+    -classic_: bool
+
+    -node_: ros::NodeHandle
+    -exec_timer_, safety_timer_, vis_timer_, frontier_timer_: ros::Timer
+    -trigger_sub_, odom_sub_: ros::Subscriber
+    -replan_pub_, new_pub_, bspline_pub_: ros::Publisher
+
+    -callExplorationPlanner(): int
+    -transitState(EXPL_STATE, string): void
+
+    -FSMCallback(const ros::TimerEvent&): void
+    -safetyCallback(const ros::TimerEvent&): void
+    -frontierCallback(const ros::TimerEvent&): void
+    -triggerCallback(const nav_msgs::PathConstPtr&): void
+    -odometryCallback(const nav_msgs::OdometryConstPtr&): void
+    -visualize(): void
+    -clearVisMarker(): void
+    +FastExplorationFSM()
+    ~FastExplorationFSM()
+    +init(ros::NodeHandle&): void
+}
+
+' As shared objects
+class FastExplorationManager {
+    FastExplorationManager()
+    ~FastExplorationManager()
+
+    +initialize(ros::NodeHandle&): void
+    +int planExploreMotion(const Vector3d&, const Vector3d&, const Vector3d&, const Vector3d&);
+    +int classicFrontier(const Vector3d&, const double&);
+    +int rapidFrontier(const Vector3d&, const Vector3d&, const double&, bool&);
+
+    +ed_: shared_ptr<ExplorationData>
+    +ep_: shared_ptr<ExplorationParam>
+    +planner_manager_: shared_ptr<FastPlannerManager>
+    +frontier_finder_: shared_ptr<FrontierFinder>
+    +Ptr: typedef shared_ptr<FastExplorationManager>
+
+    // EDIT*******************
+    -TRUNCATE_sub_: ros::Subscriber
+    -truncateCallback(const nav_msgs::Odometry::ConstPtr&): void
+    // EDIT end***
+
+    -edt_environment_: shared_ptr<EDTEnvironment>
+    -sdf_map_: shared_ptr<SDFMap>
+
+
+    -findGlobalTour(const Vector3d&, const Vector3d&, const Vector3d, vector<int>&): void
+    -refineLocalTour(const Vector3d&, const Vector3d&, const Vector3d&, const vector<vector<Vector3d>>&,\nconst vector<vector<double>>&, vector<Vector3d>&, vector<double>&: void
+    -shortenPath(vector<Vector3d>&): void
+}
+
+class FastPlannerManager {
+    'String data
+    'void methods()
+}
+
+class PlanningVisualization {
+    'String data
+    'void methods()
+}
+
+
+
+FastExplorationFSM o-- FastPlannerManager
+FastExplorationFSM o-- FastExplorationManager
+FastExplorationFSM o-- PlanningVisualization
+
+FastExplorationManager o-- FastPlannerManager
+FastExplorationManager o-- FrontierFinder
+
+FastPlannerManager o-- FastPlannerManager'/
+
+
+
+'package "Exploration node" <<Frame>> #DDDDDD {
+
+
+class FastExplorationFSM {
+    +FastExplorationFSM()
+    ~FastExplorationFSM()
+    ..
+    -planner_manager_:  shared_ptr<FastPlannerManager>
+    -expl_manager_:     shared_ptr<FastExplorationManager>
+    -visualization_:    shared_ptr<PlanningVisualization>
+    ..
+    +init(ros::NodeHandle&): void
+    -FSMCallback(const ros::TimerEvent&): void
+    -callExplorationPlanner(): int
+    -transitState(EXPL_STATE, string): void
+    -safetyCallback(const ros::TimerEvent&): void
+    -frontierCallback(const ros::TimerEvent&): void
+    -triggerCallback(const nav_msgs::PathConstPtr&): void
+    -odometryCallback(const nav_msgs::OdometryConstPtr&): void
+}
+
+
+class FastExplorationManager {
+    FastExplorationManager()
+    ~FastExplorationManager()
+    ..
+    +planner_manager_: shared_ptr<FastPlannerManager>
+    +frontier_finder_: shared_ptr<FrontierFinder>
+    -edt_environment_: shared_ptr<EDTEnvironment>
+    -sdf_map_: shared_ptr<SDFMap>
+    ..
+    __
+    // EDIT*******************
+    -TRUNCATE_sub_: ros::Subscriber
+    -truncateCallback(const nav_msgs::Odometry::ConstPtr&): void
+    // EDIT end***
+    __
+    +initialize(ros::NodeHandle&): void
+    +planExploreMotion(...): int
+    -findGlobalTour(...): void
+    -refineLocalTour(...): void
+    -shortenPath(...): void
+
+}
+
+FastExplorationFSM -. FastExplorationManager
+
+'}
+
+
+
+
+@enduml

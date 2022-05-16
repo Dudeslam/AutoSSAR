@@ -285,8 +285,7 @@ void cmdCallback(const ros::TimerEvent& e) {
     // Report info of the whole flight
     double len = calcPathLength(traj_cmd_);
     double flight_t = (end_time - start_time).toSec();
-    ROS_WARN_THROTTLE(2, "flight time: %lf, path length: %lf, mean vel: %lf, energy is: % lf ", flight_t,
-                      len, len / flight_t, energy);
+    // EDIT ROS_WARN_THROTTLE(2, "flight time: %lf, path length: %lf, mean vel: %lf, energy is: % lf ", flight_t, len, len / flight_t, energy);
   } else {
     cout << "[Traj server]: invalid time." << endl;
   }
@@ -347,16 +346,26 @@ void cmdCallback(const ros::TimerEvent& e) {
 void test() {
   // Test B-spline
   // Generate the first B-spline's control points from a sin curve
+
+  // EDIT*******************************************
+  // vector<Eigen::Vector3d> samples;
+  // const double dt1 = M_PI / 6.0;
+  // for (double theta = 0; theta <= 2 * M_PI; theta += dt1) {
+  //   Eigen::Vector3d sample(theta, sin(theta), 1);
+  //   samples.push_back(sample);
+  // }
+  
   vector<Eigen::Vector3d> samples;
-  const double dt1 = M_PI / 6.0;
-  for (double theta = 0; theta <= 2 * M_PI; theta += dt1) {
-    Eigen::Vector3d sample(theta, sin(theta), 1);
-    samples.push_back(sample);
-  }
+  const double dt1 = 1;
+  samples.push_back(Eigen::Vector3d(0, 0, 1));
+  samples.push_back(Eigen::Vector3d(1, 1, 1));
+  samples.push_back(Eigen::Vector3d(4, 2, 1));
+  std::cout << "***********************************samples.size()" << samples.size() << std::endl;
+  // EDIT end******************************************
+
   Eigen::MatrixXd points(samples.size(), 3);
   for (int i = 0; i < samples.size(); ++i)
     points.row(i) = samples[i].transpose();
-
   Eigen::VectorXd times(samples.size() - 1);
   times.setConstant(dt1);
   times[0] += dt1;
@@ -434,7 +443,19 @@ void test() {
     tn = (ros::Time::now() - t1).toSec();
   }
 }
-//ss
+
+/*/ EDIT*******************************************
+bool TRUNCATE_flag = false;
+Eigen::Vector3d init_pos;
+void truncateCallback(const nav_msgs::Odometry::ConstPtr& msg) {
+  TRUNCATE_flag = true;
+  //ROS_WARN_STREAM("traj_server truncateCallback: \tx: [" <<(*msg).pose.pose.position.x<<"], \ty: ["<<(*msg).pose.pose.position.y<<"], \tz: ["<<(*msg).pose.pose.position.z<<"] Flag: " << TRUNCATE_flag );
+  ROS_WARN("traj_server truncateCallback*****************************************");
+  //test();
+}
+// EDIT end*******************************************/
+
+
 int main(int argc, char** argv) {
   ros::init(argc, argv, "traj_server");
   ros::NodeHandle node;
@@ -449,7 +470,11 @@ int main(int argc, char** argv) {
   cmd_vis_pub = node.advertise<visualization_msgs::Marker>("planning/position_cmd_vis", 10);
   pos_cmd_pub = node.advertise<quadrotor_msgs::PositionCommand>("/position_cmd", 50);
   traj_pub = node.advertise<visualization_msgs::Marker>("planning/travel_traj", 10);
-
+  // EDIT*******************************************************
+  // std::string selfUAV = node.getNamespace().c_str();
+  // ROS_WARN_STREAM("\n"+selfUAV+"/position_cmd ************ traj_server **************");
+  // ros::Subscriber TRUNCATE_sub_ = node.subscribe(selfUAV+"/pub_man_pos", 1, truncateCallback);
+  // EDIT end***************************************
   ros::Timer cmd_timer = node.createTimer(ros::Duration(0.01), cmdCallback);
   ros::Timer vis_timer = node.createTimer(ros::Duration(0.25), visCallback);
 
@@ -457,7 +482,7 @@ int main(int argc, char** argv) {
   nh.param("fsm/replan_time", replan_time_, 0.1);
   nh.param("loop_correction/isLoopCorrection", isLoopCorrection, false);
 
-  Eigen::Vector3d init_pos;
+  Eigen::Vector3d init_pos; //EDIT - made global*****************************
   nh.param("traj_server/init_x", init_pos[0], 0.0);
   nh.param("traj_server/init_y", init_pos[1], 0.0);
   nh.param("traj_server/init_z", init_pos[2], 0.0);

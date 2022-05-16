@@ -17,12 +17,6 @@
 #include <string>
 #include <thread>
 
-// EDIT*************************************
-#include "std_msgs/MultiArrayLayout.h"
-#include "std_msgs/MultiArrayDimension.h"
-#include "std_msgs/Float32MultiArray.h"
-// EDIT end*********************************
-
 using Eigen::Vector3d;
 using std::vector;
 using std::shared_ptr;
@@ -33,10 +27,11 @@ namespace fast_planner {
 class FastPlannerManager;
 class FastExplorationManager;
 class PlanningVisualization;
+class LocalExploreFSM;
 struct FSMParam;
 struct FSMData;
 
-enum EXPL_STATE { INIT, WAIT_TRIGGER, PLAN_TRAJ, PUB_TRAJ, EXEC_TRAJ, FINISH };
+enum EXPL_STATE { INIT, WAIT_TRIGGER, PLAN_TRAJ, PUB_TRAJ, EXEC_TRAJ, FINISH, WAIT_PARTNER}; // EDIT added state
 
 class FastExplorationFSM {
 private:
@@ -71,8 +66,12 @@ private:
   void clearVisMarker();
 
   // EDIT*************************************
+  std::string selfUAV;
   ros::Subscriber TRUNCATE_sub_;
   void truncateCallback(const nav_msgs::Odometry::ConstPtr& msg);
+  bool TRUNCATE_flag;
+  //nav_msgs::Odometry TRUNCATE_msg;
+  Eigen::Vector3d TRUNCATE_pos;
   // EDIT end*********************************
 public:
   FastExplorationFSM(/* args */) {

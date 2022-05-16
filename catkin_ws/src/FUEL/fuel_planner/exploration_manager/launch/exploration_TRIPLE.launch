@@ -1,0 +1,296 @@
+<launch>
+  <!-- size of map, change the size in x, y, z according to your application -->
+  <arg name="map_size_x" value="50.0"/>
+  <arg name="map_size_y" value="50.0"/>
+  <arg name="map_size_z" value=" 10.0"/>
+
+  <!-- enable costume namespaces -->
+  <arg name="ns0" default="UAV0"/>
+  <arg name="ns1" default="UAV1"/>
+  <arg name="ns2" default="UAV2"/>
+
+
+  <arg name="ns0_init_x" value="0.0"/>
+  <arg name="ns0_init_y" value="1.0"/>
+  <arg name="ns0_init_z" value="1.0"/> 
+
+  <arg name="ns1_init_x" value="0.0"/>
+  <arg name="ns1_init_y" value="0.0"/>
+  <arg name="ns1_init_z" value="1.0"/>
+
+  <arg name="ns2_init_x" value="0.0"/>
+  <arg name="ns2_init_y" value="-1.0"/>
+  <arg name="ns2_init_z" value="1.0"/> 
+
+
+  <!-- /////////////////////////////////////////////////////////////////////////// -->
+  <!-- /////////////////////////////////////////////////////////////////////////// -->
+  <!-- /////////////////////////////////////////////////////////////////////////// -->
+
+
+  <!-- init coordinates -->
+  <!-- <arg name="ns0_init_x" value="-7.0"/>
+  <arg name="ns0_init_y" value="1.0"/>
+  <arg name="ns0_init_z" value="1.0"/>  -->
+
+  <!-- main algorithm params, calls: "exploration_node.cpp" with arguments NOTE: this node does all the printing !!! -->
+  <include file="$(find exploration_manager)/launch/algorithm_MULTI.xml" ns="$(arg ns0)">
+    <arg name="drone_index" value="$(arg ns0)"/> 
+
+    <arg name="map_size_x_" value="$(arg map_size_x)"/>
+    <arg name="map_size_y_" value="$(arg map_size_y)"/>
+    <arg name="map_size_z_" value="$(arg map_size_z)"/>
+
+    <arg name="box_min_x" value="-10.0"/>
+    <arg name="box_min_y" value="-15.0"/>
+    <arg name="box_min_z" value=" 0.0"/>
+    <arg name="box_max_x" value="10.0"/>
+    <arg name="box_max_y" value="15.0"/>
+    <arg name="box_max_z" value=" 2.0"/>
+
+    <!-- <arg name="box_min_x" value="-2.0"/>
+    <arg name="box_min_y" value="-16.0"/>
+    <arg name="box_min_z" value=" 0.0"/>
+    <arg name="box_max_x" value="16.0"/>
+    <arg name="box_max_y" value="16.0"/>
+    <arg name="box_max_z" value=" 2.0"/> -->
+
+    <arg name="odometry_topic" value="/$(arg ns0)/state_ukf/odom"/>
+    <!-- sensor pose: transform of camera frame in the world frame -->
+    <arg name="sensor_pose_topic" value="/$(arg ns0)/pcl_render_node/sensor_pose"/>
+
+    <!-- depth topic: depth image, 640x480 by default -->
+    <!-- cloud topic: point cloud measurement  -->
+    <!-- subscribe ONLY TO ONE of the two topics -->
+    <arg name="depth_topic" value="/$(arg ns0)/pcl_render_node/depth"/>
+    <arg name="cloud_topic" value="/$(arg ns0)/pcl_render_node/cloud"/>
+    
+
+    <!-- intrinsic params of the depth camera -->
+    <arg name="cx" value="321.04638671875"/>
+    <arg name="cy" value="243.44969177246094"/>
+    <arg name="fx" value="387.229248046875"/>
+    <arg name="fy" value="387.229248046875"/>
+
+    <!-- maximum velocity and acceleration the drone will reach -->
+    <arg name="max_vel" value="2.0" />  <!--Default = 2-->
+    <arg name="max_acc" value="2.0" />  <!--Default = 2-->
+  </include>
+
+
+  <!-- trajectory server -->
+  <!-- <node pkg="plan_manage" name="traj_server" type="traj_server" output="screen" ns="$(arg ns0)"> -->
+  <node pkg="plan_manage" name="traj_server" type="traj_server" ns="$(arg ns0)">
+    <remap from="/position_cmd" to="/$(arg ns0)/planning/pos_cmd"/>
+    <remap from="/odom_world" to="/$(arg ns0)/state_ukf/odom"/>
+    <param name="traj_server/time_forward" value="1.5" type="double"/>
+    <param name="traj_server/pub_traj_id" value="4" type="int"/>
+    <param name="traj_server/init_x" value="$(arg ns0_init_x)" type="double"/>
+    <param name="traj_server/init_y" value="$(arg ns0_init_y)" type="double"/>
+    <param name="traj_server/init_z" value="$(arg ns0_init_z)" type="double"/>
+
+    <param name="perception_utils/top_angle" value="0.56125" type="double"/>
+    <param name="perception_utils/left_angle" value="0.69222" type="double"/>
+    <param name="perception_utils/right_angle" value="0.68901" type="double"/>
+    <param name="perception_utils/max_dist" value="4.5" type="double"/>
+    <param name="perception_utils/vis_dist" value="1.0" type="double"/>
+  </node>
+
+
+  <!-- <node pkg="waypoint_generator" name="waypoint_generator" type="waypoint_generator" output="screen" ns="$(arg ns0)"> -->
+  <node pkg="waypoint_generator" name="waypoint_generator" type="waypoint_generator" ns="$(arg ns0)">
+    <remap from="~odom" to="/$(arg ns0)/state_ukf/odom"/>        
+    <remap from="~goal" to="/move_base_simple/goal"/>
+    <remap from="~traj_start_trigger" to="/$(arg ns0)/traj_start_trigger" />
+    <remap from="waypoint_generator/waypoints" to="/$(arg ns0)/waypoint_generator/waypoints" />
+    <param name="waypoint_type" value="point"/>    
+  </node>
+
+
+
+  <!-- /////////////////////////////////////////////////////////////////////////// -->
+  <!-- /////////////////////////////////////////////////////////////////////////// -->
+  <!-- /////////////////////////////////////////////////////////////////////////// -->
+
+<!-- init coordinates -->
+  <!-- <arg name="ns1_init_x" value="-7.0"/>
+  <arg name="ns1_init_y" value="0.0"/>
+  <arg name="ns1_init_z" value="1.0"/>  -->
+
+  <!-- main algorithm params -->
+  <include file="$(find exploration_manager)/launch/algorithm_MULTI.xml" ns="$(arg ns1)">
+    <arg name="drone_index" value="$(arg ns1)"/> 
+
+    <arg name="map_size_x_" value="$(arg map_size_x)"/>
+    <arg name="map_size_y_" value="$(arg map_size_y)"/>
+    <arg name="map_size_z_" value="$(arg map_size_z)"/>
+
+    <arg name="box_min_x" value="-10.0"/>
+    <arg name="box_min_y" value="-15.0"/>
+    <arg name="box_min_z" value=" 0.0"/>
+    <arg name="box_max_x" value="10.0"/>
+    <arg name="box_max_y" value="15.0"/>
+    <arg name="box_max_z" value=" 2.0"/>
+
+    <arg name="odometry_topic" value="/$(arg ns1)/state_ukf/odom"/>
+    <!-- sensor pose: transform of camera frame in the world frame -->
+    <arg name="sensor_pose_topic" value="/$(arg ns1)/pcl_render_node/sensor_pose"/>
+    <!-- depth topic: depth image, 640x480 by default -->
+    <!-- cloud topic: point cloud measurement  -->
+    <!-- subscribe ONLY TO ONE of the two topics -->
+    <arg name="depth_topic" value="/$(arg ns1)/pcl_render_node/depth"/>
+    <arg name="cloud_topic" value="/$(arg ns1)/pcl_render_node/cloud"/>
+
+    <!-- intrinsic params of the depth camera -->
+    <arg name="cx" value="321.04638671875"/>
+    <arg name="cy" value="243.44969177246094"/>
+    <arg name="fx" value="387.229248046875"/>
+    <arg name="fy" value="387.229248046875"/>
+
+    <!-- maximum velocity and acceleration the drone will reach -->
+    <arg name="max_vel" value="2.0" />
+    <arg name="max_acc" value="2.0" />
+  </include>
+
+
+  <!-- trajectory server -->
+  <!-- <node pkg="plan_manage" name="traj_server" type="traj_server" output="screen" ns="$(arg ns1)"> Prints zeros at startup?? -->
+  <node pkg="plan_manage" name="traj_server" type="traj_server" ns="$(arg ns1)">
+    <remap from="/position_cmd" to="/$(arg ns1)/planning/pos_cmd"/>
+    <remap from="/odom_world" to="/$(arg ns1)/state_ukf/odom"/>
+    <param name="traj_server/time_forward" value="1.5" type="double"/>
+    <param name="traj_server/pub_traj_id" value="4" type="int"/>
+    <param name="traj_server/init_x" value="$(arg ns1_init_x)" type="double"/>
+    <param name="traj_server/init_y" value="$(arg ns1_init_y)" type="double"/>
+    <param name="traj_server/init_z" value="$(arg ns1_init_z)" type="double"/>
+
+    <param name="perception_utils/top_angle" value="0.56125" type="double"/>
+    <param name="perception_utils/left_angle" value="0.69222" type="double"/>
+    <param name="perception_utils/right_angle" value="0.68901" type="double"/>
+    <param name="perception_utils/max_dist" value="4.5" type="double"/>
+    <param name="perception_utils/vis_dist" value="1.0" type="double"/>
+  </node>
+
+
+  <!-- <node pkg="waypoint_generator" name="waypoint_generator" type="waypoint_generator" output="screen" ns="$(arg ns1)"> -->
+  <node pkg="waypoint_generator" name="waypoint_generator" type="waypoint_generator" ns="$(arg ns1)">
+    <remap from="~odom" to="/$(arg ns1)/state_ukf/odom"/>        
+    <remap from="~goal" to="/move_base_simple/goal"/>
+    <remap from="~traj_start_trigger" to="/$(arg ns1)/traj_start_trigger" />
+    <remap from="waypoint_generator/waypoints" to="/$(arg ns1)/waypoint_generator/waypoints" />
+    <param name="waypoint_type" value="point"/>    
+  </node>
+
+
+
+  <!-- /////////////////////////////////////////////////////////////////////////// -->
+  <!-- /////////////////////////////////////////////////////////////////////////// -->
+  <!-- /////////////////////////////////////////////////////////////////////////// -->
+
+
+
+
+<!-- init coordinates -->
+  <!-- <arg name="ns2_init_x" value="-7.0"/>
+  <arg name="ns2_init_y" value="-1.0"/>
+  <arg name="ns2_init_z" value="1.0"/>  -->
+
+  <!-- main algorithm params -->
+  <include file="$(find exploration_manager)/launch/algorithm_MULTI.xml" ns="$(arg ns2)">
+    <arg name="drone_index" value="$(arg ns2)"/> 
+
+    <arg name="map_size_x_" value="$(arg map_size_x)"/>
+    <arg name="map_size_y_" value="$(arg map_size_y)"/>
+    <arg name="map_size_z_" value="$(arg map_size_z)"/>
+
+    <arg name="box_min_x" value="-10.0"/>
+    <arg name="box_min_y" value="-15.0"/>
+    <arg name="box_min_z" value=" 0.0"/>
+    <arg name="box_max_x" value="10.0"/>
+    <arg name="box_max_y" value="15.0"/>
+    <arg name="box_max_z" value=" 2.0"/>
+
+    <arg name="odometry_topic" value="/$(arg ns2)/state_ukf/odom"/>
+    <!-- sensor pose: transform of camera frame in the world frame -->
+    <arg name="sensor_pose_topic" value="/$(arg ns2)/pcl_render_node/sensor_pose"/>
+    <!-- depth topic: depth image, 640x480 by default -->
+    <!-- cloud topic: point cloud measurement  -->
+    <!-- subscribe ONLY TO ONE of the two topics -->
+    <arg name="depth_topic" value="/$(arg ns2)/pcl_render_node/depth"/>
+    <arg name="cloud_topic" value="/$(arg ns2)/pcl_render_node/cloud"/>
+
+    <!-- intrinsic params of the depth camera -->
+    <arg name="cx" value="321.04638671875"/>
+    <arg name="cy" value="243.44969177246094"/>
+    <arg name="fx" value="387.229248046875"/>
+    <arg name="fy" value="387.229248046875"/>
+
+    <!-- maximum velocity and acceleration the drone will reach -->
+    <arg name="max_vel" value="2.0" />
+    <arg name="max_acc" value="2.0" />
+  </include>
+
+
+  <!-- trajectory server -->
+  <!-- <node pkg="plan_manage" name="traj_server" type="traj_server" output="screen" ns="$(arg ns2)"> -->
+  <node pkg="plan_manage" name="traj_server" type="traj_server" ns="$(arg ns2)">
+    <remap from="/position_cmd" to="/$(arg ns2)/planning/pos_cmd"/>
+    <remap from="/odom_world" to="/$(arg ns2)/state_ukf/odom"/>
+    <param name="traj_server/time_forward" value="1.5" type="double"/>
+    <param name="traj_server/pub_traj_id" value="4" type="int"/>
+    <param name="traj_server/init_x" value="$(arg ns2_init_x)" type="double"/>
+    <param name="traj_server/init_y" value="$(arg ns2_init_y)" type="double"/>
+    <param name="traj_server/init_z" value="$(arg ns2_init_z)" type="double"/>
+
+    <param name="perception_utils/top_angle" value="0.56125" type="double"/>
+    <param name="perception_utils/left_angle" value="0.69222" type="double"/>
+    <param name="perception_utils/right_angle" value="0.68901" type="double"/>
+    <param name="perception_utils/max_dist" value="4.5" type="double"/>
+    <param name="perception_utils/vis_dist" value="1.0" type="double"/>
+  </node>
+
+
+  <!-- <node pkg="waypoint_generator" name="waypoint_generator" type="waypoint_generator" output="screen" ns="$(arg ns2)"> -->
+  <node pkg="waypoint_generator" name="waypoint_generator" type="waypoint_generator" ns="$(arg ns2)">
+    <remap from="~odom" to="/$(arg ns2)/state_ukf/odom"/>        
+    <remap from="~goal" to="/move_base_simple/goal"/>
+    <remap from="~traj_start_trigger" to="/$(arg ns2)/traj_start_trigger" />
+    <remap from="waypoint_generator/waypoints" to="/$(arg ns2)/waypoint_generator/waypoints" />
+    <param name="waypoint_type" value="point"/>    
+  </node>
+
+
+
+  <!-- /////////////////////////////////////////////////////////////////////////// -->
+  <!-- /////////////////////////////////////////////////////////////////////////// -->
+  <!-- /////////////////////////////////////////////////////////////////////////// -->
+
+
+  <!-- use simulator (for swarm)-->
+  <include file="$(find exploration_manager)/launch/simulator_TRIPLE.xml">
+    <arg name="ns0" value="$(arg ns0)"/>
+    <arg name="ns1" value="$(arg ns1)"/>
+    <arg name="ns2" value="$(arg ns2)"/>
+
+    <arg name="map_size_x_" value="$(arg map_size_x)"/>
+    <arg name="map_size_y_" value="$(arg map_size_y)"/>
+    <arg name="map_size_z_" value="$(arg map_size_z)"/>
+
+    <arg name="ns0_init_x" value="$(arg ns0_init_x)"/>
+    <arg name="ns0_init_y" value="$(arg ns0_init_y)"/>
+    <arg name="ns0_init_z" value="$(arg ns0_init_z)"/>
+
+    <arg name="ns1_init_x" value="$(arg ns1_init_x)"/>
+    <arg name="ns1_init_y" value="$(arg ns1_init_y)"/>
+    <arg name="ns1_init_z" value="$(arg ns1_init_z)"/>
+
+    <arg name="ns2_init_x" value="$(arg ns2_init_x)"/>
+    <arg name="ns2_init_y" value="$(arg ns2_init_y)"/>
+    <arg name="ns2_init_z" value="$(arg ns2_init_z)"/>
+
+    <arg name="c_num" value="0"/>
+    <arg name="p_num" value="130"/>
+  </include>
+
+
+</launch>

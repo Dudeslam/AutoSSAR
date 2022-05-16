@@ -1,0 +1,263 @@
+<launch>
+      <arg name="ns0"/>
+      <arg name="ns1"/>
+      <arg name="ns2"/>
+      
+      <arg name="ns0_init_x"/>
+      <arg name="ns0_init_y"/>
+      <arg name="ns0_init_z"/>
+
+      <arg name="ns1_init_x"/>
+      <arg name="ns1_init_y"/>
+      <arg name="ns1_init_z"/>
+
+      <arg name="ns2_init_x"/>
+      <arg name="ns2_init_y"/>
+      <arg name="ns2_init_z"/>
+
+      <arg name="map_size_x_"/>
+      <arg name="map_size_y_"/>
+      <arg name="map_size_z_"/>
+      <arg name="box_min_x"/>
+      <arg name="box_min_y"/>
+      <arg name="box_min_z"/>
+      <arg name="box_max_x"/>
+      <arg name="box_max_y"/>
+      <arg name="box_max_z"/>
+      <arg name="c_num"/>
+      <arg name="p_num"/>
+      <arg name="obj_num" value="1" />
+
+
+      <!-- <node pkg ="map_generator" name ="map_pub" type ="map_pub" output = "screen" args="$(find map_generator)/resource/office.pcd"/> -->
+      <node pkg ="map_generator" name ="map_pub" type ="map_pub" args="$(find map_generator)/resource/tmp.pcd"/>
+
+
+
+  <!-- /////////////////////////////////////////////////////////////////////////// -->
+  <!-- /////////////////////////////////////////////////////////////////////////// -->
+  <!-- /////////////////////////////////////////////////////////////////////////// -->
+
+
+
+      <!-- <node pkg="so3_quadrotor_simulator" type="quadrotor_simulator_so3" name="quadrotor_simulator_so3" output="screen" ns="$(arg ns0)"> -->
+      <node pkg="so3_quadrotor_simulator" type="quadrotor_simulator_so3" name="quadrotor_simulator_so3" ns="$(arg ns0)">
+            <param name="rate/odom" value="200.0"/>
+            <param name="simulator/init_state_x" value="$(arg ns0_init_x)"/>
+            <param name="simulator/init_state_y" value="$(arg ns0_init_y)"/>
+            <param name="simulator/init_state_z" value="$(arg ns0_init_z)"/>
+
+            <remap from="~odom" to="/$(arg ns0)/visual_slam/odom"/>
+            <remap from="~cmd" to="/$(arg ns0)/so3_cmd"/>
+            <remap from="~force_disturbance" to="/$(arg ns0)/force_disturbance"/>    
+            <remap from="~moment_disturbance" to="/$(arg ns0)/moment_disturbance"/>        
+      </node>
+      
+      <!-- <node pkg="nodelet" type="nodelet" args="standalone so3_control/SO3ControlNodelet" name="so3_control" required="true" output="screen" ns="$(arg ns0)"> -->
+      <node pkg="nodelet" type="nodelet" args="standalone so3_control/SO3ControlNodelet" name="so3_control" required="true" ns="$(arg ns0)">
+            <remap from="~odom" to="/$(arg ns0)/state_ukf/odom"/>
+            <remap from="~position_cmd" to="/$(arg ns0)/planning/pos_cmd"/>
+            <remap from="~motors" to="/$(arg ns0)/motors"/>
+            <remap from="~corrections" to="/$(arg ns0)/corrections"/>
+            <remap from="~so3_cmd" to="/$(arg ns0)/so3_cmd"/>
+            <rosparam file="$(find so3_control)/config/gains_hummingbird.yaml"/>
+            <rosparam file="$(find so3_control)/config/corrections_hummingbird.yaml"/>
+            <param name="mass" value="0.98"/>
+            <param name="use_angle_corrections " value="false"/>
+            <param name="use_external_yaw "      value="false"/>
+            <param name="gains/rot/z" value="1.0"/>    
+            <param name="gains/ang/z" value="0.1"/>        
+      </node>  
+      
+      <!-- <node pkg="so3_disturbance_generator" name="so3_disturbance_generator" type="so3_disturbance_generator" output="screen" ns="$(arg ns0)"> -->
+      <node pkg="so3_disturbance_generator" name="so3_disturbance_generator" type="so3_disturbance_generator" ns="$(arg ns0)">
+            <remap from="~odom" to="/$(arg ns0)/visual_slam/odom"/>             
+            <remap from="~noisy_odom" to="/$(arg ns0)/state_ukf/odom"/>          
+            <remap from="~correction" to="/$(arg ns0)/visual_slam/correction"/>   
+            <remap from="~force_disturbance" to="/$(arg ns0)/force_disturbance"/>        
+            <remap from="~moment_disturbance" to="/$(arg ns0)/moment_disturbance"/>            
+      </node> 
+      
+      <!-- <node pkg="odom_visualization" name="odom_visualization" type="odom_visualization" output="screen" ns="$(arg ns0)"> -->
+      <node pkg="odom_visualization" name="odom_visualization" type="odom_visualization" ns="$(arg ns0)">
+            <remap from="~odom" to="/$(arg ns0)/visual_slam/odom"/>
+            <param name="color/a" value="1.0"/>    
+            <param name="color/r" value="0.0"/>        
+            <param name="color/g" value="0.0"/>        
+            <param name="color/b" value="1.0"/>       
+            <param name="covariance_scale" value="100.0"/>       
+            <param name="robot_scale" value="1.0"/>
+      </node>
+
+      <!-- <node pkg="local_sensing_node" type="pcl_render_node" name="pcl_render_node" output="screen" ns="$(arg ns0)"> -->
+      <node pkg="local_sensing_node" type="pcl_render_node" name="pcl_render_node" ns="$(arg ns0)">
+            <rosparam command="load" file="$(find local_sensing_node)/params/camera.yaml" />
+            <param name="sensing_horizon"  value="5.0" />
+            <param name="sensing_rate"     value="15.0"/>
+            <param name="estimation_rate"  value="15.0"/>
+
+            <param name="map/x_size"     value="$(arg map_size_x_)"/>
+            <param name="map/y_size"     value="$(arg map_size_y_)"/>
+            <param name="map/z_size"     value="$(arg map_size_z_)"/>
+
+            <remap from="~global_map" to="/map_generator/global_cloud"/>
+            <remap from="~odometry"   to="/$(arg ns0)/state_ukf/odom"/>
+
+            <remap from="/pcl_render_node/depth" to="/$(arg ns0)/pcl_render_node/depth"/>
+            <remap from="/pcl_render_node/sensor_pose" to="/$(arg ns0)/pcl_render_node/sensor_pose"/>
+      </node>
+
+
+
+  <!-- /////////////////////////////////////////////////////////////////////////// -->
+  <!-- /////////////////////////////////////////////////////////////////////////// -->
+  <!-- /////////////////////////////////////////////////////////////////////////// -->
+
+
+
+
+      <!-- <node pkg="so3_quadrotor_simulator" type="quadrotor_simulator_so3" name="quadrotor_simulator_so3" output="screen" ns="$(arg ns1)"> -->
+      <node pkg="so3_quadrotor_simulator" type="quadrotor_simulator_so3" name="quadrotor_simulator_so3" ns="$(arg ns1)">
+            <param name="rate/odom" value="200.0"/>
+            <param name="simulator/init_state_x" value="$(arg ns1_init_x)"/>
+            <param name="simulator/init_state_y" value="$(arg ns1_init_y)"/>
+            <param name="simulator/init_state_z" value="$(arg ns1_init_z)"/>
+
+            <remap from="~odom" to="/$(arg ns1)/visual_slam/odom"/>
+            <remap from="~cmd" to="/$(arg ns1)/so3_cmd"/>
+            <remap from="~force_disturbance" to="/$(arg ns1)/force_disturbance"/>    
+            <remap from="~moment_disturbance" to="/$(arg ns1)/moment_disturbance"/>        
+      </node>
+      
+      <!-- <node pkg="nodelet" type="nodelet" args="standalone so3_control/SO3ControlNodelet" name="so3_control" required="true" output="screen" ns="$(arg ns1)"> -->
+      <node pkg="nodelet" type="nodelet" args="standalone so3_control/SO3ControlNodelet" name="so3_control" required="true" ns="$(arg ns1)">
+            <remap from="~odom" to="/$(arg ns1)/state_ukf/odom"/>
+            <remap from="~position_cmd" to="/$(arg ns1)/planning/pos_cmd"/>
+            <remap from="~motors" to="/$(arg ns1)/motors"/>
+            <remap from="~corrections" to="/$(arg ns1)/corrections"/>
+            <remap from="~so3_cmd" to="/$(arg ns1)/so3_cmd"/>
+            <rosparam file="$(find so3_control)/config/gains_hummingbird.yaml"/>
+            <rosparam file="$(find so3_control)/config/corrections_hummingbird.yaml"/>
+            <param name="mass" value="0.98"/>
+            <param name="use_angle_corrections " value="false"/>
+            <param name="use_external_yaw "      value="false"/>
+            <param name="gains/rot/z" value="1.0"/>    
+            <param name="gains/ang/z" value="0.1"/>        
+      </node>  
+      
+      <!-- <node pkg="so3_disturbance_generator" name="so3_disturbance_generator" type="so3_disturbance_generator" output="screen" ns="$(arg ns1)"> -->
+      <node pkg="so3_disturbance_generator" name="so3_disturbance_generator" type="so3_disturbance_generator" ns="$(arg ns1)">
+            <remap from="~odom" to="/$(arg ns1)/visual_slam/odom"/>             
+            <remap from="~noisy_odom" to="/$(arg ns1)/state_ukf/odom"/>          
+            <remap from="~correction" to="/$(arg ns1)/visual_slam/correction"/>   
+            <remap from="~force_disturbance" to="/$(arg ns1)/force_disturbance"/>        
+            <remap from="~moment_disturbance" to="/$(arg ns1)/moment_disturbance"/>            
+      </node> 
+      
+      <!-- <node pkg="odom_visualization" name="odom_visualization" type="odom_visualization" output="screen" ns="$(arg ns1)"> -->
+      <node pkg="odom_visualization" name="odom_visualization" type="odom_visualization" ns="$(arg ns1)">
+            <remap from="~odom" to="/$(arg ns1)/visual_slam/odom"/>
+            <param name="color/a" value="1.0"/>    
+            <param name="color/r" value="0.0"/>        
+            <param name="color/g" value="0.0"/>        
+            <param name="color/b" value="1.0"/>       
+            <param name="covariance_scale" value="100.0"/>       
+            <param name="robot_scale" value="1.0"/>
+      </node>
+
+      <!-- <node pkg="local_sensing_node" type="pcl_render_node" name="pcl_render_node" output="screen" ns="$(arg ns1)"> -->
+      <node pkg="local_sensing_node" type="pcl_render_node" name="pcl_render_node" ns="$(arg ns1)">
+            <rosparam command="load" file="$(find local_sensing_node)/params/camera.yaml" />
+            <param name="sensing_horizon"  value="5.0" />
+            <param name="sensing_rate"     value="15.0"/>
+            <param name="estimation_rate"  value="15.0"/>
+
+            <param name="map/x_size"     value="$(arg map_size_x_)"/>
+            <param name="map/y_size"     value="$(arg map_size_y_)"/>
+            <param name="map/z_size"     value="$(arg map_size_z_)"/>
+
+            <remap from="~global_map" to="/map_generator/global_cloud"/>
+            <remap from="~odometry"   to="/$(arg ns1)/state_ukf/odom"/>
+
+            <remap from="/pcl_render_node/depth" to="/$(arg ns1)/pcl_render_node/depth"/>
+            <remap from="/pcl_render_node/sensor_pose" to="/$(arg ns1)/pcl_render_node/sensor_pose"/>
+      </node>
+
+
+
+  <!-- /////////////////////////////////////////////////////////////////////////// -->
+  <!-- /////////////////////////////////////////////////////////////////////////// -->
+  <!-- /////////////////////////////////////////////////////////////////////////// -->
+
+
+
+
+      <!-- <node pkg="so3_quadrotor_simulator" type="quadrotor_simulator_so3" name="quadrotor_simulator_so3" output="screen" ns="$(arg ns2)"> -->
+      <node pkg="so3_quadrotor_simulator" type="quadrotor_simulator_so3" name="quadrotor_simulator_so3" ns="$(arg ns2)">
+            <param name="rate/odom" value="200.0"/>
+            <param name="simulator/init_state_x" value="$(arg ns2_init_x)"/>
+            <param name="simulator/init_state_y" value="$(arg ns2_init_y)"/>
+            <param name="simulator/init_state_z" value="$(arg ns2_init_z)"/>
+
+            <remap from="~odom" to="/$(arg ns2)/visual_slam/odom"/>
+            <remap from="~cmd" to="/$(arg ns2)/so3_cmd"/>
+            <remap from="~force_disturbance" to="/$(arg ns2)/force_disturbance"/>    
+            <remap from="~moment_disturbance" to="/$(arg ns2)/moment_disturbance"/>        
+      </node>
+      
+      <!-- <node pkg="nodelet" type="nodelet" args="standalone so3_control/SO3ControlNodelet" name="so3_control" required="true" output="screen" ns="$(arg ns2)"> -->
+      <node pkg="nodelet" type="nodelet" args="standalone so3_control/SO3ControlNodelet" name="so3_control" required="true" ns="$(arg ns2)">
+            <remap from="~odom" to="/$(arg ns2)/state_ukf/odom"/>
+            <remap from="~position_cmd" to="/$(arg ns2)/planning/pos_cmd"/>
+            <remap from="~motors" to="/$(arg ns2)/motors"/>
+            <remap from="~corrections" to="/$(arg ns2)/corrections"/>
+            <remap from="~so3_cmd" to="/$(arg ns2)/so3_cmd"/>
+            <rosparam file="$(find so3_control)/config/gains_hummingbird.yaml"/>
+            <rosparam file="$(find so3_control)/config/corrections_hummingbird.yaml"/>
+            <param name="mass" value="0.98"/>
+            <param name="use_angle_corrections " value="false"/>
+            <param name="use_external_yaw "      value="false"/>
+            <param name="gains/rot/z" value="1.0"/>    
+            <param name="gains/ang/z" value="0.1"/>        
+      </node>  
+      
+      <!-- <node pkg="so3_disturbance_generator" name="so3_disturbance_generator" type="so3_disturbance_generator" output="screen" ns="$(arg ns2)"> -->
+      <node pkg="so3_disturbance_generator" name="so3_disturbance_generator" type="so3_disturbance_generator" ns="$(arg ns2)">
+            <remap from="~odom" to="/$(arg ns2)/visual_slam/odom"/>             
+            <remap from="~noisy_odom" to="/$(arg ns2)/state_ukf/odom"/>          
+            <remap from="~correction" to="/$(arg ns2)/visual_slam/correction"/>   
+            <remap from="~force_disturbance" to="/$(arg ns2)/force_disturbance"/>        
+            <remap from="~moment_disturbance" to="/$(arg ns2)/moment_disturbance"/>            
+      </node> 
+      
+      <!-- <node pkg="odom_visualization" name="odom_visualization" type="odom_visualization" output="screen" ns="$(arg ns2)"> -->
+      <node pkg="odom_visualization" name="odom_visualization" type="odom_visualization" ns="$(arg ns2)">
+            <remap from="~odom" to="/$(arg ns2)/visual_slam/odom"/>
+            <param name="color/a" value="1.0"/>    
+            <param name="color/r" value="0.0"/>        
+            <param name="color/g" value="0.0"/>        
+            <param name="color/b" value="1.0"/>       
+            <param name="covariance_scale" value="100.0"/>       
+            <param name="robot_scale" value="1.0"/>
+      </node>
+
+      <!-- <node pkg="local_sensing_node" type="pcl_render_node" name="pcl_render_node" output="screen" ns="$(arg ns2)"> -->
+      <node pkg="local_sensing_node" type="pcl_render_node" name="pcl_render_node" ns="$(arg ns2)">
+            <rosparam command="load" file="$(find local_sensing_node)/params/camera.yaml" />
+            <param name="sensing_horizon"  value="5.0" />
+            <param name="sensing_rate"     value="15.0"/>
+            <param name="estimation_rate"  value="15.0"/>
+
+            <param name="map/x_size"     value="$(arg map_size_x_)"/>
+            <param name="map/y_size"     value="$(arg map_size_y_)"/>
+            <param name="map/z_size"     value="$(arg map_size_z_)"/>
+
+            <remap from="~global_map" to="/map_generator/global_cloud"/>
+            <remap from="~odometry"   to="/$(arg ns2)/state_ukf/odom"/>
+
+            <remap from="/pcl_render_node/depth" to="/$(arg ns2)/pcl_render_node/depth"/>
+            <remap from="/pcl_render_node/sensor_pose" to="/$(arg ns2)/pcl_render_node/sensor_pose"/>
+      </node>
+
+
+</launch>
