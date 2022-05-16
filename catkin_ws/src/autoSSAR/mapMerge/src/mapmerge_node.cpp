@@ -136,7 +136,7 @@ void getLocalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
 }
 
 void getWithinRangeCallback(const nav_msgs::Odometry::ConstPtr& msg){
-    if(*msg).child_frame_id == ""){return}
+    if((*msg).child_frame_id == ""){return;}
 
     if((*msg).child_frame_id == otherUAV0 ){
         otherUAV0InRange_ = true;
