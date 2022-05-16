@@ -40,6 +40,8 @@ void FastExplorationFSM::init(ros::NodeHandle& nh) {
 
   trigger_sub_ = nh.subscribe("/waypoint_generator/waypoints", 1, &FastExplorationFSM::triggerCallback, this);
   odom_sub_ = nh.subscribe("/odom_world", 1, &FastExplorationFSM::odometryCallback, this);
+  merge_sub_ = nh.subscribe("/MergeComplete", 1, &FastExplorationFSM::mergeCallback, this);
+
 
   replan_pub_ = nh.advertise<std_msgs::Empty>("/planning/replan", 10);
   new_pub_ = nh.advertise<std_msgs::Empty>("/planning/new", 10);
@@ -386,6 +388,11 @@ void FastExplorationFSM::frontierCallback(const ros::TimerEvent& e) {
   //   astar_time = (ros::Time::now() - t1).toSec();
   //   ROS_WARN("Average astar time: %lf", astar_time);
   // }
+}
+void FastExplorationFSM::mergeCallback(const std_msgs::StringConstPtr& msg) {
+  if (msg->data == "MergeMapComplete") {
+    transitState(PLAN_TRAJ, "MergeMapCompleteCallback");
+  }
 }
 
 void FastExplorationFSM::triggerCallback(const nav_msgs::PathConstPtr& msg) {
