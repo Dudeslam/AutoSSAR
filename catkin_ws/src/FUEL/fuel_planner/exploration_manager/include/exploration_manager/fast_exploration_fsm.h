@@ -30,7 +30,7 @@ class LocalExploreFSM;
 struct FSMParam;
 struct FSMData;
 
-enum EXPL_STATE { INIT, WAIT_TRIGGER, PLAN_TRAJ, PUB_TRAJ, EXEC_TRAJ, FINISH, WAIT_PARTNER}; // EDIT added state
+enum EXPL_STATE { INIT, WAIT_TRIGGER, PLAN_TRAJ, PUB_TRAJ, EXEC_TRAJ, FINISH, PAUSE_PLANNING}; // EDIT added state
 
 class FastExplorationFSM {
 private:
