@@ -41,19 +41,19 @@
     <arg name="map_size_y_" value="$(arg map_size_y)"/>
     <arg name="map_size_z_" value="$(arg map_size_z)"/>
 
-    <arg name="box_min_x" value="-10.0"/>
+    <!-- <arg name="box_min_x" value="-10.0"/>
     <arg name="box_min_y" value="-15.0"/>
     <arg name="box_min_z" value=" 0.0"/>
     <arg name="box_max_x" value="10.0"/>
     <arg name="box_max_y" value="15.0"/>
-    <arg name="box_max_z" value=" 2.0"/>
+    <arg name="box_max_z" value=" 2.0"/> -->
 
-    <!-- <arg name="box_min_x" value="-2.0"/>
+    <arg name="box_min_x" value="-2.0"/>
     <arg name="box_min_y" value="-16.0"/>
     <arg name="box_min_z" value=" 0.0"/>
     <arg name="box_max_x" value="16.0"/>
     <arg name="box_max_y" value="16.0"/>
-    <arg name="box_max_z" value=" 2.0"/> -->
+    <arg name="box_max_z" value=" 2.0"/>
 
     <arg name="odometry_topic" value="/$(arg ns0)/state_ukf/odom"/>
     <!-- sensor pose: transform of camera frame in the world frame -->

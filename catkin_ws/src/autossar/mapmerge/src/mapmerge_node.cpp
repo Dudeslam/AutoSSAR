@@ -9,10 +9,6 @@
 #include <sensor_msgs/PointCloud2.h>
 #include <std_msgs/Header.h>
 #include <std_msgs/String.h>
-#include <octomap_msgs/Octomap.h>
-#include <octomap_msgs/conversions.h>
-#include <octomap/octomap.h>
-#include <tf/transform_broadcaster.h>
 #include <pcl/registration/icp.h>
 #include <pcl/filters/filter.h>
 #include <pcl/common/projection_matrix.h>
@@ -22,10 +18,7 @@
 #include <geometry_msgs/PoseArray.h>
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/Point.h>
-#include <tf/transform_listener.h>
-#include <tf/transform_broadcaster.h>
-#include <visualization_msgs/Marker.h>
-
+#include <nav_msgs/Odometry.h>
 
 pcl::PointCloud<pcl::PointXYZ> own_globalMap_pcd;
 pcl::PointCloud<pcl::PointXYZ> received_map_;
@@ -100,8 +93,8 @@ void downsample(pcl::PointCloud<pcl::PointXYZ>& cloud_in, pcl::PointCloud<pcl::P
     // std::cout << "Cloud in after downsample: " << cloud_out.size() << std::endl;
 }
 
-//Callbacks
 
+//Callbacks
 void getGlobalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
 {
     if(!finishState){
@@ -116,8 +109,6 @@ void getGlobalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
         }
     }
 }
-
-
 
 void getLocalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
 {
@@ -142,22 +133,14 @@ void getLocalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
     }
 }
 
-void getWithinRangeCallback(const std_msgs::String& msg){
+void getWithinRangeCallback(const nav_msgs::Odometry::ConstPtr& msg){
+    if((*msg).child_frame_id == ""){return;}
 
-
-    std::string str = msg.data;
-
-    // std::cout << "getWithinRangeCallback" << std::endl;
-    // std::cout << str << std::endl;
-    // std::cout << otherUAV0 << std::endl;
-    // std::cout << otherUAV1 << std::endl;
-
-
-    if( str == otherUAV0 ){
+    if((*msg).child_frame_id == otherUAV0 ){
         otherUAV0InRange_ = true;
     }
 
-    if( str == otherUAV1 ){
+    if( (*msg).child_frame_id == otherUAV1 ){
         otherUAV1InRange_ = true;
     }
 
@@ -168,11 +151,6 @@ void getFinishCallback(const std_msgs::String& msg){
     if(str == "finish"){
         finishState = true;
     }
-}
-
-void getErrorCallback(const std_msgs::String& msg){
-    std::string str = msg.data;
-    std::cout << "Error: " << str << std::endl;
 }
 
 
@@ -192,12 +170,10 @@ int main (int argc, char* argv[]){
     ros::Subscriber map_global_uav2 = nh.subscribe(otherUAV1+"/MergedMap", 10, getGlobalMapCallback); 
     ros::Subscriber within_range = nh.subscribe(selfUAV+"/within_range", 10, getWithinRangeCallback);
     ros::Subscriber finish = nh.subscribe(selfUAV+"/planning/state", 10, getFinishCallback);
-    ros::Subscriber errorMSG = nh.subscribe("exploration_node/ErrorMSG", 10, getErrorCallback);
     ROS_WARN("Have subscribed");
 
-    ros::Publisher other_pub = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/MergedMap", 1000);
-
-    ros::Publisher own_publish = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/pcl_render_node/cloud", 1000);
+    ros::Publisher other_pub = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/MergedMap", 10);
+    ros::Publisher own_publish = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/pcl_render_node/cloud", 10);
 
     // ros::Publisher debugger_own = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/debugger/cloud", 1000);
     ros::Rate loop_rate(20);
