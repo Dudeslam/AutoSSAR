@@ -62,6 +62,7 @@ private:
   void frontierCallback(const ros::TimerEvent& e);
   void triggerCallback(const nav_msgs::PathConstPtr& msg);
   void odometryCallback(const nav_msgs::OdometryConstPtr& msg);
+  void mergeCallback(const std_msgs::StringConstPtr& msg);
   void visualize();
   void clearVisMarker();
 

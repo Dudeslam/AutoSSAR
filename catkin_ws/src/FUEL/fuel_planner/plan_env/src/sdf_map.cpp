@@ -350,7 +350,7 @@ void SDFMap::OverWriteMap(const pcl::PointCloud<pcl::PointXYZ>& points, const in
   if (point_num == 0) return;
   md_->raycast_num_ += 1;
 
-  clearMap();
+  // clearMap();
   Eigen::Vector3d pt_w, tmp;
   Eigen::Vector3i idx;
   int vox_adr;
@@ -379,16 +379,16 @@ void SDFMap::OverWriteMap(const pcl::PointCloud<pcl::PointXYZ>& points, const in
     }
     posToIndex(pt_w, idx);
     vox_adr = toAddress(idx);
-    // setCacheOccupancy(vox_adr, tmp_flag);
+    setCacheOccupancy(vox_adr, tmp_flag);
     for (int k = 0; k < 3; ++k) {
       md_->update_min_[k] = 1;
       md_->update_max_[k] = 9999;
     }
-    // Raycasting between camera center and point
-    if (md_->flag_rayend_[vox_adr] == md_->raycast_num_)
-      continue;
-    else
-      md_->flag_rayend_[vox_adr] = md_->raycast_num_;
+    // // Raycasting between camera center and point
+    // if (md_->flag_rayend_[vox_adr] == md_->raycast_num_)
+    //   continue;
+    // else
+    //   md_->flag_rayend_[vox_adr] = md_->raycast_num_;
 
     // caster_->input(pt_w, camera_pos);
     // caster_->nextId(idx);

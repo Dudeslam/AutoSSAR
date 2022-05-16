@@ -215,6 +215,8 @@ int main (int argc, char* argv[]){
                 other_pub.publish(Global_Publish);
                 otherUAV1InRange_ = false;
             }
+
+
         }
         ros::spinOnce();
         loop_rate.sleep();

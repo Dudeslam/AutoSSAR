@@ -88,7 +88,7 @@ private:
   ros::Time lastMergeTime_;
   // data
   // flags of map state
-  bool local_updated_, esdf_need_update_, recently_merged_;
+  bool local_updated_, esdf_need_update_;
   // input
   Eigen::Vector3d camera_pos_;
   Eigen::Quaterniond camera_q_;

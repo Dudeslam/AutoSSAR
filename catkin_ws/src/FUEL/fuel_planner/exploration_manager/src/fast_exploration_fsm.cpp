@@ -390,9 +390,12 @@ void FastExplorationFSM::frontierCallback(const ros::TimerEvent& e) {
   // }
 }
 void FastExplorationFSM::mergeCallback(const std_msgs::StringConstPtr& msg) {
-  if (msg->data == "MergeMapComplete") {
-    transitState(PLAN_TRAJ, "MergeMapCompleteCallback");
-  }
+  // if(!fd->trigger_)
+  //   return;
+
+  // if (msg->data == "MergeMapComplete") {
+  //   transitState(PLAN_TRAJ, "MergeMapCompleteCallback");
+  // }
 }
 
 void FastExplorationFSM::triggerCallback(const nav_msgs::PathConstPtr& msg) {
