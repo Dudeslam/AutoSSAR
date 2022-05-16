@@ -390,12 +390,35 @@ void FastExplorationFSM::frontierCallback(const ros::TimerEvent& e) {
   // }
 }
 void FastExplorationFSM::mergeCallback(const std_msgs::StringConstPtr& msg) {
-  // if(!fd->trigger_)
-  //   return;
+  if(!fd->trigger_)
+    return;
 
-  // if (msg->data == "MergeMapComplete") {
-  //   transitState(PLAN_TRAJ, "MergeMapCompleteCallback");
-  // }
+  if (msg->data == "MergeMapComplete") {
+    auto ft = expl_manager_->frontier_finder_;
+    auto ed = expl_manager_->ed_;
+    ft->searchFrontiers();
+    ft->computeFrontiersToVisit();
+    ft->updateFrontierCostMatrix();
+
+    ft->getFrontiers(ed->frontiers_);           // returns all frontiers in list
+    ft->getFrontierBoxes(ed->frontier_boxes_);
+
+    // Draw frontier and bounding box
+    for (int i = 0; i < ed->frontiers_.size(); ++i) {
+      visualization_->drawCubes(ed->frontiers_[i], 0.1,
+                                visualization_->getColor(double(i) / ed->frontiers_.size(), 0.4),
+                                "frontier", i, 4);
+      // visualization_->drawBox(ed->frontier_boxes_[i].first, ed->frontier_boxes_[i].second,
+      // Vector4d(0.5, 0, 1, 0.3),
+      //                         "frontier_boxes", i, 4);
+    }
+    for (int i = ed->frontiers_.size(); i < 50; ++i) {
+      visualization_->drawCubes({}, 0.1, Vector4d(0, 0, 0, 1), "frontier", i, 4);
+      // visualization_->drawBox(Vector3d(0, 0, 0), Vector3d(0, 0, 0), Vector4d(1, 0, 0, 0.3),
+      // "frontier_boxes", i, 4);
+    }
+  }
+      transitState(PLAN_TRAJ, "MergeMapCompleteCallback");
 }
 
 void FastExplorationFSM::triggerCallback(const nav_msgs::PathConstPtr& msg) {
