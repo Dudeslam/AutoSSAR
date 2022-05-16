@@ -10,12 +10,12 @@
   <arg name="ns2" default="UAV2"/>
 
 
-  <arg name="ns0_init_x" value="0.0"/>
-  <arg name="ns0_init_y" value="1.0"/>
+  <arg name="ns0_init_x" value="4.0"/>
+  <arg name="ns0_init_y" value="3.0"/>
   <arg name="ns0_init_z" value="1.0"/> 
 
-  <arg name="ns1_init_x" value="0.0"/>
-  <arg name="ns1_init_y" value="0.0"/>
+  <arg name="ns1_init_x" value="4.0"/>
+  <arg name="ns1_init_y" value="5.0"/>
   <arg name="ns1_init_z" value="1.0"/>
 
 

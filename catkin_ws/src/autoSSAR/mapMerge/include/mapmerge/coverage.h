@@ -2,20 +2,20 @@
 #define _COVERAGE_H_
 
 #include <ros/ros.h>
-#include <nav_msgs/String.h>
-#include <std_msgs/Empty.h>
 #include <std_msgs/String.h>
+#include "nav_msgs/Odometry.h"
+#include <nav_msgs/Path.h>
+#include <std_msgs/Empty.h>
 #include <pcl_conversions/pcl_conversions.h>
 #include <pcl/point_cloud.h>
-#include <pcl/point_types.h>
 #include <iostream>
-#include <string>
+#include <string.h>
 
-class cooverage {
+class coverage {
     private:
         int UAV0_Map_size_, UAV1_Map_size_, UAV2_Map_size_;
         int Globalmap_size;
-        string UAV0_name, UAV1_name, UAV2_name;
+        std::string UAV0_name, UAV1_name, UAV2_name;
 
 
         //Subscribers
@@ -31,11 +31,11 @@ class cooverage {
     public:
         coverage(){
 
-        };
+        }
         ~coverage(){
                 
-        };
-    void init(ros::NodleHandle& nh);
+        }
+    void init(ros::NodeHandle& nh);
 
 
 };
