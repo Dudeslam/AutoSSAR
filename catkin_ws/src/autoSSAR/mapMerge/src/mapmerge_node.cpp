@@ -93,8 +93,8 @@ void downsample(pcl::PointCloud<pcl::PointXYZ>& cloud_in, pcl::PointCloud<pcl::P
     // std::cout << "Cloud in after downsample: " << cloud_out.size() << std::endl;
 }
 
-//Callbacks
 
+//Callbacks
 void getGlobalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
 {
     if(!finishState){
@@ -109,8 +109,6 @@ void getGlobalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
         }
     }
 }
-
-
 
 void getLocalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
 {
@@ -174,9 +172,8 @@ int main (int argc, char* argv[]){
     ros::Subscriber finish = nh.subscribe(selfUAV+"/planning/state", 10, getFinishCallback);
     ROS_WARN("Have subscribed");
 
-    ros::Publisher other_pub = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/MergedMap", 1000);
-
-    ros::Publisher own_publish = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/pcl_render_node/cloud", 1000);
+    ros::Publisher other_pub = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/MergedMap", 10);
+    ros::Publisher own_publish = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/pcl_render_node/cloud", 10);
 
     // ros::Publisher debugger_own = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/debugger/cloud", 1000);
     ros::Rate loop_rate(20);

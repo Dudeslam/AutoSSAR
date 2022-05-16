@@ -29,7 +29,7 @@ void FastExplorationFSM::init(ros::NodeHandle& nh) {
   planner_manager_ = expl_manager_->planner_manager_;
   state_ = EXPL_STATE::INIT;
   fd_->have_odom_ = false;
-  fd_->state_str_ = { "INIT", "WAIT_TRIGGER", "PLAN_TRAJ", "PUB_TRAJ", "EXEC_TRAJ", "FINISH", "WAIT_PARTNER" }; // EDIT added state
+  fd_->state_str_ = { "INIT", "WAIT_TRIGGER", "PLAN_TRAJ", "PUB_TRAJ", "EXEC_TRAJ", "FINISH", "PAUSE_PLANNING" }; // EDIT added state
   fd_->static_state_ = true;
   fd_->trigger_ = false;
 
@@ -102,7 +102,7 @@ void FastExplorationFSM::FSMCallback(const ros::TimerEvent& e) {
 
     case WAIT_TRIGGER: {
       // EDIT
-      if (TRUNCATE_flag) { transitState(WAIT_PARTNER, "PLAN_TRAJ"); }
+      if (TRUNCATE_flag) { transitState(PAUSE_PLANNING, "PLAN_TRAJ"); }
       // Do nothing but wait for trigger
       ROS_WARN_THROTTLE(1.0, "wait for trigger.");
       break;
@@ -114,16 +114,16 @@ void FastExplorationFSM::FSMCallback(const ros::TimerEvent& e) {
     }
 
     // EDIT added state
-    case WAIT_PARTNER: {
+    case PAUSE_PLANNING: {
       ROS_WARN_STREAM_THROTTLE(1.0, "" << selfUAV << ": waiting for partner.");
       // If flag false, restart planning
-      if (!TRUNCATE_flag) { transitState(PLAN_TRAJ, "WAIT_PARTNER"); }
+      if (!TRUNCATE_flag) { transitState(PLAN_TRAJ, "PAUSE_PLANNING"); }
       break;
     }
 
     case PLAN_TRAJ: {
       // EDIT
-      if (TRUNCATE_flag) { transitState(WAIT_PARTNER, "PLAN_TRAJ"); }
+      if (TRUNCATE_flag) { transitState(PAUSE_PLANNING, "PLAN_TRAJ"); }
 
       if (fd_->static_state_) {
         // Plan from static state (hover)
@@ -165,7 +165,7 @@ void FastExplorationFSM::FSMCallback(const ros::TimerEvent& e) {
 
     case PUB_TRAJ: {
       // EDIT
-      if (TRUNCATE_flag) { transitState(WAIT_PARTNER, "PLAN_TRAJ"); }
+      if (TRUNCATE_flag) { transitState(PAUSE_PLANNING, "PLAN_TRAJ"); }
 
       double dt = (ros::Time::now() - fd_->newest_traj_.start_time).toSec();
       if (dt > 0) {
@@ -181,7 +181,7 @@ void FastExplorationFSM::FSMCallback(const ros::TimerEvent& e) {
 
     case EXEC_TRAJ: {
       // EDIT
-      if (TRUNCATE_flag) { transitState(WAIT_PARTNER, "PLAN_TRAJ"); }
+      if (TRUNCATE_flag) { transitState(PAUSE_PLANNING, "PLAN_TRAJ"); }
 
       LocalTrajData* info = &planner_manager_->local_data_;
       double t_cur = (ros::Time::now() - info->start_time_).toSec();
@@ -208,7 +208,7 @@ void FastExplorationFSM::FSMCallback(const ros::TimerEvent& e) {
     }
   }
 
-  /*/ EDIT: If WAIT_PARTNER position reached
+  /*/ EDIT: If PAUSE_PLANNING position reached
   // ROS_WARN_STREAM_THROTTLE( 0.5, "curOdom, trunkPos " << fd_->odom_pos_(0) << fd_->odom_pos_(1) << " " << TRUNCATE_pos(0) << TRUNCATE_pos(1) );
   if ( (round(fd_->odom_pos_(0)) == round(TRUNCATE_pos(0))) && (round(fd_->odom_pos_(1)) == round(TRUNCATE_pos(1)))) {
     ROS_WARN_STREAM_THROTTLE( 0.5, "POSITION REACHED" << fd_->odom_pos_(0) << fd_->odom_pos_(1) << " " << TRUNCATE_pos(0) << TRUNCATE_pos(1) );

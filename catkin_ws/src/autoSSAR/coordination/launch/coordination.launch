@@ -82,7 +82,7 @@
     </node>
 
     <!-- <node pkg="coordination" name="coordination" type="coordination" output="screen" ns="$(arg ns2)">
-        <param name="maxBattery" value="20"/> 
+        <param name="maxBattery" value="30"/> 
     </node> -->
 
 

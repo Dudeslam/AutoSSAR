@@ -126,17 +126,27 @@ void coordinationAlgorithm::batteryCallback(const std_msgs::Float64& msg){
   rangeLeft_ = batteryCapasity_ - distTraversed_;
 
 
-  // Raise batteryHalfFlag_ if 50% distance left
-  if( (rangeLeft_ < (batteryCapasity_/2))  && selfUAV_.role != coord_state_str_[SACRIFICE] ){
+  /*/ Raise batteryHalfFlag_ if 50% distance left
+  if( (rangeLeft_ < (batteryCapasity_*(1/2)))  && selfUAV_.role != coord_state_str_[SACRIFICE] ){
     batteryHalfFlag_ = true;
     //std::cout << "batteryCallback batteryHalfFlag_: " << batteryHalfFlag_ << std::endl;
   }
 
   // If SACRIFICE simulate longer before return
-  if( (rangeLeft_ < ((batteryCapasity_/2)+5)) && selfUAV_.role == coord_state_str_[SACRIFICE] ){
+  if( ( rangeLeft_ < (batteryCapasity_*(2/5)) ) && selfUAV_.role == coord_state_str_[SACRIFICE] ){
     batteryHalfFlag_ = true;
     //std::cout << "batteryCallback batteryHalfFlag_: " << batteryHalfFlag_ << std::endl;
   }//*/
+
+  if( rangeLeft_ < (batteryCapasity_*(1/2))  && selfUAV_.role != coord_state_str_[SACRIFICE] ){
+    batteryHalfFlag_ = true;
+    //std::cout << "batteryCallback batteryHalfFlag_: " << batteryHalfFlag_ << std::endl;
+  }
+
+  if( rangeLeft_ < 5  && selfUAV_.role == coord_state_str_[SACRIFICE] ){
+    batteryHalfFlag_ = true;
+    //std::cout << "batteryCallback batteryHalfFlag_: " << batteryHalfFlag_ << std::endl;
+  }
 
 
   if(rangeLeft_ <= 0){
