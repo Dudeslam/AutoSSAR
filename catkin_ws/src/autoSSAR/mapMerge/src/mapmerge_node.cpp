@@ -142,22 +142,14 @@ void getLocalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
     }
 }
 
-void getWithinRangeCallback(const std_msgs::String& msg){
+void getWithinRangeCallback(const nav_msgs::Odometry::ConstPtr& msg){
+    if(*msg).child_frame_id == ""){return}
 
-
-    std::string str = msg.data;
-
-    // std::cout << "getWithinRangeCallback" << std::endl;
-    // std::cout << str << std::endl;
-    // std::cout << otherUAV0 << std::endl;
-    // std::cout << otherUAV1 << std::endl;
-
-
-    if( str == otherUAV0 ){
+    if((*msg).child_frame_id == otherUAV0 ){
         otherUAV0InRange_ = true;
     }
 
-    if( str == otherUAV1 ){
+    if( (*msg).child_frame_id == otherUAV1 ){
         otherUAV1InRange_ = true;
     }
 

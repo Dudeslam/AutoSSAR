@@ -31,7 +31,7 @@
   <arg name="ns0_init_z" value="1.0"/>  -->
 
   <!-- main algorithm params, calls: "exploration_node.cpp" with arguments NOTE: this node does all the printing !!! -->
-  <include file="$(find exploration_manager)/launch/algorithm_myMulti.xml" ns="$(arg ns0)">
+  <include file="$(find exploration_manager)/launch/algorithm_MULTI.xml" ns="$(arg ns0)">
     <arg name="drone_index" value="$(arg ns0)"/> 
 
     <arg name="map_size_x_" value="$(arg map_size_x)"/>
@@ -109,7 +109,7 @@
   <arg name="ns1_init_z" value="1.0"/>  -->
 
   <!-- main algorithm params -->
-  <include file="$(find exploration_manager)/launch/algorithm_myMulti.xml" ns="$(arg ns1)">
+  <include file="$(find exploration_manager)/launch/algorithm_MULTI.xml" ns="$(arg ns1)">
     <arg name="drone_index" value="$(arg ns1)"/> 
 
     <arg name="map_size_x_" value="$(arg map_size_x)"/>
