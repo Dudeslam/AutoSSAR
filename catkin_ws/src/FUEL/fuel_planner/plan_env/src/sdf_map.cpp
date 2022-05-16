@@ -364,13 +364,13 @@ void SDFMap::OverWriteMap(const pcl::PointCloud<pcl::PointXYZ>& points, const in
       // Find closest point in map and set free
       pt_w = closetPointInMap(pt_w, camera_pos);
       length = (pt_w - camera_pos).norm();
-      if (length > mp_->max_ray_length_)
+      if (length > 999)
         pt_w = (pt_w - camera_pos) / length * mp_->max_ray_length_ + camera_pos;
       if (pt_w[2] < 0.2) continue;
       tmp_flag = 0;
     } else {
       length = (pt_w - camera_pos).norm();
-      if (length > mp_->max_ray_length_) {
+      if (length > 999) {
         pt_w = (pt_w - camera_pos) / length * mp_->max_ray_length_ + camera_pos;
         if (pt_w[2] < 0.2) continue;
         tmp_flag = 0;
