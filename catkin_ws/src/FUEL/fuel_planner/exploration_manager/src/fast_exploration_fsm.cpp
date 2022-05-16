@@ -390,7 +390,7 @@ void FastExplorationFSM::frontierCallback(const ros::TimerEvent& e) {
   // }
 }
 void FastExplorationFSM::mergeCallback(const std_msgs::StringConstPtr& msg) {
-  if(!fd->trigger_)
+  if(!fd_->trigger_)
     return;
 
   if (msg->data == "MergeMapComplete") {
