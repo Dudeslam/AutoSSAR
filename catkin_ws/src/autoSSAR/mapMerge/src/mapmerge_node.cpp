@@ -9,10 +9,6 @@
 #include <sensor_msgs/PointCloud2.h>
 #include <std_msgs/Header.h>
 #include <std_msgs/String.h>
-#include <octomap_msgs/Octomap.h>
-#include <octomap_msgs/conversions.h>
-#include <octomap/octomap.h>
-#include <tf/transform_broadcaster.h>
 #include <pcl/registration/icp.h>
 #include <pcl/filters/filter.h>
 #include <pcl/common/projection_matrix.h>
@@ -22,10 +18,7 @@
 #include <geometry_msgs/PoseArray.h>
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/Point.h>
-#include <tf/transform_listener.h>
-#include <tf/transform_broadcaster.h>
-#include <visualization_msgs/Marker.h>
-
+#include <nav_msgs/Odometry.h>
 
 pcl::PointCloud<pcl::PointXYZ> own_globalMap_pcd;
 pcl::PointCloud<pcl::PointXYZ> received_map_;
