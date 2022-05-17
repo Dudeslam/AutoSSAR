@@ -27,6 +27,8 @@
   <arg name="box_max_z" value=" 2.0"/> -->
 
   <!--  Costume maps -->
+  <arg name="map_choice" value="maze"/>
+
   <arg name="box_min_x" value="-2.0"/>
   <arg name="box_min_y" value="-16.0"/>
   <arg name="box_min_z" value=" 0.0"/>
@@ -212,6 +214,8 @@
 
     <arg name="c_num" value="0"/>
     <arg name="p_num" value="130"/>
+
+    <arg name="map_choice" value="$(arg map_choice)"/>
   </include>
 
 
