@@ -31,7 +31,7 @@ geometry_msgs::PoseStamped Global_Pose;
 bool otherUAV0InRange_  = false;
 bool otherUAV1InRange_  = false;
 bool finishState = false;
-bool recentlyMerged_ = false;
+bool recentlyMerged_1, recentlyMerged_2 = false;
 
 
 std::string selfUAV;
@@ -99,7 +99,6 @@ void downsample(pcl::PointCloud<pcl::PointXYZ>& cloud_in, pcl::PointCloud<pcl::P
 void getGlobalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
 {
     if(!finishState){
-        if(!recentlyMerged_){
             // ROS_WARN("Received local map");
             pcl::PointCloud<pcl::PointXYZ> cloudMap;
             pcl::fromROSMsg(*msg, cloudMap);
@@ -109,7 +108,6 @@ void getGlobalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
                 mergeMaps(cloudMap, own_globalMap_pcd);
                 downsample(own_globalMap_pcd, own_globalMap_pcd);
                 last_point_cloud_size_ = cloudMap.size();
-            }
         }
     }
 }
@@ -158,7 +156,14 @@ void getFinishCallback(const std_msgs::String& msg){
 }
 
 void mergeTimerCallback(const ros::TimerEvent& event){
-    recentlyMerged_ = false;
+    if(recentlyMerged_1)
+    {
+        recentlyMerged_1 = false;
+    }
+    if(recentlyMerged_2)
+    {
+        recentlyMerged_2 = false;
+    }
 }
 
 
@@ -199,26 +204,24 @@ int main (int argc, char* argv[]){
                 // ROS_WARN("Publish own global map");
             }
 
-            if(!recentlyMerged_)
-            {
-                if(otherUAV0InRange_)
+
+                if(otherUAV0InRange_ && !recentlyMerged_1)
                 {
                     // ROS_WARN("Other UAV0 is in range");
                     pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
                     other_pub.publish(Global_Publish);
                     otherUAV0InRange_ = false;
-                    recentlyMerged_ = true;
+                    recentlyMerged_1 = true;
                 }
 
-                if(otherUAV1InRange_)
+                if(otherUAV1InRange_ && !recentlyMerged_2)
                 {
                     // ROS_WARN("Other UAV1 is in range");
                     pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
                     other_pub.publish(Global_Publish);
                     otherUAV1InRange_ = false;
-                    recentlyMerged_ = true;
+                    recentlyMerged_2 = true;
                 }
-            }
         }
         ros::spinOnce();
         loop_rate.sleep();
