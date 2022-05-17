@@ -65,7 +65,7 @@ void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, pcl::PointCloud<pcl::Poin
     //pcl::fromROSMsg(map_out, *map_out_ptr_tmp);
     //Remove NAN points
     std::vector<int> indices;
-    pcl::removeNaNFromPointCloud(*map_in_ptr, *map_in_ptr, indices);
+    // pcl::removeNaNFromPointCloud(*map_in_ptr, *map_in_ptr, indices);
     pcl::IterativeClosestPoint<pcl::PointXYZ, pcl::PointXYZ> icp;
     // ROS_WARN("Set input cloud");
     icp.setInputSource(map_in_ptr);
@@ -99,15 +99,17 @@ void downsample(pcl::PointCloud<pcl::PointXYZ>& cloud_in, pcl::PointCloud<pcl::P
 void getGlobalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
 {
     if(!finishState){
-        // ROS_WARN("Received local map");
-        pcl::PointCloud<pcl::PointXYZ> cloudMap;
-        pcl::fromROSMsg(*msg, cloudMap);
-        std::vector<int> indices;
-        pcl::removeNaNFromPointCloud(cloudMap, cloudMap, indices);
-        if(cloudMap.size() != last_point_cloud_size_){
-            mergeMaps(cloudMap, own_globalMap_pcd);
-            downsample(own_globalMap_pcd, own_globalMap_pcd);
-            last_point_cloud_size_ = cloudMap.size();
+        if(!recentlyMerged_){
+            // ROS_WARN("Received local map");
+            pcl::PointCloud<pcl::PointXYZ> cloudMap;
+            pcl::fromROSMsg(*msg, cloudMap);
+            std::vector<int> indices;
+            pcl::removeNaNFromPointCloud(cloudMap, cloudMap, indices);
+            if(cloudMap.size() != last_point_cloud_size_){
+                mergeMaps(cloudMap, own_globalMap_pcd);
+                downsample(own_globalMap_pcd, own_globalMap_pcd);
+                last_point_cloud_size_ = cloudMap.size();
+            }
         }
     }
 }
@@ -180,7 +182,7 @@ int main (int argc, char* argv[]){
 
     ros::Publisher other_pub = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/MergedMap", 10);
     ros::Publisher own_publish = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/pcl_render_node/cloud", 10);
-    ros::Timer merge_timer = nh.createTimer(ros::Duration(3), mergeTimerCallback);
+    ros::Timer merge_timer = nh.createTimer(ros::Duration(2), mergeTimerCallback);
     // ros::Publisher debugger_own = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/debugger/cloud", 1000);
     ros::Rate loop_rate(20);
     Global_Publish.header.frame_id = "/map";

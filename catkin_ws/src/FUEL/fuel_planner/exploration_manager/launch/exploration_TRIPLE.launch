@@ -10,6 +10,7 @@
   <arg name="ns2" default="UAV2"/>
 
 
+  <arg name="map" value="office"/>
   <arg name="ns0_init_x" value="0.0"/>
   <arg name="ns0_init_y" value="1.0"/>
   <arg name="ns0_init_z" value="1.0"/> 
@@ -51,8 +52,8 @@
     <arg name="box_min_x" value="-2.0"/>
     <arg name="box_min_y" value="-16.0"/>
     <arg name="box_min_z" value=" 0.0"/>
-    <arg name="box_max_x" value="16.0"/>
-    <arg name="box_max_y" value="16.0"/>
+    <arg name="box_max_x" value="20.0"/>
+    <arg name="box_max_y" value="30.0"/>
     <arg name="box_max_z" value=" 2.0"/>
 
     <arg name="odometry_topic" value="/$(arg ns0)/state_ukf/odom"/>
@@ -128,8 +129,8 @@
     <arg name="box_min_x" value="-10.0"/>
     <arg name="box_min_y" value="-15.0"/>
     <arg name="box_min_z" value=" 0.0"/>
-    <arg name="box_max_x" value="10.0"/>
-    <arg name="box_max_y" value="15.0"/>
+    <arg name="box_max_x" value="20.0"/>
+    <arg name="box_max_y" value="30.0"/>
     <arg name="box_max_z" value=" 2.0"/>
 
     <arg name="odometry_topic" value="/$(arg ns1)/state_ukf/odom"/>
@@ -206,8 +207,8 @@
     <arg name="box_min_x" value="-10.0"/>
     <arg name="box_min_y" value="-15.0"/>
     <arg name="box_min_z" value=" 0.0"/>
-    <arg name="box_max_x" value="10.0"/>
-    <arg name="box_max_y" value="15.0"/>
+    <arg name="box_max_x" value="20.0"/>
+    <arg name="box_max_y" value="30.0"/>
     <arg name="box_max_z" value=" 2.0"/>
 
     <arg name="odometry_topic" value="/$(arg ns2)/state_ukf/odom"/>
@@ -290,6 +291,7 @@
 
     <arg name="c_num" value="0"/>
     <arg name="p_num" value="130"/>
+    <arg name="map_pcd" value="$(arg map)"/>
   </include>
 
 
