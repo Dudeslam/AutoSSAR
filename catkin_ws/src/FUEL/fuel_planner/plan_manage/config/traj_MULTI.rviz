@@ -75,7 +75,7 @@ Visualization Manager:
           Marker Topic: /UAV0/planning_vis/trajectory
           Name: bspline_traj
           Namespaces:
-            B-Spline: true
+            {}
           Queue Size: 100
           Value: true
         - Class: rviz/Marker
@@ -99,7 +99,7 @@ Visualization Manager:
           Marker Topic: /UAV0/planning/travel_traj
           Name: executed_traj
           Namespaces:
-            "": true
+            {}
           Queue Size: 100
           Value: true
         - Class: rviz/Marker
@@ -107,7 +107,7 @@ Visualization Manager:
           Marker Topic: /UAV0/planning/position_cmd_vis
           Name: position_cmd
           Namespaces:
-            current_pose: true
+            {}
           Queue Size: 100
           Value: true
       Enabled: true
@@ -230,6 +230,34 @@ Visualization Manager:
           Use Fixed Frame: true
           Use rainbow: true
           Value: false
+        - Alpha: 1
+          Autocompute Intensity Bounds: true
+          Autocompute Value Bounds:
+            Max Value: 1.25
+            Min Value: -2
+            Value: false
+          Axis: Z
+          Channel Name: intensity
+          Class: rviz/PointCloud2
+          Color: 116; 116; 116
+          Color Transformer: AxisColor
+          Decay Time: 0
+          Enabled: true
+          Invert Rainbow: false
+          Max Color: 0; 0; 0
+          Min Color: 0; 0; 0
+          Name: UAV2_FUEL
+          Position Transformer: XYZ
+          Queue Size: 10
+          Selectable: true
+          Size (Pixels): 15
+          Size (m): 0.125
+          Style: Flat Squares
+          Topic: /UAV2/sdf_map/occupancy_all
+          Unreliable: false
+          Use Fixed Frame: true
+          Use rainbow: true
+          Value: true
         - Alpha: 1
           Autocompute Intensity Bounds: true
           Autocompute Value Bounds:
@@ -451,7 +479,7 @@ Visualization Manager:
           Marker Topic: /UAV2/odom_visualization/robot
           Name: robot2
           Namespaces:
-            {}
+            mesh: true
           Queue Size: 100
           Value: true
       Enabled: true
