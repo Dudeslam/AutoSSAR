@@ -21,7 +21,7 @@
 #include <nav_msgs/Odometry.h>
 
 pcl::PointCloud<pcl::PointXYZ> own_globalMap_pcd;
-pcl::PointCloud<pcl::PointXYZ> received_map_;
+// pcl::PointCloud<pcl::PointXYZ> received_map_;
 size_t last_point_cloud_size_ = 0;
 sensor_msgs::PointCloud2 Global_Publish;
 geometry_msgs::PoseStamped UAV_pose;
@@ -31,6 +31,7 @@ geometry_msgs::PoseStamped Global_Pose;
 bool otherUAV0InRange_  = false;
 bool otherUAV1InRange_  = false;
 bool finishState = false;
+bool recentlyMerged_ = false;
 
 
 std::string selfUAV;
@@ -104,7 +105,8 @@ void getGlobalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
         std::vector<int> indices;
         pcl::removeNaNFromPointCloud(cloudMap, cloudMap, indices);
         if(cloudMap.size() != last_point_cloud_size_){
-            received_map_ = cloudMap;
+            mergeMaps(cloudMap, own_globalMap_pcd);
+            downsample(own_globalMap_pcd, own_globalMap_pcd);
             last_point_cloud_size_ = cloudMap.size();
         }
     }
@@ -153,6 +155,10 @@ void getFinishCallback(const std_msgs::String& msg){
     }
 }
 
+void mergeTimerCallback(const ros::TimerEvent& event){
+    recentlyMerged_ = false;
+}
+
 
 int main (int argc, char* argv[]){
     ros::init(argc, argv, "map_merger");
@@ -174,7 +180,7 @@ int main (int argc, char* argv[]){
 
     ros::Publisher other_pub = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/MergedMap", 10);
     ros::Publisher own_publish = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/pcl_render_node/cloud", 10);
-
+    ros::Timer merge_timer = nh.createTimer(ros::Duration(3), mergeTimerCallback);
     // ros::Publisher debugger_own = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/debugger/cloud", 1000);
     ros::Rate loop_rate(20);
     Global_Publish.header.frame_id = "/map";
@@ -185,35 +191,32 @@ int main (int argc, char* argv[]){
         {
             if(!finishState){
                 // Always publish own global map if it is not empty
-
                 pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
                 own_publish.publish(Global_Publish);
                 // debugger_own.publish(Global_Publish);
                 // ROS_WARN("Publish own global map");
             }
-            
-            if(otherUAV0InRange_)
+
+            if(!recentlyMerged_)
             {
-                // ROS_WARN("Other UAV0 is in range");
-                mergeMaps(received_map_, own_globalMap_pcd);
-                downsample(own_globalMap_pcd, own_globalMap_pcd);
-                pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
-                other_pub.publish(Global_Publish);
-                otherUAV0InRange_ = false;
+                if(otherUAV0InRange_)
+                {
+                    // ROS_WARN("Other UAV0 is in range");
+                    pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
+                    other_pub.publish(Global_Publish);
+                    otherUAV0InRange_ = false;
+                    recentlyMerged_ = true;
+                }
+
+                if(otherUAV1InRange_)
+                {
+                    // ROS_WARN("Other UAV1 is in range");
+                    pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
+                    other_pub.publish(Global_Publish);
+                    otherUAV1InRange_ = false;
+                    recentlyMerged_ = true;
+                }
             }
-
-            if(otherUAV1InRange_)
-            {
-                // ROS_WARN("Other UAV1 is in range");
-                mergeMaps(received_map_, own_globalMap_pcd);
-                downsample(own_globalMap_pcd, own_globalMap_pcd);
-                pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
-                pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
-                other_pub.publish(Global_Publish);
-                otherUAV1InRange_ = false;
-            }
-
-
         }
         ros::spinOnce();
         loop_rate.sleep();
