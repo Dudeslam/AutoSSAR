@@ -23,6 +23,23 @@
   <arg name="ns2_init_z" value="1.0"/> 
 
 
+  <!--  Office1 map -->
+  <!-- <arg name="box_min_x" value="-10.0"/>
+  <arg name="box_min_y" value="-15.0"/>
+  <arg name="box_min_z" value=" 0.0"/>
+  <arg name="box_max_x" value="10.0"/>
+  <arg name="box_max_y" value="15.0"/>
+  <arg name="box_max_z" value=" 2.0"/> -->
+
+  <!--  Costume maps -->
+  <arg name="box_min_x" value="-2.0"/>
+  <arg name="box_min_y" value="-16.0"/>
+  <arg name="box_min_z" value=" 0.0"/>
+  <arg name="box_max_x" value="16.0"/>
+  <arg name="box_max_y" value="16.0"/>
+  <arg name="box_max_z" value=" 2.0"/>
+
+
   <!-- /////////////////////////////////////////////////////////////////////////// -->
   <!-- /////////////////////////////////////////////////////////////////////////// -->
   <!-- /////////////////////////////////////////////////////////////////////////// -->
@@ -41,19 +58,12 @@
     <arg name="map_size_y_" value="$(arg map_size_y)"/>
     <arg name="map_size_z_" value="$(arg map_size_z)"/>
 
-    <!-- <arg name="box_min_x" value="-10.0"/>
-    <arg name="box_min_y" value="-15.0"/>
-    <arg name="box_min_z" value=" 0.0"/>
-    <arg name="box_max_x" value="10.0"/>
-    <arg name="box_max_y" value="15.0"/>
-    <arg name="box_max_z" value=" 2.0"/> -->
-
-    <arg name="box_min_x" value="-2.0"/>
-    <arg name="box_min_y" value="-16.0"/>
-    <arg name="box_min_z" value=" 0.0"/>
-    <arg name="box_max_x" value="16.0"/>
-    <arg name="box_max_y" value="16.0"/>
-    <arg name="box_max_z" value=" 2.0"/>
+    <arg name="box_min_x" value="$(arg box_min_x)"/>
+    <arg name="box_min_y" value="$(arg box_min_y)"/>
+    <arg name="box_min_z" value="$(arg box_min_z)"/>
+    <arg name="box_max_x" value="$(arg box_max_x)"/>
+    <arg name="box_max_y" value="$(arg box_max_y)"/>
+    <arg name="box_max_z" value="$(arg box_max_z)"/>
 
     <arg name="odometry_topic" value="/$(arg ns0)/state_ukf/odom"/>
     <!-- sensor pose: transform of camera frame in the world frame -->
@@ -125,12 +135,12 @@
     <arg name="map_size_y_" value="$(arg map_size_y)"/>
     <arg name="map_size_z_" value="$(arg map_size_z)"/>
 
-    <arg name="box_min_x" value="-10.0"/>
-    <arg name="box_min_y" value="-15.0"/>
-    <arg name="box_min_z" value=" 0.0"/>
-    <arg name="box_max_x" value="10.0"/>
-    <arg name="box_max_y" value="15.0"/>
-    <arg name="box_max_z" value=" 2.0"/>
+    <arg name="box_min_x" value="$(arg box_min_x)"/>
+    <arg name="box_min_y" value="$(arg box_min_y)"/>
+    <arg name="box_min_z" value="$(arg box_min_z)"/>
+    <arg name="box_max_x" value="$(arg box_max_x)"/>
+    <arg name="box_max_y" value="$(arg box_max_y)"/>
+    <arg name="box_max_z" value="$(arg box_max_z)"/>
 
     <arg name="odometry_topic" value="/$(arg ns1)/state_ukf/odom"/>
     <!-- sensor pose: transform of camera frame in the world frame -->
@@ -203,12 +213,12 @@
     <arg name="map_size_y_" value="$(arg map_size_y)"/>
     <arg name="map_size_z_" value="$(arg map_size_z)"/>
 
-    <arg name="box_min_x" value="-10.0"/>
-    <arg name="box_min_y" value="-15.0"/>
-    <arg name="box_min_z" value=" 0.0"/>
-    <arg name="box_max_x" value="10.0"/>
-    <arg name="box_max_y" value="15.0"/>
-    <arg name="box_max_z" value=" 2.0"/>
+    <arg name="box_min_x" value="$(arg box_min_x)"/>
+    <arg name="box_min_y" value="$(arg box_min_y)"/>
+    <arg name="box_min_z" value="$(arg box_min_z)"/>
+    <arg name="box_max_x" value="$(arg box_max_x)"/>
+    <arg name="box_max_y" value="$(arg box_max_y)"/>
+    <arg name="box_max_z" value="$(arg box_max_z)"/>
 
     <arg name="odometry_topic" value="/$(arg ns2)/state_ukf/odom"/>
     <!-- sensor pose: transform of camera frame in the world frame -->
