@@ -4,6 +4,7 @@
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 #include <visualization_msgs/Marker.h>
+#include <std_msgs/String.h>
 
 #include <fstream>
 
@@ -41,7 +42,6 @@ void MapROS::init() {
   point_cloud_.points.resize(640 * 480 / (skip_pixel_ * skip_pixel_));
   // proj_points_.reserve(640 * 480 / map_->mp_->skip_pixel_ / map_->mp_->skip_pixel_);
   proj_points_cnt = 0;
-
   local_updated_ = false;
   esdf_need_update_ = false;
   fuse_time_ = 0.0;
@@ -67,6 +67,8 @@ void MapROS::init() {
   esdf_pub_ = node_.advertise<sensor_msgs::PointCloud2>("/sdf_map/esdf", 10);
   update_range_pub_ = node_.advertise<visualization_msgs::Marker>("/sdf_map/update_range", 10);
   depth_pub_ = node_.advertise<sensor_msgs::PointCloud2>("/sdf_map/depth_cloud", 10);
+  mergeMap_sub_ = node_.subscribe("/MergedMap", 10, &MapROS::mergeMapCallback, this);
+  mergeCompl_pub_ = node_.advertise<std_msgs::String>("/MergeComplete", 10);
 
   depth_sub_.reset(new message_filters::Subscriber<sensor_msgs::Image>(node_, "/map_ros/depth", 50));
   cloud_sub_.reset(
@@ -80,7 +82,6 @@ void MapROS::init() {
   sync_cloud_pose_.reset(new message_filters::Synchronizer<MapROS::SyncPolicyCloudPose>(
       MapROS::SyncPolicyCloudPose(100), *cloud_sub_, *pose_sub_));
   sync_cloud_pose_->registerCallback(boost::bind(&MapROS::cloudPoseCallback, this, _1, _2));
-
   map_start_time_ = ros::Time::now();
 }
 
@@ -118,6 +119,36 @@ void MapROS::updateESDFCallback(const ros::TimerEvent& /*event*/) {
              max_esdf_time_);
 }
 
+void MapROS::mergeMapCallback(const sensor_msgs::PointCloud2ConstPtr& cloud) {
+
+  auto t1 = ros::Time::now();
+  pcl::PointCloud<pcl::PointXYZ> cloudMap;
+  pcl::fromROSMsg(*cloud, cloudMap);
+
+
+    map_->OverWriteMap(cloudMap, cloudMap.size(), camera_pos_);
+
+
+  //Using regular method
+  // map_->inputPointCloud(cloudMap, cloudMap.size(), camera_pos_);
+  if(local_updated_){
+    map_->clearAndInflateLocalMap();
+    local_updated_ = false;
+  }
+  auto t2 = ros::Time::now();
+  fuse_time_ += (t2 - t1).toSec();
+  max_fuse_time_ = max(max_fuse_time_, (t2 - t1).toSec());
+  fuse_num_ += 1;
+  if (show_occ_time_)
+    ROS_WARN("MergeMap t: cur: %lf, avg: %lf, max: %lf", (t2 - t1).toSec(), fuse_time_ / fuse_num_,
+             max_fuse_time_);
+
+  //publish merged map complete message
+  std_msgs::String msg;
+  msg.data = "MergeMapComplete";
+  mergeCompl_pub_.publish(msg);
+}
+
 void MapROS::depthPoseCallback(const sensor_msgs::ImageConstPtr& img,
                                const geometry_msgs::PoseStampedConstPtr& pose) {
   camera_pos_(0) = pose->pose.position.x;
@@ -126,6 +157,7 @@ void MapROS::depthPoseCallback(const sensor_msgs::ImageConstPtr& img,
   if (!map_->isInMap(camera_pos_))  // exceed mapped region
     return;
 
+  //
   camera_q_ = Eigen::Quaterniond(pose->pose.orientation.w, pose->pose.orientation.x,
                                  pose->pose.orientation.y, pose->pose.orientation.z);
   cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(img, img->encoding);

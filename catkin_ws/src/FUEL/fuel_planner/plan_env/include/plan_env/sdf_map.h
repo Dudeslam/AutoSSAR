@@ -34,6 +34,8 @@ public:
   void initMap(ros::NodeHandle& nh);
   void inputPointCloud(const pcl::PointCloud<pcl::PointXYZ>& points, const int& point_num,
                        const Eigen::Vector3d& camera_pos);
+  void OverWriteMap(const pcl::PointCloud<pcl::PointXYZ>& points, const int& point_num,
+                      const Eigen::Vector3d& camera_pos);
 
   void posToIndex(const Eigen::Vector3d& pos, Eigen::Vector3i& id);
   void indexToPos(const Eigen::Vector3i& id, Eigen::Vector3d& pos);
@@ -63,19 +65,20 @@ public:
   double getResolution();
   int getVoxelNum();
 
+
 private:
   void clearAndInflateLocalMap();
   void inflatePoint(const Eigen::Vector3i& pt, int step, vector<Eigen::Vector3i>& pts);
   void setCacheOccupancy(const int& adr, const int& occ);
+  void setCacheOccupancyNoUpdate(const int& adr, const int& occ);
   Eigen::Vector3d closetPointInMap(const Eigen::Vector3d& pt, const Eigen::Vector3d& camera_pt);
   template <typename F_get_val, typename F_set_val>
   void fillESDF(F_get_val f_get_val, F_set_val f_set_val, int start, int end, int dim);
-
+  void clearMap();
   unique_ptr<MapParam> mp_;
   unique_ptr<MapData> md_;
   unique_ptr<MapROS> mr_;
   unique_ptr<RayCaster> caster_;
-
   friend MapROS;
 
 public:
@@ -120,6 +123,7 @@ struct MapData {
   Eigen::Vector3i local_bound_min_, local_bound_max_;
   Eigen::Vector3d update_min_, update_max_;
   bool reset_updated_box_;
+
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
