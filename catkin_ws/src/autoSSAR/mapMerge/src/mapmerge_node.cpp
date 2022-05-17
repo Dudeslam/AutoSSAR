@@ -109,11 +109,6 @@ void getGlobalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
             downsample(own_globalMap_pcd, own_globalMap_pcd);
             last_point_cloud_size_ = cloudMap.size();
         }
-        if(own_globalMap_pcd.size()==0)
-        {
-            own_globalMap_pcd = cloudMap;
-            last_point_cloud_size_ = cloudMap.size();
-        }
     }
 }
 

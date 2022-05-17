@@ -1,5 +1,4 @@
 <launch>
-
       <!-- enable costume namespaces -->
     <arg name="ns0" default="UAV0"/>
     <arg name="ns1" default="UAV1"/>
@@ -43,28 +42,4 @@
         <param name="otherUAV0" value="/$(arg ns0)"/>
         <param name="otherUAV1" value="/$(arg ns1)"/>
     </node>
-
-<!-- Start traversal utils -->
-    <!-- <node pkg="dist_traversed" name="dist_traversed" type="dist_traversed" output="screen" ns="$(arg ns0)"/> -->
-    <!-- <node pkg="dist_traversed" name="dist_traversed" type="dist_traversed" output="screen" ns="$(arg ns1)"/> -->
-    <!-- <node pkg="dist_traversed" name="dist_traversed" type="dist_traversed" output="screen" ns="$(arg ns2)"/> -->
-    <node pkg="dist_traversed" name="dist_traversed" type="dist_traversed" ns="$(arg ns0)"/>
-    <node pkg="dist_traversed" name="dist_traversed" type="dist_traversed" ns="$(arg ns1)"/>
-    <node pkg="dist_traversed" name="dist_traversed" type="dist_traversed" ns="$(arg ns2)"/>
-
-
-<!-- Start coordination algorithm -->
-    <node pkg="coordination" name="coordination" type="coordination" output="screen" ns="$(arg ns0)">
-        <param name="maxBattery" value="30"/>
-    </node>
-
-    <node pkg="coordination" name="coordination" type="coordination" output="screen" ns="$(arg ns1)">
-        <param name="maxBattery" value="30"/>
-    </node>
-
-    <!-- <node pkg="coordination" name="coordination" type="coordination" output="screen" ns="$(arg ns2)">
-        <param name="maxBattery" value="30"/> 
-    </node> -->
-
-
 </launch>
