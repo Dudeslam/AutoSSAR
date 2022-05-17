@@ -10,6 +10,7 @@
   <arg name="ns2" default="UAV2"/>
 
 
+  <arg name="map" value="mergeTest"/>
   <arg name="ns0_init_x" value="-8.0"/>
   <arg name="ns0_init_y" value="0.0"/>
   <arg name="ns0_init_z" value="1.0"/> 
@@ -18,6 +19,14 @@
   <arg name="ns1_init_y" value="2.0"/>
   <arg name="ns1_init_z" value="1.0"/>
 
+  <!-- <arg name="map" value="office"/>
+  <arg name="ns0_init_x" value="0.0"/>
+  <arg name="ns0_init_y" value="0.0"/>
+  <arg name="ns0_init_z" value="1.0"/> 
+
+  <arg name="ns1_init_x" value="0.0"/>
+  <arg name="ns1_init_y" value="2.0"/>
+  <arg name="ns1_init_z" value="1.0"/> -->
 
 
   <!-- /////////////////////////////////////////////////////////////////////////// -->
@@ -200,6 +209,7 @@
 
     <arg name="c_num" value="0"/>
     <arg name="p_num" value="130"/>
+    <arg name="map_pcd" value="$(arg map)"/>
   </include>
 
 
