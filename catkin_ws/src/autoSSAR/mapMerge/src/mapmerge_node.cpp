@@ -102,12 +102,13 @@ bool pclUnique (pcl::PointNormal i, pcl::PointNormal j)
 }
 
 
-void getOverlap(pcl::PointCloud<pcl::PointXYZ> cloud_in, pcl::PointCloud<pcl::PointXYZ> own_cloud, pcl::IterativeClosestPoint<pcl::PointXYZ, pcl::PointXYZ> icp_){
+void getOverlap(pcl::PointCloud<pcl::PointXYZ> cloud_in, pcl::PointCloud<pcl::PointXYZ> own_cloud, pcl::IterativeClosestPoint<pcl::PointNormal, pcl::PointNormal> icp_){
     std::vector<int> nn_indices (max_nn_overlap_);
     std::vector<float> nn_dists (max_nn_overlap_);
 
 
-    pcl::PointCloud<pcl::PointNormal> cloud_in_copy, own_cloud_copy, overlap_model, overlap_current, overlap_model_copy, overlap_current_copy;
+    pcl::PointCloud<pcl::PointNormal> cloud_in_copy, own_cloud_copy, overlap_model, overlap_current;
+    // pcl::PointCloud<pcl::PointXYZ>  overlap_model_copy, overlap_current_copy;
     copyPointCloud(cloud_in, cloud_in_copy);
     copyPointCloud(own_cloud, own_cloud_copy);
     Eigen::Matrix4f transformation;
@@ -132,40 +133,38 @@ void getOverlap(pcl::PointCloud<pcl::PointXYZ> cloud_in, pcl::PointCloud<pcl::Po
     it = std::unique(overlap_model.points.begin(), overlap_model.points.end(), pclUnique);
     overlap_model.points.resize(it - overlap_model.points.begin());
 
-
-    copyPointCloud(overlap_model, overlap_model_copy);
-    copyPointCloud(overlap_current, overlap_current_copy);
-
-    icp_.setInputTarget(boost::make_shared< pcl::PointCloud < pcl::PointNormal> > (overlap_model_copy));
-    icp_.setInputCloud(boost::make_shared< pcl::PointCloud < pcl::PointNormal> > (overlap_current_copy));
+    icp_.setInputTarget(overlap_model);
+    icp_.setInputCloud(overlap_current);
 
     // icp_.align(pointcloud2_transformed_);
 }
 
 void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, pcl::PointCloud<pcl::PointXYZ>& map_out)
 {
-    pcl::PointCloud<pcl::PointXYZ>::Ptr map_in_ptr(new pcl::PointCloud<pcl::PointXYZ>(map_in));
-    pcl::PointCloud<pcl::PointXYZ>::Ptr map_out_ptr(new pcl::PointCloud<pcl::PointXYZ>(map_out));
+    // pcl::PointCloud<pcl::PointXYZ>::Ptr map_in_ptr(new pcl::PointCloud<pcl::PointXYZ>(map_in));
+    // pcl::PointCloud<pcl::PointXYZ>::Ptr map_out_ptr(new pcl::PointCloud<pcl::PointXYZ>(map_out));
     pcl::PointCloud<pcl::PointXYZ> Final;
+    pcl::PointCloud<pcl::PointNormal> Final_normal;
     //pcl::fromROSMsg(map_out, *map_out_ptr_tmp);
     //Remove NAN points
     std::vector<int> indices;
     // pcl::removeNaNFromPointCloud(*map_in_ptr, *map_in_ptr, indices);
-    pcl::IterativeClosestPoint<pcl::PointXYZ, pcl::PointXYZ> icp;
+    pcl::IterativeClosestPoint<pcl::PointNormal, pcl::PointNormal> icp;
     // ROS_WARN("Set input cloud");
     // icp.setInputSource(map_in_ptr);
     // icp.setInputTarget(map_out_ptr);
 
 
-    getOverlap(*map_in_ptr, *map_out_ptr, icp);
-    icp.align(Final);
+    getOverlap(*map_in, *map_out, icp);
+    icp.align(Final_Normal);
     if(icp.hasConverged())
     {
         // ROS_WARN("ICP has converged");
         icp.getFitnessScore();
-        pcl::transformPointCloud(*map_in_ptr, Final, icp.getFinalTransformation());
+        pcl::transformPointCloud(*map_in_ptr, Final_normal, icp.getFinalTransformation());
         // concatePCL(Final, *map_out_ptr, map_out);
-        map_out += *map_out_ptr;
+        copyPointCloud(Final_normal, Final);
+        map_out += Final;
     }
     else
     {
