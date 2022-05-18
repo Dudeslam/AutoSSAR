@@ -32,7 +32,7 @@ class coverage {
         void mapSize_callback(const sensor_msgs::PointCloud2::ConstPtr& msg);
         void mergedMapSize_callback(const sensor_msgs::PointCloud2::ConstPtr& msg);
 
-        void mapCoveredCallback();
+        void mapCoveredCallback(const ros::TimerEvent& event);
 
     public:
         coverage(){
