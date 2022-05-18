@@ -40,6 +40,32 @@ std::string selfUAV;
 std::string otherUAV0 = "nan";
 std::string otherUAV1 = "nan";
 
+
+
+//parameters for transform
+int max_number_of_iterations_icp_, max_nn_icp_, max_nn_overlap_;
+double downsample_leafsize_, epsilon_z_, epsilon_curvature_, epsilon_transformation_, radius_icp_, radius_overlap_;
+bool downsample_pointcloud_before_, downsample_pointcloud_after_, filter_outliers_, curvature_check_;
+int scan_index_;
+
+void init(){
+    //initialize parameters
+    max_number_of_iterations_icp_ = 100;
+    max_nn_icp_ = 10;
+    max_nn_overlap_ = 10;
+    downsample_leafsize_ = 0.01;
+    epsilon_z_ = 0.01;
+    epsilon_curvature_ = 0.01;
+    epsilon_transformation_ = 0.01;
+    radius_icp_ = 0.1;
+    radius_overlap_ = 0.1;
+    downsample_pointcloud_before_ = false;
+    downsample_pointcloud_after_ = false;
+    filter_outliers_ = true;
+    curvature_check_ = true;
+    scan_index_ = 0;
+}
+
 //functions here
 bool concatePCL(pcl::PointCloud<pcl::PointXYZ> cloud1, pcl::PointCloud<pcl::PointXYZ> cloud2, pcl::PointCloud<pcl::PointXYZ>& cloud_out)
 {
@@ -60,20 +86,21 @@ bool concatePCL(pcl::PointCloud<pcl::PointXYZ> cloud1, pcl::PointCloud<pcl::Poin
 }
 
 void getOverlap(pcl::PointCloud<pcl::PointXYZ> cloud_in, pcl::PointCloud<pcl::PointXYZ> own_cloud, pcl::IterativeClosestPoint<pcl::PointXYZ, pcl::PointXYZ> icp){
-    std::vector<int> nn_indices;
-    std::vector<float> nn_distances;
+    std::vector<int> nn_indices (max_nn_overlap_);
+    std::vector<float> nn_dists (max_nn_overlap_);
 
-    pcl::PointCloud<pcl:PointNormal> overlap_model, overlap_current;
+    kdtree_.setInputCloud (boost::make_shared< pcl::PointCloud < pcl::PointXYZ> > (own_cloud));
+    pcl::PointCloud<pcl::PointNormal> overlap_model, overlap_current;
     Eigen::Matrix4f transformation;
     std::vector<pcl:: PointNormal, Eigen::aligned_allocator<pcl:: PointNormal> >::iterator it;
 
-    for(size_t idx = 0 ; idx < pointcloud2_current_.points.size(); idx++ )
+    for(size_t idx = 0 ; idx < cloud_in.points.size(); idx++ )
     {
-      kdtree_.radiusSearch(pointcloud2_current_, idx, radius_overlap_, nn_indices, nn_dists, max_nn_overlap_);
+      kdtree_.radiusSearch(cloud_in, idx, radius_overlap_, nn_indices, nn_dists, max_nn_overlap_);
 
       if(nn_indices.size() > 0 )
       {
-        overlap_current.points.push_back(pointcloud2_current_.points[idx]);
+        overlap_current.points.push_back(cloud_in.points[idx]);
               for(size_t i = 0 ; i < nn_indices.size(); i++)
         {
           overlap_model.points.push_back (kdtree_.getInputCloud()->points[nn_indices[i]]);
@@ -113,8 +140,8 @@ void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, pcl::PointCloud<pcl::Poin
         // ROS_WARN("ICP has converged");
         icp.getFitnessScore();
         pcl::transformPointCloud(*map_in_ptr, Final, icp.getFinalTransformation());
-        concatePCL(Final, *map_out_ptr, map_out);
-        // map_out += *map_out_ptr;
+        // concatePCL(Final, *map_out_ptr, map_out);
+        map_out += *map_out_ptr;
     }
     else
     {
