@@ -149,11 +149,11 @@ void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, pcl::PointCloud<pcl::Poin
     pcl::PointCloud<pcl::PointXYZ> Final;
     pcl::PointCloud<pcl::PointNormal> Final_normal;
     //pcl::fromROSMsg(map_out, *map_out_ptr_tmp);
-    
+
     //Remove NAN points
     // std::vector<int> indices;
     // pcl::removeNaNFromPointCloud(*map_in_ptr, *map_in_ptr, indices);
-    // pcl::IterativeClosestPointCorrespondencesCheck<pcl::PointXYZINormal, pcl::PointXYZINormal> icp_;
+    pcl::IterativeClosestPoint<pcl::PointNormal, pcl::PointNormal> icp;
     // ROS_WARN("Set input cloud");
     // icp.setInputSource(map_in_ptr);
     // icp.setInputTarget(map_out_ptr);
