@@ -14,24 +14,18 @@
 #include <pcl/common/projection_matrix.h>
 #include <pcl/common/io.h>
 #include <pcl/filters/voxel_grid.h>
-#include <geometry_msgs/PoseStamped.h>
-#include <geometry_msgs/PoseArray.h>
-#include <geometry_msgs/Pose.h>
-#include <geometry_msgs/Point.h>
 #include <nav_msgs/Odometry.h>
 #include "mapmerge/coverage.h"
 #include <Eigen/SVD>
 #include <pcl/features/normal_3d_omp.h>
 #include <algorithm>
+#include <pcl/impl/point_types.hpp>
 
 
 pcl::PointCloud<pcl::PointXYZ> own_globalMap_pcd;
 // pcl::PointCloud<pcl::PointXYZ> received_map_;
 size_t last_point_cloud_size_ = 0;
 sensor_msgs::PointCloud2 Global_Publish;
-geometry_msgs::PoseStamped UAV_pose;
-geometry_msgs::PoseStamped Global_Pose;
-
 //placeholder for inRange flag, to be set
 bool otherUAV0InRange_  = false;
 bool otherUAV1InRange_  = false;
@@ -88,6 +82,23 @@ bool concatePCL(pcl::PointCloud<pcl::PointXYZ> cloud1, pcl::PointCloud<pcl::Poin
 
 
 }
+
+bool pclSort (pcl::PointNormal i, pcl::PointNormal j)
+{
+  return (i.x < j.x);
+}
+
+bool pclUnique (pcl::PointNormal i, pcl::PointNormal j)
+{
+  double x_diff = fabs(i.x - j.x);
+  double y_diff = fabs(i.y - j.y);
+  double z_diff = fabs(i.z - j.z);
+  if(x_diff < 0.0001 && y_diff < 0.0001 && z_diff < 0.0001 )
+    return 1;
+  else
+    return 0;
+}
+
 
 void getOverlap(pcl::PointCloud<pcl::PointXYZ> cloud_in, pcl::PointCloud<pcl::PointXYZ> own_cloud, pcl::IterativeClosestPoint<pcl::PointXYZ, pcl::PointXYZ> icp_){
     std::vector<int> nn_indices (max_nn_overlap_);
