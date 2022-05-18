@@ -155,13 +155,13 @@ void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, pcl::PointCloud<pcl::Poin
     // icp.setInputTarget(map_out_ptr);
 
 
-    getOverlap(*map_in, *map_out, icp);
-    icp.align(Final_Normal);
+    getOverlap(map_in, map_out, icp);
+    icp.align(Final_normal);
     if(icp.hasConverged())
     {
         // ROS_WARN("ICP has converged");
         icp.getFitnessScore();
-        pcl::transformPointCloud(*map_in_ptr, Final_normal, icp.getFinalTransformation());
+        pcl::transformPointCloud(map_in, Final_normal, icp.getFinalTransformation());
         // concatePCL(Final, *map_out_ptr, map_out);
         copyPointCloud(Final_normal, Final);
         map_out += Final;
