@@ -8,7 +8,7 @@ void coverage::init(ros::NodeHandle& nh) {
     std::cout << "Self: "<< selfUAV << std::endl;
     std::cout << "*************************************************************" << std::endl;
 
-    Globalmap_size = nh.subscribe("/map_generator/global_cloud", 1, &coverage::mapSize_callback, this);
+    Globalmap_sub_ = nh.subscribe("/map_generator/global_cloud", 1, &coverage::mapSize_callback, this);
     selfUAVMapSize_sub_ = nh.subscribe(selfUAV + "/MergedMap", 1, &coverage::mergedMapSize_callback, this);
     
     coverage_pub_ = nh.advertise<std_msgs::String>(selfUAV+"/map_generator/coverage", 1);
