@@ -37,7 +37,7 @@ void coverage::mapCoveredCallback(const ros::TimerEvent& event) {
         msg_global.data = Globalmap_size;
         msg_local.data = SelfMapSize;
 
-        globalMapSize_pub_.publish(msg_global);
+        GlobalMapSize_pub_.publish(msg_global);
         selfUAVMapSize_pub_.publish(msg_local);
         std::cout << "Global map size: " << Globalmap_size << std::endl;
         std::cout << selfUAV <<" map size: " << SelfMapSize << std::endl;
