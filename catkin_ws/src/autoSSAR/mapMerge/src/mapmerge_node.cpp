@@ -21,6 +21,9 @@
 #include <nav_msgs/Odometry.h>
 #include "mapmerge/coverage.h"
 #include <Eigen/SVD>
+#include <pcl/features/normal_3d_omp.h>
+#include <algorithm>
+
 
 pcl::PointCloud<pcl::PointXYZ> own_globalMap_pcd;
 // pcl::PointCloud<pcl::PointXYZ> received_map_;
@@ -47,23 +50,24 @@ int max_number_of_iterations_icp_, max_nn_icp_, max_nn_overlap_;
 double downsample_leafsize_, epsilon_z_, epsilon_curvature_, epsilon_transformation_, radius_icp_, radius_overlap_;
 bool downsample_pointcloud_before_, downsample_pointcloud_after_, filter_outliers_, curvature_check_;
 int scan_index_;
+pcl::KdTreeFLANN<pcl::PointXYZ> kdtree_;
 
 void init(){
     //initialize parameters
     max_number_of_iterations_icp_ = 100;
     max_nn_icp_ = 10;
     max_nn_overlap_ = 10;
-    downsample_leafsize_ = 0.01;
-    epsilon_z_ = 0.01;
-    epsilon_curvature_ = 0.01;
-    epsilon_transformation_ = 0.01;
-    radius_icp_ = 0.1;
+    // downsample_leafsize_ = 0.01;
+    // epsilon_z_ = 0.01;
+    // epsilon_curvature_ = 0.01;
+    // epsilon_transformation_ = 0.01;
+    // radius_icp_ = 0.1;
     radius_overlap_ = 0.1;
-    downsample_pointcloud_before_ = false;
-    downsample_pointcloud_after_ = false;
-    filter_outliers_ = true;
-    curvature_check_ = true;
-    scan_index_ = 0;
+    // downsample_pointcloud_before_ = false;
+    // downsample_pointcloud_after_ = false;
+    // filter_outliers_ = true;
+    // curvature_check_ = true;
+    // scan_index_ = 0;
 }
 
 //functions here
@@ -85,14 +89,14 @@ bool concatePCL(pcl::PointCloud<pcl::PointXYZ> cloud1, pcl::PointCloud<pcl::Poin
 
 }
 
-void getOverlap(pcl::PointCloud<pcl::PointXYZ> cloud_in, pcl::PointCloud<pcl::PointXYZ> own_cloud, pcl::IterativeClosestPoint<pcl::PointXYZ, pcl::PointXYZ> icp){
+void getOverlap(pcl::PointCloud<pcl::PointXYZ> cloud_in, pcl::PointCloud<pcl::PointXYZ> own_cloud, pcl::IterativeClosestPoint<pcl::PointXYZ, pcl::PointXYZ> icp_){
     std::vector<int> nn_indices (max_nn_overlap_);
     std::vector<float> nn_dists (max_nn_overlap_);
 
     kdtree_.setInputCloud (boost::make_shared< pcl::PointCloud < pcl::PointXYZ> > (own_cloud));
     pcl::PointCloud<pcl::PointNormal> overlap_model, overlap_current;
     Eigen::Matrix4f transformation;
-    std::vector<pcl:: PointNormal, Eigen::aligned_allocator<pcl:: PointNormal> >::iterator it;
+    std::vector<pcl::PointNormal, Eigen::aligned_allocator<pcl::PointNormal> >::iterator it;
 
     for(size_t idx = 0 ; idx < cloud_in.points.size(); idx++ )
     {
@@ -116,7 +120,7 @@ void getOverlap(pcl::PointCloud<pcl::PointXYZ> cloud_in, pcl::PointCloud<pcl::Po
     icp_.setInputTarget(boost::make_shared< pcl::PointCloud < pcl::PointNormal> > (overlap_model));
     icp_.setInputCloud(boost::make_shared< pcl::PointCloud < pcl::PointNormal> > (overlap_current));
 
-    icp_.align(pointcloud2_transformed_);
+    // icp_.align(pointcloud2_transformed_);
 }
 
 void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, pcl::PointCloud<pcl::PointXYZ>& map_out)
@@ -132,9 +136,10 @@ void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, pcl::PointCloud<pcl::Poin
     // ROS_WARN("Set input cloud");
     // icp.setInputSource(map_in_ptr);
     // icp.setInputTarget(map_out_ptr);
-    // icp.align(Final);
+
 
     getOverlap(*map_in_ptr, *map_out_ptr, icp);
+    icp.align(Final);
     if(icp.hasConverged())
     {
         // ROS_WARN("ICP has converged");
