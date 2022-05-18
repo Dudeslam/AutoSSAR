@@ -29,8 +29,8 @@ class coverage {
 
         ros::Timer timer_;
         // Callback functions
-        void mapSize_callback(const std_msgs::String::ConstPtr& msg);
-        void mergedMapSize_callback(const std_msgs::String::ConstPtr& msg);
+        void mapSize_callback(const sensor_msgs::PointCloud2::ConstPtr& msg);
+        void mergedMapSize_callback(const sensor_msgs::PointCloud2::ConstPtr& msg);
 
         void mapCoveredCallback();
 
