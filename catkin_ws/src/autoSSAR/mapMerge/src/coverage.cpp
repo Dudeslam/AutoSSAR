@@ -32,15 +32,13 @@ void coverage::mergedMapSize_callback(const sensor_msgs::PointCloud2::ConstPtr& 
 
 void coverage::mapCoveredCallback(const ros::TimerEvent& event) {
     if(Globalmap_size != 0 && SelfMapSize != 0) {
-        size_t cover = (((Globalmap_size-SelfMapSize)/Globalmap_size));
-        size_t cover_percentage = (cover*100);
+        auto cover = 100-(static_cast<double>(((Globalmap_size-SelfMapSize)/Globalmap_size))*100);
         std_msgs::String msg;
         msg.data = std::to_string(cover);
         coverage_pub_.publish(msg);
         std::cout << "Global map size: " << Globalmap_size << std::endl;
         std::cout << selfUAV <<" map size: " << SelfMapSize << std::endl;
         std::cout << selfUAV << " Total cover" << cover << "%" << std::endl;
-        std::cout << selfUAV << "Total Cover percentage: " << cover_percentage << "%" << std::endl;
     }
 
 }
