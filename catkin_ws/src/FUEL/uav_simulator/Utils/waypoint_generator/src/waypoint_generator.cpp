@@ -84,7 +84,7 @@ void load_waypoints(ros::NodeHandle& nh, const ros::Time& time_base) {
 }
 
 void publish_waypoints() {
-  ROS_ERROR("********************publish_waypoints");
+  ROS_ERROR_STREAM("******publish_waypoints******: " << ros::Time::now() );
   waypoints.header.frame_id = std::string("world");
   waypoints.header.stamp = ros::Time::now();
   pub1.publish(waypoints);
@@ -97,7 +97,6 @@ void publish_waypoints() {
 }
 
 void publish_waypoints_vis() {
-  ROS_ERROR("********************publish_waypoints_vis");
   nav_msgs::Path wp_vis = waypoints;
   geometry_msgs::PoseArray poseArray;
   poseArray.header.frame_id = std::string("world");

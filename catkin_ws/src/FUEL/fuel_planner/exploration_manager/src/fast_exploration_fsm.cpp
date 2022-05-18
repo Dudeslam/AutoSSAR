@@ -60,14 +60,14 @@ void FastExplorationFSM::init(ros::NodeHandle& nh) {
 
 // EDIT*******************************************
 void FastExplorationFSM::truncateCallback(const nav_msgs::Odometry::ConstPtr& msg) {
-  //ROS_WARN_STREAM_THROTTLE(0.5, "\n FastExplorationFSM truncateCallback: \tx: [" <<(*msg).pose.pose.position.x<<"], \ty: ["<<(*msg).pose.pose.position.y<<"], \tz: ["<<(*msg).pose.pose.position.z<<"] CMD: " << (*msg).child_frame_id );
+  
   if((*msg).child_frame_id == "HALT"){
-    //ROS_WARN_STREAM_THROTTLE(0.5, "\n FastExplorationFSM FLAG true");
     TRUNCATE_flag = true;
   } else {
-    //ROS_WARN_STREAM_THROTTLE(0.5, "\n FastExplorationFSM FLAG false");
     TRUNCATE_flag = false;
   }
+
+  ROS_WARN_STREAM_THROTTLE(1.0, "FastExplorationFSM:" << selfUAV <<"\tCMD: " << (*msg).child_frame_id << "\tFLAG: " << TRUNCATE_flag);
 
   //TRUNCATE_flag = true;
   //TRUNCATE_msg = *(msg);
@@ -112,9 +112,12 @@ void FastExplorationFSM::FSMCallback(const ros::TimerEvent& e) {
 
     // EDIT added state
     case PAUSE_PLANNING: {
-      ROS_WARN_STREAM_THROTTLE(1.0, "" << selfUAV << ": waiting for partner.");
+      ROS_WARN_STREAM_THROTTLE(2.0, "" << selfUAV << ": waiting for partner.");
       // If flag false, restart planning
-      if (!TRUNCATE_flag) { transitState(PLAN_TRAJ, "PAUSE_PLANNING"); }
+      if (!TRUNCATE_flag) {
+        transitState(PLAN_TRAJ, "PAUSE_PLANNING");
+      ROS_WARN_STREAM_THROTTLE(2.0, "" << selfUAV << ": done waiting for partner.");
+      }
       break;
     }
 
