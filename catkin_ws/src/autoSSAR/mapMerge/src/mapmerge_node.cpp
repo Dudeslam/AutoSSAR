@@ -19,6 +19,7 @@
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/Point.h>
 #include <nav_msgs/Odometry.h>
+#include "coverage.h"
 
 pcl::PointCloud<pcl::PointXYZ> own_globalMap_pcd;
 // pcl::PointCloud<pcl::PointXYZ> received_map_;
@@ -171,7 +172,8 @@ int main (int argc, char* argv[]){
     ros::init(argc, argv, "map_merger");
     ros::NodeHandle nh;
 
-
+    coverage mapcover;
+    mapcover.init(nh);
 
     selfUAV = nh.getNamespace().c_str();
     nh.getParam(selfUAV+"/mapmerge/otherUAV0", otherUAV0);

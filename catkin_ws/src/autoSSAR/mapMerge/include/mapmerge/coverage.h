@@ -10,12 +10,15 @@
 #include <pcl/point_cloud.h>
 #include <iostream>
 #include <string.h>
+#include <pcl/point_types.h>
+#include <pcl/filters/voxel_grid.h>
+#include <sensor_msgs/PointCloud2.h>
 
 class coverage {
     private:
-        int UAV0_Map_size_, UAV1_Map_size_, UAV2_Map_size_;
+        int SelfMapSize;
         int Globalmap_size;
-        std::string UAV0_name, UAV1_name, UAV2_name;
+        std::string selfUAV;
 
 
         //Subscribers

@@ -2,17 +2,26 @@
 
 void coverage::init(ros::NodeHandle& nh) {
 
-    UAV0_name = "UAV0";
-    UAV1_name = "UAV1";
-    UAV2_name = "UAV2";
+    selfUAV = nh.getNamespace().c_str();
 
     std::cout << "*************************************************************" << std::endl;
-    std::cout << "Self: "<< UAV0_name << std::endl;
-    std::cout << "Other UAV0: " << UAV1_name << std::endl;
-    std::cout << "Other UAV1: " << UAV2_name << std::endl;
+    std::cout << "Self: "<< selfUAV << std::endl;
     std::cout << "*************************************************************" << std::endl;
-  
 
-    //subscribers
+    Globalmap_size = nh.subscribe("/map_generator/global_cloud", 1, &coverage::mapSize_callback, this);
+    UAV0MapSize_sub_ = nh.subscribe(selfUAV + "/MergedMap", 1, &coverage::mergedMapSize_callback, this);
+}
 
+void coverage::mapSize_callback(const sensor_msgs::PointCloud2::ConstPtr& msg) {
+    pcl::PointCloud<pcl::PointXYZ> cloudMap;
+    pcl::fromROSMsg(*msg, cloudMap);
+    Globalmap_size = cloudMap.size();
+    std::cout << "Map Size: " << Globalmap_size << std::endl;
+}
+
+void coverage::MergedMapSize_callback(const sensor_msgs::PointCloud2::ConstPtr& msg) {
+    pcl::PointCloud<pcl::PointXYZ> cloudMap;
+    pcl::fromROSMsg(*msg, cloudMap);
+    SelfMapSize = cloudMap.size();
+    std::cout << "Map Size: " << SelfMapSize << std::endl;
 }
