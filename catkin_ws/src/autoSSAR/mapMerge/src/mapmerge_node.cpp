@@ -107,9 +107,9 @@ void getOverlap(pcl::PointCloud<pcl::PointXYZ> cloud_in, pcl::PointCloud<pcl::Po
     std::vector<float> nn_dists (max_nn_overlap_);
 
     kdtree_.setInputCloud (boost::make_shared< pcl::PointCloud < pcl::PointXYZ> > (own_cloud));
-    pcl::PointCloud<pcl::PointNormal> overlap_model, overlap_current;
+    pcl::PointCloud<pcl::PointXYZ> overlap_model, overlap_current;
     Eigen::Matrix4f transformation;
-    std::vector<pcl::PointNormal, Eigen::aligned_allocator<pcl::PointNormal> >::iterator it;
+    std::vector<pcl::PointXYZ, Eigen::aligned_allocator<pcl::PointXYZ> >::iterator it;
 
     for(size_t idx = 0 ; idx < cloud_in.points.size(); idx++ )
     {
@@ -130,8 +130,8 @@ void getOverlap(pcl::PointCloud<pcl::PointXYZ> cloud_in, pcl::PointCloud<pcl::Po
     it = std::unique(overlap_model.points.begin(), overlap_model.points.end(), pclUnique);
     overlap_model.points.resize(it - overlap_model.points.begin());
 
-    icp_.setInputTarget(boost::make_shared< pcl::PointCloud < pcl::PointNormal> > (overlap_model));
-    icp_.setInputCloud(boost::make_shared< pcl::PointCloud < pcl::PointNormal> > (overlap_current));
+    icp_.setInputTarget(boost::make_shared< pcl::PointCloud < pcl::PointXYZ> > (overlap_model));
+    icp_.setInputCloud(boost::make_shared< pcl::PointCloud < pcl::PointXYZ> > (overlap_current));
 
     // icp_.align(pointcloud2_transformed_);
 }
