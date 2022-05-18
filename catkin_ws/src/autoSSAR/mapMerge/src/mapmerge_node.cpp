@@ -133,8 +133,11 @@ void getOverlap(pcl::PointCloud<pcl::PointXYZ> cloud_in, pcl::PointCloud<pcl::Po
     it = std::unique(overlap_model.points.begin(), overlap_model.points.end(), pclUnique);
     overlap_model.points.resize(it - overlap_model.points.begin());
 
-    icp_.setInputTarget(overlap_model);
-    icp_.setInputCloud(overlap_current);
+    pcl::PointCloud<pcl::PointNormal>::Ptr overlap_model_copy (new pcl::PointCloud<pcl::PointNormal>(overlap_model));
+    pcl::PointCloud<pcl::PointNormal>::Ptr overlap_current_copy (new pcl::PointCloud<pcl::PointNormal>(overlap_current));
+
+    icp_.setInputTarget(overlap_model_copy);
+    icp_.setInputCloud(overlap_current_copy);
 
     // icp_.align(pointcloud2_transformed_);
 }
@@ -146,10 +149,11 @@ void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, pcl::PointCloud<pcl::Poin
     pcl::PointCloud<pcl::PointXYZ> Final;
     pcl::PointCloud<pcl::PointNormal> Final_normal;
     //pcl::fromROSMsg(map_out, *map_out_ptr_tmp);
+    
     //Remove NAN points
-    std::vector<int> indices;
+    // std::vector<int> indices;
     // pcl::removeNaNFromPointCloud(*map_in_ptr, *map_in_ptr, indices);
-    pcl::IterativeClosestPoint<pcl::PointNormal, pcl::PointNormal> icp;
+    // pcl::IterativeClosestPointCorrespondencesCheck<pcl::PointXYZINormal, pcl::PointXYZINormal> icp_;
     // ROS_WARN("Set input cloud");
     // icp.setInputSource(map_in_ptr);
     // icp.setInputTarget(map_out_ptr);
@@ -161,9 +165,9 @@ void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, pcl::PointCloud<pcl::Poin
     {
         // ROS_WARN("ICP has converged");
         icp.getFitnessScore();
-        pcl::transformPointCloud(map_in, Final_normal, icp.getFinalTransformation());
-        // concatePCL(Final, *map_out_ptr, map_out);
         copyPointCloud(Final_normal, Final);
+        pcl::transformPointCloud(map_in, Final, icp.getFinalTransformation());
+        // concatePCL(Final, *map_out_ptr, map_out);
         map_out += Final;
     }
     else
