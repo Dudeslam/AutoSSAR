@@ -5,6 +5,8 @@
 #include <pcl/point_types.h>
 #include <pcl/kdtree/kdtree_flann.h>
 #include <pcl_conversions/pcl_conversions.h>
+#include <pcl/ros/conversions.h>
+#include <pcl/features/feature.h>
 #include <iostream>
 #include <sensor_msgs/PointCloud2.h>
 #include <std_msgs/Header.h>
