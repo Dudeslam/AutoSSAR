@@ -27,7 +27,7 @@
   <arg name="box_max_z" value=" 2.0"/> -->
 
   <!--  Costume maps -->
-  <arg name="map_choice" value="maze"/>
+  <arg name="map_choice" value="office"/>
 
   <arg name="box_min_x" value="-4.0"/>
   <arg name="box_min_y" value="-18.0"/>

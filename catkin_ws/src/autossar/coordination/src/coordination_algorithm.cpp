@@ -176,7 +176,7 @@ void coordinationAlgorithm::withinRangeCallback(const nav_msgs::Odometry::ConstP
 
   nearUAVFlag_ = true;
   // std::cout << selfUAV_.name << " is within: " << nearUAV_.name << std::endl;
-  // ROS_INFO_STREAM_THROTTLE(1.0, ""<< selfUAV_.name << " is within: " << nearUAV_.name );
+  ROS_INFO_STREAM_THROTTLE(1.0, ""<< selfUAV_.name << " is within: " << nearUAV_.name );
 }
 
 void coordinationAlgorithm::odometryCallback(const nav_msgs::Odometry::ConstPtr& msg){
@@ -223,7 +223,7 @@ void coordinationAlgorithm::triggerTimer(const ros::TimerEvent& e){
 void coordinationAlgorithm::transitState(COORD_STATE new_state, std::string pos_call) {
   int pre_s = int(state_);
   state_ = new_state;
-  std::cout << selfUAV_.name << " [" + pos_call + "]: from " + coord_state_str_[pre_s] + " to " + coord_state_str_[int(new_state)] << std::endl;
+  //std::cout << selfUAV_.name << " [" + pos_call + "]: from " + coord_state_str_[pre_s] + " to " + coord_state_str_[int(new_state)] << std::endl;
 }
 
 void coordinationAlgorithm::evaluateRoles(void){
@@ -395,7 +395,7 @@ void coordinationAlgorithm::runCoordinationAlgorithm(const ros::TimerEvent& e){
         ROS_INFO_STREAM_THROTTLE(1.0, ""<< selfUAV_.name <<" RELAY: timeoutTimer_.start() at: " << ros::Time::now() );
         
         // SIMULATION: performanceTestSingleRaw
-        //ROS_DEBUG_STREAM_ONCE( ""<< selfUAV_.name << " Sim end at: " << ros::Time::now() );
+        //ROS_INFO_STREAM_THROTTLE(1.0, ""<< selfUAV_.name << " Sim end at: " << ros::Time::now() );
         //while(1);
       }
 
