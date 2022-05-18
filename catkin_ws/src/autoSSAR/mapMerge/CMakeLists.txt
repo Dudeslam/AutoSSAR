@@ -12,8 +12,6 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Wall")
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   PCL
-  octomap_msgs
-  octomap_ros
   roscpp
   std_msgs
   geometry_msgs
@@ -123,7 +121,7 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-include
+  include
   ${PROJECT_SOURCE_DIR}/include
   ${catkin_INCLUDE_DIRS}
   ${PCL_INCLUDE_DIRS}

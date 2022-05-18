@@ -13,23 +13,26 @@
 #include <pcl/point_types.h>
 #include <pcl/filters/voxel_grid.h>
 #include <sensor_msgs/PointCloud2.h>
-
 class coverage {
     private:
-        int SelfMapSize;
-        int Globalmap_size;
+        size_t SelfMapSize;
+        size_t Globalmap_size;
         std::string selfUAV;
 
 
         //Subscribers
-        ros::Subscriber GlobalmapSize_sub_, UAV0MapSize_sub_, UAV1MapSize_sub_, UAV2MapSize_sub_;
+        ros::Subscriber GlobalmapSize_sub_, selfUAVMapSize_sub_;
         
         // Publishers
         ros::Publisher coverage_pub_;
 
+
+        ros::Timer timer_;
         // Callback functions
         void mapSize_callback(const std_msgs::String::ConstPtr& msg);
         void mergedMapSize_callback(const std_msgs::String::ConstPtr& msg);
+
+        void mapCoveredCallback();
 
     public:
         coverage(){

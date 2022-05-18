@@ -19,7 +19,7 @@
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/Point.h>
 #include <nav_msgs/Odometry.h>
-#include "coverage.h"
+#include "mapmerge/coverage.h"
 
 pcl::PointCloud<pcl::PointXYZ> own_globalMap_pcd;
 // pcl::PointCloud<pcl::PointXYZ> received_map_;
