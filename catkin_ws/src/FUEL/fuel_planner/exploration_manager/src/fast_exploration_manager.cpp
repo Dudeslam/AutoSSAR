@@ -108,17 +108,6 @@ void FastExplorationManager::truncateCallback(const nav_msgs::Odometry::ConstPtr
   } else {
     TRUNCATE_flag = false;
   }
-  
-  
-  
-  //TRUNCATE_flag = true;
-  //TRUNCATE_msg = *(msg);
-  //std::cout << "Position-> \tx: [" <<(*msg).pose.pose.position.x<<"], \ty: ["<<(*msg).pose.pose.position.y<<"], \tz: ["<<(*msg).pose.pose.position.z<<"]" << std::endl;
-  //ROS_WARN_STREAM("\n FastExplorationManager truncateCallback: \tx: [" <<(*msg).pose.pose.position.x<<"], \ty: ["<<(*msg).pose.pose.position.y<<"], \tz: ["<<(*msg).pose.pose.position.z<<"] Flag: " << TRUNCATE_flag );
-  // TRUNCATE_pos(0) = (*msg).pose.pose.position.x;
-  // TRUNCATE_pos(1) = (*msg).pose.pose.position.y;
-  // TRUNCATE_pos(2) = (*msg).pose.pose.position.z;
-  // ROS_WARN_STREAM_THROTTLE(1.0, "\n FastExplorationManager truncateCallback: \tx: [" <<TRUNCATE_pos(0)<<"], \ty: ["<<TRUNCATE_pos(1)<<"], \tz: ["<<TRUNCATE_pos(2)<<"] Flag: " << TRUNCATE_flag );
 }
 // EDIT end*******************************************************
 

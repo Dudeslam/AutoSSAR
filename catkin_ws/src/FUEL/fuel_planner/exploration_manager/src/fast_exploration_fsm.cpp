@@ -51,10 +51,6 @@ void FastExplorationFSM::init(ros::NodeHandle& nh) {
   ROS_WARN_STREAM(""+selfUAV+"/pub_manual_pos *** FastExplorationFSM");
   TRUNCATE_sub_ = nh.subscribe(selfUAV+"/pub_manual_pos", 1, &FastExplorationFSM::truncateCallback, this);
   TRUNCATE_flag = false;
-  TRUNCATE_pos.setZero();
-  TRUNCATE_pos(0) = 99;
-  TRUNCATE_pos(1) = 99;
-  TRUNCATE_pos(2) = 99;
   // EDIT end***************************************
 }
 
@@ -68,15 +64,6 @@ void FastExplorationFSM::truncateCallback(const nav_msgs::Odometry::ConstPtr& ms
   }
 
   ROS_WARN_STREAM_THROTTLE(1.0, "FastExplorationFSM:" << selfUAV <<"\tCMD: " << (*msg).child_frame_id << "\tFLAG: " << TRUNCATE_flag);
-
-  //TRUNCATE_flag = true;
-  //TRUNCATE_msg = *(msg);
-  //std::cout << "Position-> \tx: [" <<(*msg).pose.pose.position.x<<"], \ty: ["<<(*msg).pose.pose.position.y<<"], \tz: ["<<(*msg).pose.pose.position.z<<"]" << std::endl;
-  //ROS_WARN_STREAM("\n FastExplorationFSM truncateCallback: \tx: [" <<(*msg).pose.pose.position.x<<"], \ty: ["<<(*msg).pose.pose.position.y<<"], \tz: ["<<(*msg).pose.pose.position.z<<"] Flag: " << TRUNCATE_flag );
-  // TRUNCATE_pos(0) = (*msg).pose.pose.position.x;
-  // TRUNCATE_pos(1) = (*msg).pose.pose.position.y;
-  // TRUNCATE_pos(2) = (*msg).pose.pose.position.z;
-  //ROS_WARN_STREAM_THROTTLE(1.0, "\n FastExplorationFSM truncateCallback: \tx: [" <<TRUNCATE_pos(0)<<"], \ty: ["<<TRUNCATE_pos(1)<<"], \tz: ["<<TRUNCATE_pos(2)<<"] Flag: " << TRUNCATE_flag );
 }
 // EDIT end*******************************************************
 
@@ -207,13 +194,6 @@ void FastExplorationFSM::FSMCallback(const ros::TimerEvent& e) {
       break;
     }
   }
-
-  /*/ EDIT: If PAUSE_PLANNING position reached
-  // ROS_WARN_STREAM_THROTTLE( 0.5, "curOdom, trunkPos " << fd_->odom_pos_(0) << fd_->odom_pos_(1) << " " << TRUNCATE_pos(0) << TRUNCATE_pos(1) );
-  if ( (round(fd_->odom_pos_(0)) == round(TRUNCATE_pos(0))) && (round(fd_->odom_pos_(1)) == round(TRUNCATE_pos(1)))) {
-    ROS_WARN_STREAM_THROTTLE( 0.5, "POSITION REACHED" << fd_->odom_pos_(0) << fd_->odom_pos_(1) << " " << TRUNCATE_pos(0) << TRUNCATE_pos(1) );
-    transitState(PLAN_TRAJ, "FSM");
-  }//*/
 }
 
 int FastExplorationFSM::callExplorationPlanner() {

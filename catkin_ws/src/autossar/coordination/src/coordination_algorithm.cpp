@@ -392,9 +392,11 @@ void coordinationAlgorithm::runCoordinationAlgorithm(const ros::TimerEvent& e){
         cmd_pub_.publish(selfUAV_.relayPoint);
         // Wait for one minut NOTE doesn't reset timer on re-call so timerRunningFlag_ isn't nessesary
         timeoutTimer_.start();
-        ROS_DEBUG_STREAM_ONCE( ""<< selfUAV_.name << " Sim end at: " << ros::Time::now() );
         ROS_INFO_STREAM_THROTTLE(1.0, ""<< selfUAV_.name <<" RELAY: timeoutTimer_.start() at: " << ros::Time::now() );
-        while(1);
+        
+        // SIMULATION: performanceTestSingleRaw
+        //ROS_DEBUG_STREAM_ONCE( ""<< selfUAV_.name << " Sim end at: " << ros::Time::now() );
+        //while(1);
       }
 
       // 3)   When timer expired - go home
