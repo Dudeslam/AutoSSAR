@@ -64,7 +64,7 @@ public:
   void getUpdatedBox(Eigen::Vector3d& bmin, Eigen::Vector3d& bmax, bool reset = false);
   double getResolution();
   int getVoxelNum();
-  MapData getMapData();
+  MapData getMap();
 
 
 private:
