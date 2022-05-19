@@ -9,14 +9,14 @@
 <!-- Start range utils -->
     <!-- <node pkg="within_range" name="within_range" type="within_range" output="screen" ns="$(arg ns0)"> -->
     <node pkg="within_range" name="within_range" type="within_range" ns="$(arg ns0)">
-        <param name="maxRange" value="2"/>
+        <param name="maxRange" value="3"/>
         <param name="otherUAV0" value="/$(arg ns1)"/>
         <param name="otherUAV1" value="/$(arg ns2)"/>
     </node>
 
     <!-- <node pkg="within_range" name="within_range" type="within_range" output="screen" ns="$(arg ns1)"> -->
     <node pkg="within_range" name="within_range" type="within_range" ns="$(arg ns1)">
-        <param name="maxRange" value="2"/>
+        <param name="maxRange" value="3"/>
         <param name="otherUAV0" value="/$(arg ns0)"/>
         <param name="otherUAV1" value="/$(arg ns2)"/>
     </node>

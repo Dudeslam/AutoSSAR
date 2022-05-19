@@ -126,9 +126,16 @@ void FrontierFinder::searchFrontiers(float max_up) {
 
   // Bounding box of updated region
   Vector3d update_min, update_max;
-  edt_env_->sdf_map_->getMap();
+  // edt_env_->sdf_map_->getMap();
   edt_env_->sdf_map_->getUpdatedBox(update_min, update_max, true);
   update_max + Eigen::Vector3d(max_up,max_up,max_up);
+  for(auto i = frontiers_.begin(); i != frontiers_.end(); it++)
+  {
+    if(i->box_max_(0) < update_min(0) || i->box_max_(1) < update_min(1) || i->box_max_(2) < update_min(2))
+    {
+      frontiers_.erase(i);
+    }
+  }
 
   // Removed changed frontiers in updated map
   auto resetFlag = [&](list<Frontier>::iterator& iter, list<Frontier>& frontiers) {

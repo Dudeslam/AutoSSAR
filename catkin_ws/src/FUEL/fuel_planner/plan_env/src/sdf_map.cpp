@@ -410,10 +410,10 @@ void SDFMap::OverWriteMap(const pcl::PointCloud<pcl::PointXYZ>& points, const in
     else
       md_->flag_rayend_[vox_adr] = md_->raycast_num_;
 
-    // caster_->input(pt_w, camera_pos);
-    // caster_->nextId(idx);
-    // while (caster_->nextId(idx))
-    //   setCacheOccupancy(toAddress(idx), 0);
+    caster_->input(pt_w, camera_pos);
+    caster_->nextId(idx);
+    while (caster_->nextId(idx))
+      setCacheOccupancy(toAddress(idx), 0);
   }
 
   while (!md_->cache_voxel_.empty()) {

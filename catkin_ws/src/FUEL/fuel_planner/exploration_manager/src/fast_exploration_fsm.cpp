@@ -222,6 +222,7 @@ int FastExplorationFSM::callExplorationPlanner() {
   if(mergeMap_){
     res = expl_manager_->planExploreMotion(fd_->start_pt_, fd_->start_vel_, fd_->start_acc_,
                                              fd_->start_yaw_, 200);
+    mergeMap_ = false;
   }
   else{
     res = expl_manager_->planExploreMotion(fd_->start_pt_, fd_->start_vel_, fd_->start_acc_,
@@ -400,8 +401,8 @@ void FastExplorationFSM::mergeCallback(const std_msgs::StringConstPtr& msg) {
     return;
 
   if (msg->data == "MergeMapComplete") {
-      auto ft = expl_manager_->frontier_finder_;
-      auto ed = expl_manager_->ed_;
+      // auto ft = expl_manager_->frontier_finder_;
+      // auto ed = expl_manager_->ed_;
       mergeMap_=true;
       // // auto res = callExplorationPlanner();
       // ft->searchFrontiers(200);
