@@ -129,9 +129,11 @@ void FrontierFinder::searchFrontiers(float max_up) {
   // edt_env_->sdf_map_->getMap();
   edt_env_->sdf_map_->getUpdatedBox(update_min, update_max, true);
   update_max + Eigen::Vector3d(max_up,max_up,max_up);
-  for(auto i = frontiers_.begin(); i != frontiers_.end(); it++)
+  for(auto i = frontiers_.begin(); i != frontiers_.end(); i++)
   {
-    if(i->box_max_(0) < update_min(0) || i->box_max_(1) < update_min(1) || i->box_max_(2) < update_min(2))
+    Eigen::Vector3i idx;
+    edt_env_->sdf_map_->posToIndex(i->box_min_, idx);
+    if(edt_env_->sdf_map_->isInMap(idx))
     {
       frontiers_.erase(i);
     }
@@ -152,6 +154,13 @@ void FrontierFinder::searchFrontiers(float max_up) {
   removed_ids_.clear();
   int rmv_idx = 0;
   for (auto iter = frontiers_.begin(); iter != frontiers_.end();) {
+    //convert frontier to index
+    Eigen::Vector3i idx;
+    edt_env_->sdf_map_->posToIndex(iter->cells_[0], idx);
+    if(edt_env_->sdf_map_->isInMap()){
+      resetFlag(iter, frontiers_);
+      removed_ids_.push_back(rmv_idx);
+    }
     if (haveOverlap(iter->box_min_, iter->box_max_, update_min, update_max) &&
         isFrontierChanged(*iter)) {
       resetFlag(iter, frontiers_);
