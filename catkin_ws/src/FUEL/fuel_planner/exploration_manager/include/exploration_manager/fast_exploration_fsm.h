@@ -71,6 +71,7 @@ private:
   ros::Subscriber TRUNCATE_sub_;
   void truncateCallback(const nav_msgs::Odometry::ConstPtr& msg);
   bool TRUNCATE_flag;
+  bool mergedMap_ = false;
   //nav_msgs::Odometry TRUNCATE_msg;
   Eigen::Vector3d TRUNCATE_pos;
   // EDIT end*********************************

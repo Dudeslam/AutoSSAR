@@ -120,16 +120,15 @@ void FrontierFinder::searchFrontiers() {
   // EDIT ROS_WARN_THROTTLE(5.0, "Frontier t: %lf", (ros::Time::now() - t1).toSec());
 }
 
-void FrontierFinder::searchFrontiers(Vector3d min, Vector3d max) {
+void FrontierFinder::searchFrontiers(float max_up) {
   ros::Time t1 = ros::Time::now();
   tmp_frontiers_.clear();
 
   // Bounding box of updated region
   Vector3d update_min, update_max;
-  // edt_env_->sdf_map_->getUpdatedBox(update_min, update_max, true);
-
-  update_min = min;
-  update_max = max;
+  edt_env_->sdf_map_->getMap();
+  edt_env_->sdf_map_->getUpdatedBox(update_min, update_max, true);
+  update_max + Eigen::Vector3d(max_up,max_up,max_up);
 
   // Removed changed frontiers in updated map
   auto resetFlag = [&](list<Frontier>::iterator& iter, list<Frontier>& frontiers) {

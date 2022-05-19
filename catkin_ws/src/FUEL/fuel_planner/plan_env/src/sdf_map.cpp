@@ -346,6 +346,15 @@ void SDFMap::inputPointCloud(
   }
 }
 
+MapData SDFMap::getMap(){
+  MapData map_data;
+  map_data.map_ = md_->occupancy_buffer_;
+  map_data.map_size_ = md_->map_size_;
+  map_data.map_resolution_ = mp_->resolution_;
+  map_data.map_origin_ = mp_->origin_;
+  return map_data;
+}
+
 void SDFMap::OverWriteMap(const pcl::PointCloud<pcl::PointXYZ>& points, const int& point_num, const Eigen::Vector3d& camera_pos) {
   if (point_num == 0) return;
   md_->raycast_num_ += 1;

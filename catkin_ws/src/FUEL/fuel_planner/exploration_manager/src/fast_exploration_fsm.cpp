@@ -218,9 +218,14 @@ void FastExplorationFSM::FSMCallback(const ros::TimerEvent& e) {
 
 int FastExplorationFSM::callExplorationPlanner() {
   ros::Time time_r = ros::Time::now() + ros::Duration(fp_->replan_time_);
-
-  int res = expl_manager_->planExploreMotion(fd_->start_pt_, fd_->start_vel_, fd_->start_acc_,
+  if(mergeMap_){
+      int res = expl_manager_->planExporeMotion(fd_->start_pt_, fd_->start_vel_, fd_->start_acc_,
+                                             fd_->start_yaw_, 100);
+  }
+  else{
+  int res = expl_manager_->planExporeMotion(fd_->start_pt_, fd_->start_vel_, fd_->start_acc_,
                                              fd_->start_yaw_);
+  }
   classic_ = false;
 
   // int res = expl_manager_->classicFrontier(fd_->start_pt_, fd_->start_yaw_[0]);
@@ -394,32 +399,17 @@ void FastExplorationFSM::mergeCallback(const std_msgs::StringConstPtr& msg) {
     return;
 
   if (msg->data == "MergeMapComplete") {
-    auto ft = expl_manager_->frontier_finder_;
-    auto ed = expl_manager_->ed_;
-    // ft->searchFrontiers();
-    ft->searchFrontiers(1, 9999);
-    ft->computeFrontiersToVisit();
-    ft->updateFrontierCostMatrix();
+      mergedMap_=true;
+      // auto res = callExplorationPlanner();
+      ft->searchFrontiers(200);
+      ft->computeFrontiersToVisit();
+      ft->updateFrontierCostMatrix();
 
-    ft->getFrontiers(ed->frontiers_);           // returns all frontiers in list
-    ft->getFrontierBoxes(ed->frontier_boxes_);
-
-    // Draw frontier and bounding box
-    for (int i = 0; i < ed->frontiers_.size(); ++i) {
-      visualization_->drawCubes(ed->frontiers_[i], 0.1,
-                                visualization_->getColor(double(i) / ed->frontiers_.size(), 0.4),
-                                "frontier", i, 4);
-      // visualization_->drawBox(ed->frontier_boxes_[i].first, ed->frontier_boxes_[i].second,
-      // Vector4d(0.5, 0, 1, 0.3),
-      //                         "frontier_boxes", i, 4);
-    }
-    for (int i = ed->frontiers_.size(); i < 50; ++i) {
-      visualization_->drawCubes({}, 0.1, Vector4d(0, 0, 0, 1), "frontier", i, 4);
-      // visualization_->drawBox(Vector3d(0, 0, 0), Vector3d(0, 0, 0), Vector4d(1, 0, 0, 0.3),
-      // "frontier_boxes", i, 4);
-    }
+      ft->getFrontiers(ed->frontiers_);           // returns all frontiers in list
+      ft->getFrontierBoxes(ed->frontier_boxes_);
+      // transitState(PLAN_TRAJ, "MergeMapCompleteCallback");
   }
-      transitState(PLAN_TRAJ, "MergeMapCompleteCallback");
+
 }
 
 void FastExplorationFSM::triggerCallback(const nav_msgs::PathConstPtr& msg) {
