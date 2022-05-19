@@ -60,6 +60,8 @@
     <!-- subscribe ONLY TO ONE of the two topics -->
     <arg name="depth_topic" value="/$(arg ns0)/pcl_render_node/depth"/>
     <arg name="cloud_topic" value="/$(arg ns0)/pcl_render_node/cloud"/>
+
+    <arg name="mapmerge_topic" value="/$(arg ns0)/MergedMap"/>
     
 
     <!-- intrinsic params of the depth camera -->

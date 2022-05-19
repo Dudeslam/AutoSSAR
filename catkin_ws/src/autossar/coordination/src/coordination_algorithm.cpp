@@ -176,7 +176,7 @@ void coordinationAlgorithm::withinRangeCallback(const nav_msgs::Odometry::ConstP
 
   nearUAVFlag_ = true;
   // std::cout << selfUAV_.name << " is within: " << nearUAV_.name << std::endl;
-  ROS_INFO_STREAM_THROTTLE(1.0, ""<< selfUAV_.name << " is within: " << nearUAV_.name );
+  // ROS_INFO_STREAM_THROTTLE(1.0, ""<< selfUAV_.name << " is within: " << nearUAV_.name );
 }
 
 void coordinationAlgorithm::odometryCallback(const nav_msgs::Odometry::ConstPtr& msg){
@@ -327,6 +327,7 @@ void coordinationAlgorithm::runCoordinationAlgorithm(const ros::TimerEvent& e){
       if(timerExpiredFlag_ == false && atRelayPointFlag_ == false){
         // Go to relay-point and wait for MEET
         selfUAV_.relayPoint.child_frame_id = "GOTO";
+        //for(int i=0; i<100; i++){cmd_pub_.publish(selfUAV_.relayPoint);}
         cmd_pub_.publish(selfUAV_.relayPoint);
         //std::cout << "RELAY: cmd_pub_.publish(selfUAV_.relayPoint);" << std::endl;
       }
@@ -335,7 +336,7 @@ void coordinationAlgorithm::runCoordinationAlgorithm(const ros::TimerEvent& e){
       if(atRelayPointFlag_){
         // STOP UAV - and start timer
         selfUAV_.relayPoint.child_frame_id = "HALT";
-        for(int i=0; i<100; i++){cmd_pub_.publish(selfUAV_.relayPoint);}
+        //for(int i=0; i<100; i++){cmd_pub_.publish(selfUAV_.relayPoint);}
         cmd_pub_.publish(selfUAV_.relayPoint);
         // Wait for one minut NOTE doesn't reset timer on re-call so timerRunningFlag_ isn't nessesary
         timeoutTimer_.start();
@@ -357,9 +358,8 @@ void coordinationAlgorithm::runCoordinationAlgorithm(const ros::TimerEvent& e){
 
         // Release from halt!
         baseStationOdom_.child_frame_id = "RND";
-        for(int i=0; i<100; i++){
-          cmd_pub_.publish(baseStationOdom_);
-        }
+        //for(int i=0; i<100; i++){cmd_pub_.publish(baseStationOdom_);}
+        cmd_pub_.publish(baseStationOdom_);
 
         // Set state explorer
         transitState(EXPLORE, "State: SACRIFICE");
@@ -381,6 +381,7 @@ void coordinationAlgorithm::runCoordinationAlgorithm(const ros::TimerEvent& e){
       if(timerExpiredFlag_ == false && atRelayPointFlag_ == false){
         // Go to relay-point and wait for MEET
         selfUAV_.relayPoint.child_frame_id = "GOTO";
+        //for(int i=0; i<100; i++){cmd_pub_.publish(selfUAV_.relayPoint);}
         cmd_pub_.publish(selfUAV_.relayPoint);
         //std::cout << "RELAY: cmd_pub_.publish(selfUAV_.relayPoint);" << std::endl;
       }
@@ -389,20 +390,22 @@ void coordinationAlgorithm::runCoordinationAlgorithm(const ros::TimerEvent& e){
       if(atRelayPointFlag_){
         // STOP UAV - and start timer
         selfUAV_.relayPoint.child_frame_id = "HALT";
+        //for(int i=0; i<100; i++){cmd_pub_.publish(selfUAV_.relayPoint);}
         cmd_pub_.publish(selfUAV_.relayPoint);
         // Wait for one minut NOTE doesn't reset timer on re-call so timerRunningFlag_ isn't nessesary
         timeoutTimer_.start();
         ROS_INFO_STREAM_THROTTLE(1.0, ""<< selfUAV_.name <<" RELAY: timeoutTimer_.start() at: " << ros::Time::now() );
         
-        // SIMULATION: performanceTestSingleRaw
-        //ROS_INFO_STREAM_THROTTLE(1.0, ""<< selfUAV_.name << " Sim end at: " << ros::Time::now() );
-        //while(1);
+        // SIMULATION: baselineTestSingleRaw, performanceTestSingleRaw
+        ROS_INFO_STREAM_THROTTLE(1.0, ""<< selfUAV_.name << " Sim end at: " << ros::Time::now() );
+        while(1);
       }
 
       // 3)   When timer expired - go home
       if(timerExpiredFlag_ == true){
         // Go home, partner not comming
         baseStationOdom_.child_frame_id = "GOTO";
+        //for(int i=0; i<100; i++){cmd_pub_.publish(baseStationOdom_);}
         cmd_pub_.publish(baseStationOdom_);
         //std::cout << "RELAY: cmd_pub_.publish(baseStationOdom_);" << std::endl;
       }
