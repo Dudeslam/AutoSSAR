@@ -218,12 +218,13 @@ void FastExplorationFSM::FSMCallback(const ros::TimerEvent& e) {
 
 int FastExplorationFSM::callExplorationPlanner() {
   ros::Time time_r = ros::Time::now() + ros::Duration(fp_->replan_time_);
+  int res;
   if(mergeMap_){
-      int res = expl_manager_->planExporeMotion(fd_->start_pt_, fd_->start_vel_, fd_->start_acc_,
-                                             fd_->start_yaw_, 100);
+    res = expl_manager_->planExploreMotion(fd_->start_pt_, fd_->start_vel_, fd_->start_acc_,
+                                             fd_->start_yaw_, 200);
   }
   else{
-  int res = expl_manager_->planExporeMotion(fd_->start_pt_, fd_->start_vel_, fd_->start_acc_,
+    res = expl_manager_->planExploreMotion(fd_->start_pt_, fd_->start_vel_, fd_->start_acc_,
                                              fd_->start_yaw_);
   }
   classic_ = false;
@@ -401,15 +402,15 @@ void FastExplorationFSM::mergeCallback(const std_msgs::StringConstPtr& msg) {
   if (msg->data == "MergeMapComplete") {
       auto ft = expl_manager_->frontier_finder_;
       auto ed = expl_manager_->ed_;
-      mergedMap_=true;
-      // auto res = callExplorationPlanner();
-      ft->searchFrontiers(200);
-      ft->computeFrontiersToVisit();
-      ft->updateFrontierCostMatrix();
+      mergeMap_=true;
+      // // auto res = callExplorationPlanner();
+      // ft->searchFrontiers(200);
+      // ft->computeFrontiersToVisit();
+      // ft->updateFrontierCostMatrix();
 
-      ft->getFrontiers(ed->frontiers_);           // returns all frontiers in list
-      ft->getFrontierBoxes(ed->frontier_boxes_);
-      // transitState(PLAN_TRAJ, "MergeMapCompleteCallback");
+      // ft->getFrontiers(ed->frontiers_);           // returns all frontiers in list
+      // ft->getFrontierBoxes(ed->frontier_boxes_);
+      transitState(PLAN_TRAJ, "MergeMapCompleteCallback");
   }
 
 }

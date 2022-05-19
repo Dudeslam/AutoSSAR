@@ -402,13 +402,13 @@ void SDFMap::OverWriteMap(const pcl::PointCloud<pcl::PointXYZ>& points, const in
     setCacheOccupancy(vox_adr, tmp_flag);
     for (int k = 0; k < 3; ++k) {
       md_->update_min_[k] = 1;
-      md_->update_max_[k] = 9999;
+      md_->update_max_[k] = 300;
     }
-    // // Raycasting between camera center and point
-    // if (md_->flag_rayend_[vox_adr] == md_->raycast_num_)
-    //   continue;
-    // else
-    //   md_->flag_rayend_[vox_adr] = md_->raycast_num_;
+    // Raycasting between camera center and point
+    if (md_->flag_rayend_[vox_adr] == md_->raycast_num_)
+      continue;
+    else
+      md_->flag_rayend_[vox_adr] = md_->raycast_num_;
 
     // caster_->input(pt_w, camera_pos);
     // caster_->nextId(idx);
