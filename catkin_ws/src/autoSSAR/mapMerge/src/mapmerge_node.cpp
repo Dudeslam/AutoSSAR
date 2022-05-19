@@ -235,9 +235,9 @@ void getFinishCallback(const std_msgs::String& msg){
 }
 
 void mergeTimerCallback(const ros::TimerEvent& event){
-    if(recentlyMerged)
+    if(recentlyMerged_)
     {
-        recentlyMerged = false;
+        recentlyMerged_ = false;
     }
 }
 
@@ -287,7 +287,7 @@ int main (int argc, char* argv[]){
                     pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
                     other_pub.publish(Global_Publish);
                     otherUAV0InRange_ = false;
-                    recentlyMerged_1 = true;
+                    recentlyMerged_ = true;
                 }
 
                 if(otherUAV1InRange_)
@@ -296,7 +296,7 @@ int main (int argc, char* argv[]){
                     pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
                     other_pub.publish(Global_Publish);
                     otherUAV1InRange_ = false;
-                    recentlyMerged_2 = true;
+                    recentlyMerged_ = true;
                 }
             }
         }  
