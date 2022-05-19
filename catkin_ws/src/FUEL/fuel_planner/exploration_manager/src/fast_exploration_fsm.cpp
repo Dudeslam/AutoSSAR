@@ -220,6 +220,7 @@ int FastExplorationFSM::callExplorationPlanner() {
   ros::Time time_r = ros::Time::now() + ros::Duration(fp_->replan_time_);
   int res;
   if(mergeMap_){
+    // expl_manager_->ed_->clear();
     res = expl_manager_->planExploreMotion(fd_->start_pt_, fd_->start_vel_, fd_->start_acc_,
                                              fd_->start_yaw_, 200);
     mergeMap_ = false;

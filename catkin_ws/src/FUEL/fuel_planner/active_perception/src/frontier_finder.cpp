@@ -157,12 +157,8 @@ void FrontierFinder::searchFrontiers(float max_up) {
     //convert frontier to index
     Eigen::Vector3i idx;
     edt_env_->sdf_map_->posToIndex(iter->cells_[0], idx);
-    if(edt_env_->sdf_map_->isInMap()){
-      resetFlag(iter, frontiers_);
-      removed_ids_.push_back(rmv_idx);
-    }
     if (haveOverlap(iter->box_min_, iter->box_max_, update_min, update_max) &&
-        isFrontierChanged(*iter)) {
+        isFrontierChanged(*iter) || knownfree(idx)) {
       resetFlag(iter, frontiers_);
       removed_ids_.push_back(rmv_idx);
     } else {
