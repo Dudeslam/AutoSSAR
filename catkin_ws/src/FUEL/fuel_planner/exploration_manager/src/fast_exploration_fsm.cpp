@@ -399,6 +399,8 @@ void FastExplorationFSM::mergeCallback(const std_msgs::StringConstPtr& msg) {
     return;
 
   if (msg->data == "MergeMapComplete") {
+      auto ft = expl_manager_->frontier_finder_;
+      auto ed = expl_manager_->ed_;
       mergedMap_=true;
       // auto res = callExplorationPlanner();
       ft->searchFrontiers(200);

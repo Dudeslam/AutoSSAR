@@ -347,26 +347,11 @@ void SDFMap::inputPointCloud(
 }
 
 MapData SDFMap::getMap(){
-
-    std::vector<double> occupancy_buffer_;
-  std::vector<char> occupancy_buffer_inflate_;
-  std::vector<double> distance_buffer_neg_;
-  std::vector<double> distance_buffer_;
-  std::vector<double> tmp_buffer1_;
-  std::vector<double> tmp_buffer2_;
-  // data for updating
-  vector<short> count_hit_, count_miss_, count_hit_and_miss_;
-  vector<char> flag_rayend_, flag_visited_;
-  char raycast_num_;
-  queue<int> cache_voxel_;
-  Eigen::Vector3i local_bound_min_, local_bound_max_;
-  Eigen::Vector3d update_min_, update_max_;
-
   MapData map_data;
   map_data.occupancy_buffer_ = md_->occupancy_buffer_;
   map_data.occupancy_buffer_inflate_ = md_->occupancy_buffer_inflate_;
-  map_data.distance_buffer_neg_ = mp_->distance_buffer_neg_;
-  map_data.distance_buffer_ = mp_->distance_buffer_;
+  map_data.distance_buffer_neg_ = md_->distance_buffer_neg_;
+  map_data.distance_buffer_ = md_->distance_buffer_;
   map_data.count_hit_ = md_->count_hit_;
   map_data.count_miss_ = md_->count_miss_;
   map_data.count_hit_and_miss_ = md_->count_hit_and_miss_;
