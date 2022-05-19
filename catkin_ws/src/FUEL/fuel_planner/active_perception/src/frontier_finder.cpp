@@ -120,6 +120,78 @@ void FrontierFinder::searchFrontiers() {
   // EDIT ROS_WARN_THROTTLE(5.0, "Frontier t: %lf", (ros::Time::now() - t1).toSec());
 }
 
+void FrontierFinder::searchFrontiers(Vector3d min, Vector3d max) {
+  ros::Time t1 = ros::Time::now();
+  tmp_frontiers_.clear();
+
+  // Bounding box of updated region
+  Vector3d update_min, update_max;
+  // edt_env_->sdf_map_->getUpdatedBox(update_min, update_max, true);
+
+  update_min = min;
+  update_max = max;
+
+  // Removed changed frontiers in updated map
+  auto resetFlag = [&](list<Frontier>::iterator& iter, list<Frontier>& frontiers) {
+    Eigen::Vector3i idx;
+    for (auto cell : iter->cells_) {
+      edt_env_->sdf_map_->posToIndex(cell, idx);
+      frontier_flag_[toadr(idx)] = 0;
+    }
+    iter = frontiers.erase(iter);
+  };
+
+  std::cout << "Before remove: " << frontiers_.size() << std::endl;
+
+  removed_ids_.clear();
+  int rmv_idx = 0;
+  for (auto iter = frontiers_.begin(); iter != frontiers_.end();) {
+    if (haveOverlap(iter->box_min_, iter->box_max_, update_min, update_max) &&
+        isFrontierChanged(*iter)) {
+      resetFlag(iter, frontiers_);
+      removed_ids_.push_back(rmv_idx);
+    } else {
+      ++rmv_idx;
+      ++iter;
+    }
+  }
+  std::cout << "After remove: " << frontiers_.size() << std::endl;
+  for (auto iter = dormant_frontiers_.begin(); iter != dormant_frontiers_.end();) {
+    if (haveOverlap(iter->box_min_, iter->box_max_, update_min, update_max) &&
+        isFrontierChanged(*iter))
+      resetFlag(iter, dormant_frontiers_);
+    else
+      ++iter;
+  }
+
+  // Search new frontier within box slightly inflated from updated box
+  Vector3d search_min = update_min - Vector3d(1, 1, 0.5);
+  Vector3d search_max = update_max + Vector3d(1, 1, 0.5);
+  Vector3d box_min, box_max;
+  edt_env_->sdf_map_->getBox(box_min, box_max);
+  for (int k = 0; k < 3; ++k) {
+    search_min[k] = max(search_min[k], box_min[k]);
+    search_max[k] = min(search_max[k], box_max[k]);
+  }
+  Eigen::Vector3i min_id, max_id;
+  edt_env_->sdf_map_->posToIndex(search_min, min_id);
+  edt_env_->sdf_map_->posToIndex(search_max, max_id);
+
+  for (int x = min_id(0); x <= max_id(0); ++x)
+    for (int y = min_id(1); y <= max_id(1); ++y)
+      for (int z = min_id(2); z <= max_id(2); ++z) {
+        // Scanning the updated region to find seeds of frontiers
+        Eigen::Vector3i cur(x, y, z);
+        if (frontier_flag_[toadr(cur)] == 0 && knownfree(cur) && isNeighborUnknown(cur)) {
+          // Expand from the seed cell to find a complete frontier cluster
+          expandFrontier(cur);
+        }
+      }
+  splitLargeFrontiers(tmp_frontiers_);
+
+  // EDIT ROS_WARN_THROTTLE(5.0, "Frontier t: %lf", (ros::Time::now() - t1).toSec());
+}
+
 void FrontierFinder::expandFrontier(
     const Eigen::Vector3i& first /* , const int& depth, const int& parent_id */) {
   // std::cout << "depth: " << depth << std::endl;

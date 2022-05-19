@@ -32,7 +32,7 @@ sensor_msgs::PointCloud2 Global_Publish;
 bool otherUAV0InRange_  = false;
 bool otherUAV1InRange_  = false;
 bool finishState = false;
-bool recentlyMerged_1, recentlyMerged_2 = false;
+bool recentlyMerged_ = false;
 
 
 std::string selfUAV;
@@ -108,10 +108,9 @@ void getOverlap(pcl::PointCloud<pcl::PointXYZ> cloud_in, pcl::PointCloud<pcl::Po
 
 
     pcl::PointCloud<pcl::PointNormal> cloud_in_copy, own_cloud_copy, overlap_model, overlap_current;
-    // pcl::PointCloud<pcl::PointXYZ>  overlap_model_copy, overlap_current_copy;
+    // Convert to pcl::PointNormal
     copyPointCloud(cloud_in, cloud_in_copy);
     copyPointCloud(own_cloud, own_cloud_copy);
-    Eigen::Matrix4f transformation;
     std::vector<pcl::PointNormal, Eigen::aligned_allocator<pcl::PointNormal> >::iterator it;
     kdtree_.setInputCloud (boost::make_shared< pcl::PointCloud < pcl::PointNormal> > (own_cloud_copy));
     for(size_t idx = 0 ; idx < cloud_in.points.size(); idx++ )
@@ -128,46 +127,38 @@ void getOverlap(pcl::PointCloud<pcl::PointXYZ> cloud_in, pcl::PointCloud<pcl::Po
       }
     }
     
-
+    // Remove excess overlaps
     std::sort(overlap_model.points.begin(), overlap_model.points.end(), pclSort);
     it = std::unique(overlap_model.points.begin(), overlap_model.points.end(), pclUnique);
     overlap_model.points.resize(it - overlap_model.points.begin());
 
+    // Buffers for alignment
     pcl::PointCloud<pcl::PointNormal>::Ptr overlap_model_copy (new pcl::PointCloud<pcl::PointNormal>(overlap_model));
     pcl::PointCloud<pcl::PointNormal>::Ptr overlap_current_copy (new pcl::PointCloud<pcl::PointNormal>(overlap_current));
 
+    //set source and target for alignment
     icp_.setInputTarget(overlap_model_copy);
     icp_.setInputCloud(overlap_current_copy);
-
-    // icp_.align(pointcloud2_transformed_);
 }
 
 void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, pcl::PointCloud<pcl::PointXYZ>& map_out)
 {
-    // pcl::PointCloud<pcl::PointXYZ>::Ptr map_in_ptr(new pcl::PointCloud<pcl::PointXYZ>(map_in));
-    // pcl::PointCloud<pcl::PointXYZ>::Ptr map_out_ptr(new pcl::PointCloud<pcl::PointXYZ>(map_out));
+    // Buffers for alignment
     pcl::PointCloud<pcl::PointXYZ> Final;
     pcl::PointCloud<pcl::PointNormal> Final_normal;
-    //pcl::fromROSMsg(map_out, *map_out_ptr_tmp);
-
-    //Remove NAN points
-    // std::vector<int> indices;
-    // pcl::removeNaNFromPointCloud(*map_in_ptr, *map_in_ptr, indices);
     pcl::IterativeClosestPoint<pcl::PointNormal, pcl::PointNormal> icp;
-    // ROS_WARN("Set input cloud");
-    // icp.setInputSource(map_in_ptr);
-    // icp.setInputTarget(map_out_ptr);
 
 
+    //Find overlap and remove excess
     getOverlap(map_in, map_out, icp);
     icp.align(Final_normal);
     if(icp.hasConverged())
     {
-        // ROS_WARN("ICP has converged");
         icp.getFitnessScore();
+
+        // convert to pcl::PointCloud<pcl::PointXYZ>
         copyPointCloud(Final_normal, Final);
         pcl::transformPointCloud(map_in, Final, icp.getFinalTransformation());
-        // concatePCL(Final, *map_out_ptr, map_out);
         map_out += Final;
     }
     else
@@ -178,12 +169,10 @@ void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, pcl::PointCloud<pcl::Poin
 
 void downsample(pcl::PointCloud<pcl::PointXYZ>& cloud_in, pcl::PointCloud<pcl::PointXYZ>& cloud_out)
 {
-    // std::cout << "Cloud in before downsample: " << cloud_in.size() << std::endl;
     pcl::VoxelGrid<pcl::PointXYZ> sor;
     sor.setInputCloud (cloud_in.makeShared());
     sor.setLeafSize (0.1, 0.1, 0.1);
     sor.filter (cloud_out);
-    // std::cout << "Cloud in after downsample: " << cloud_out.size() << std::endl;
 }
 
 
@@ -191,7 +180,6 @@ void downsample(pcl::PointCloud<pcl::PointXYZ>& cloud_in, pcl::PointCloud<pcl::P
 void getGlobalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
 {
     if(!finishState){
-            // ROS_WARN("Received local map");
             pcl::PointCloud<pcl::PointXYZ> cloudMap;
             pcl::fromROSMsg(*msg, cloudMap);
             std::vector<int> indices;
@@ -207,23 +195,22 @@ void getGlobalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
 void getLocalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
 {
         if(!finishState){
-        // ROS_WARN("Received local map");
-        pcl::PointCloud<pcl::PointXYZ> cloudMap;
-        pcl::fromROSMsg(*msg, cloudMap);
-        std::vector<int> indices;
-        pcl::removeNaNFromPointCloud(cloudMap, cloudMap, indices);
-        if(cloudMap.size() > 0 && own_globalMap_pcd.size() > 0)
-        {
-            // ROS_WARN("Local map is not empty");
-            own_globalMap_pcd += cloudMap;
-            downsample(own_globalMap_pcd, own_globalMap_pcd);
-        }   
-        else
-        {
-            // ROS_WARN("Local map is empty");
-            own_globalMap_pcd = cloudMap;
-            downsample(own_globalMap_pcd, own_globalMap_pcd);
-        }
+            pcl::PointCloud<pcl::PointXYZ> cloudMap;
+            pcl::fromROSMsg(*msg, cloudMap);
+            std::vector<int> indices;
+            pcl::removeNaNFromPointCloud(cloudMap, cloudMap, indices);
+            if(cloudMap.size() > 0 && own_globalMap_pcd.size() > 0)
+            {
+                // Add new map data
+                own_globalMap_pcd += cloudMap;
+                downsample(own_globalMap_pcd, own_globalMap_pcd);
+            }   
+            else
+            {
+                // If global map empty set local map as global map
+                own_globalMap_pcd = cloudMap;
+                downsample(own_globalMap_pcd, own_globalMap_pcd);
+            }
     }
 }
 
@@ -248,13 +235,9 @@ void getFinishCallback(const std_msgs::String& msg){
 }
 
 void mergeTimerCallback(const ros::TimerEvent& event){
-    if(recentlyMerged_1)
+    if(recentlyMerged)
     {
-        recentlyMerged_1 = false;
-    }
-    if(recentlyMerged_2)
-    {
-        recentlyMerged_2 = false;
+        recentlyMerged = false;
     }
 }
 
@@ -280,8 +263,9 @@ int main (int argc, char* argv[]){
 
     ros::Publisher other_pub = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/MergedMap", 10);
     ros::Publisher own_publish = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/pcl_render_node/cloud", 10);
+
+    // Timer to avoid constant merging
     ros::Timer merge_timer = nh.createTimer(ros::Duration(2), mergeTimerCallback);
-    // ros::Publisher debugger_own = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/debugger/cloud", 1000);
     ros::Rate loop_rate(20);
     Global_Publish.header.frame_id = "/map";
     
@@ -293,12 +277,11 @@ int main (int argc, char* argv[]){
                 // Always publish own global map if it is not empty
                 pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
                 own_publish.publish(Global_Publish);
-                // debugger_own.publish(Global_Publish);
-                // ROS_WARN("Publish own global map");
             }
 
-
-                if(otherUAV0InRange_ && !recentlyMerged_1)
+            if(!recentlyMerged_)
+            {
+                if(otherUAV0InRange_)
                 {
                     // ROS_WARN("Other UAV0 is in range");
                     pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
@@ -307,7 +290,7 @@ int main (int argc, char* argv[]){
                     recentlyMerged_1 = true;
                 }
 
-                if(otherUAV1InRange_ && !recentlyMerged_2)
+                if(otherUAV1InRange_)
                 {
                     // ROS_WARN("Other UAV1 is in range");
                     pcl::toROSMsg(own_globalMap_pcd, Global_Publish);
@@ -315,7 +298,8 @@ int main (int argc, char* argv[]){
                     otherUAV1InRange_ = false;
                     recentlyMerged_2 = true;
                 }
-        }
+            }
+        }  
         ros::spinOnce();
         loop_rate.sleep();
         
