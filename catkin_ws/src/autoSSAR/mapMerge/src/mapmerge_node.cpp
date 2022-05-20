@@ -140,12 +140,12 @@ Eigen::Matrix4f getOverlap(pcl::PointCloud<pcl::PointXYZ> cloud_in, pcl::PointCl
     //set source and target for alignment
     icp_.setInputTarget(overlap_model_copy);
     icp_.setInputCloud(overlap_current_copy);
-    icp.align(final_normal);
+    icp_.align(final_normal);
 
     // convert to pcl::PointCloud<pcl::PointXYZ>
     copyPointCloud(Final_normal, Final);
-    
-    return icp.getFinalTransformation();
+
+    return icp_.getFinalTransformation();
 }
 
 void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, pcl::PointCloud<pcl::PointXYZ>& map_out)
