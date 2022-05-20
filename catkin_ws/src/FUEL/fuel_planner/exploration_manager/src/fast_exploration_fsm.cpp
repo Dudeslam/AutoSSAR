@@ -222,7 +222,7 @@ int FastExplorationFSM::callExplorationPlanner() {
   if(mergeMap_){
     // expl_manager_->ed_->clear();
     res = expl_manager_->planExploreMotion(fd_->start_pt_, fd_->start_vel_, fd_->start_acc_,
-                                             fd_->start_yaw_, 200);
+                                             fd_->start_yaw_, 50);
     mergeMap_ = false;
   }
   else{

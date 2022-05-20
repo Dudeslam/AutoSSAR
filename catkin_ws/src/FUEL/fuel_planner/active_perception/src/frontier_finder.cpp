@@ -122,10 +122,7 @@ void FrontierFinder::searchFrontiers() {
 
 void FrontierFinder::searchFrontiers(float max_up) {
   ros::Time t1 = ros::Time::now();
-  tmp_frontiers_.clear();
-  auto temp = frontiers_.back();
-  frontiers_.clear();
-  frontiers_.push_back(temp);
+
 
   // Bounding box of updated region
   Vector3d update_min, update_max;
@@ -171,7 +168,7 @@ void FrontierFinder::searchFrontiers(float max_up) {
     Eigen::Vector3i idx;
     edt_env_->sdf_map_->posToIndex(iter->cells_[0], idx);
     if (haveOverlap(iter->box_min_, iter->box_max_, update_min, update_max) &&
-        isFrontierChanged(*iter) || knownfree(idx)) {
+        isFrontierChanged(*iter) || knownfree(iter)) {
       resetFlag(iter, frontiers_);
       removed_ids_.push_back(rmv_idx);
     } else {
@@ -179,6 +176,20 @@ void FrontierFinder::searchFrontiers(float max_up) {
       ++iter;
     }
   }
+  
+  // remove frontiers in explored area
+  for (auto iter = dormant_frontiers_.begin(); iter != dormant_frontiers_.end();) {
+    //convert frontier to index
+    Eigen::Vector3i idx;
+    edt_env_->sdf_map_->posToIndex(iter->cells_[0], idx);
+    if (haveOverlap(iter->box_min_, iter->box_max_, update_min, update_max) &&
+        isFrontierChanged(*iter) || knownfree(iter)) {
+      resetFlag(iter, dormant_frontiers_);
+    } else {
+      ++iter;
+    }
+  }
+
   std::cout << "After remove: " << frontiers_.size() << std::endl;
   for (auto iter = dormant_frontiers_.begin(); iter != dormant_frontiers_.end();) {
     if (haveOverlap(iter->box_min_, iter->box_max_, update_min, update_max) &&
