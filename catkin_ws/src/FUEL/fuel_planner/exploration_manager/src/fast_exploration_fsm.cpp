@@ -402,17 +402,13 @@ void FastExplorationFSM::mergeCallback(const std_msgs::StringConstPtr& msg) {
     return;
 
   if (msg->data == "MergeMapComplete") {
-      // auto ft = expl_manager_->frontier_finder_;
-      // auto ed = expl_manager_->ed_;
-      mergeMap_=true;
-      // // auto res = callExplorationPlanner();
-      // ft->searchFrontiers(200);
-      // ft->computeFrontiersToVisit();
-      // ft->updateFrontierCostMatrix();
-
-      // ft->getFrontiers(ed->frontiers_);           // returns all frontiers in list
-      // ft->getFrontierBoxes(ed->frontier_boxes_);
+      if(ros::Time::now() - mergeTime > 2)
+      {
+        mergeMap_=true;
+        lastMergeTime_ = ros::Time::now();
+      }
       transitState(PLAN_TRAJ, "MergeMapCompleteCallback");
+
   }
 
 }

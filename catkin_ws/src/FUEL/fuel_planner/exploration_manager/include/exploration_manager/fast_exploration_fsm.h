@@ -51,7 +51,7 @@ private:
   ros::Timer exec_timer_, safety_timer_, vis_timer_, frontier_timer_;
   ros::Subscriber trigger_sub_, odom_sub_, merge_sub_;
   ros::Publisher replan_pub_, new_pub_, bspline_pub_, state_pub_;
-
+  ros::Time lastMergeTime_ = 0;
   /* helper functions */
   int callExplorationPlanner();
   void transitState(EXPL_STATE new_state, string pos_call);
