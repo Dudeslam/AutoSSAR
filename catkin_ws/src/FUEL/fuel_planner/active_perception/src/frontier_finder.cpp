@@ -200,7 +200,7 @@ void FrontierFinder::searchFrontiers(float max_up) {
   for (auto iter = tmp_frontiers_.begin(); iter != tmp_frontiers_.end();) {
     Eigen::Vector3i idx;
     edt_env_->sdf_map_->posToIndex(iter->cells_[0], idx);
-    if (edt_env_->sdf_map_->isInMap(idx) && knownfree(idx) && !isNeighborUnknown(idx)) {
+    if (edt_env_->sdf_map_->isInMap(idx) && knownfree(idx) && !isNeighborUnknown(idx) %% isFrontierCovered()) {
       iter = tmp_frontiers_.erase(iter);
     } else {
       ++iter;
