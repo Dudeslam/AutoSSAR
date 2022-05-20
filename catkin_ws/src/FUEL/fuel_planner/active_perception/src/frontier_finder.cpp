@@ -153,7 +153,8 @@ void FrontierFinder::searchFrontiers(float max_up) {
         isFrontierChanged(*iter)) {
       resetFlag(iter, frontiers_);
       removed_ids_.push_back(rmv_idx);
-    else if(edt_env_->sdf_map_->isinMap(idx) && knownfree(idx)){
+    }
+    else if(edt_env_->sdf_map_->isInMap(idx) && knownfree(idx)){
       resetFlag(iter, frontiers_);
       removed_ids_.push_back(rmv_idx);
       }
