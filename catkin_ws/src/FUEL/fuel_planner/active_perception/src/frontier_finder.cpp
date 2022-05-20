@@ -131,15 +131,6 @@ void FrontierFinder::searchFrontiers(float max_up) {
   // edt_env_->sdf_map_->getMap();
   edt_env_->sdf_map_->getUpdatedBox(update_min, update_max, true);
   update_max + Eigen::Vector3d(max_up,max_up,max_up);
-  // for(auto i = frontiers_.begin(); i != frontiers_.end(); i++)
-  // {
-  //   Eigen::Vector3i idx;
-  //   edt_env_->sdf_map_->posToIndex(i->box_min_, idx);
-  //   if(edt_env_->sdf_map_->isInMap(idx))
-  //   {
-  //     frontiers_.erase(i);
-  //   }
-  // }
 
     // Removed changed frontiers in updated map
   auto resetFlag = [&](list<Frontier>::iterator& iter, list<Frontier>& frontiers) {
@@ -161,7 +152,7 @@ void FrontierFinder::searchFrontiers(float max_up) {
     Eigen::Vector3i idx;
     edt_env_->sdf_map_->posToIndex(iter->cells_[0], idx);
     if (haveOverlap(iter->box_min_, iter->box_max_, update_min, update_max) &&
-        isFrontierChanged(*iter) || knownfree(idx)) {
+        isFrontierChanged(*iter)) {
       resetFlag(iter, frontiers_);
       removed_ids_.push_back(rmv_idx);
     } else {
@@ -176,7 +167,7 @@ void FrontierFinder::searchFrontiers(float max_up) {
         Eigen::Vector3i idx;
     edt_env_->sdf_map_->posToIndex(iter->cells_[0], idx);
     if (haveOverlap(iter->box_min_, iter->box_max_, update_min, update_max) &&
-        isFrontierChanged(*iter) || knownfree(idx))
+        isFrontierChanged(*iter))
       resetFlag(iter, dormant_frontiers_);
     else
       ++iter;
@@ -209,7 +200,7 @@ void FrontierFinder::searchFrontiers(float max_up) {
   for (auto iter = tmp_frontiers_.begin(); iter != tmp_frontiers_.end();) {
     Eigen::Vector3i idx;
     edt_env_->sdf_map_->posToIndex(iter->cells_[0], idx);
-    if (knownfree(idx)) {
+    if (knownfree(idx) && isNeighborUnknown(idx)) {
       iter = tmp_frontiers_.erase(iter);
     } else {
       ++iter;
