@@ -153,6 +153,10 @@ void FrontierFinder::searchFrontiers(float max_up) {
         isFrontierChanged(*iter)) {
       resetFlag(iter, frontiers_);
       removed_ids_.push_back(rmv_idx);
+    else if(edt_env_->sdf_map_->isinMap(idx) && knownfree(idx)){
+      resetFlag(iter, frontiers_);
+      removed_ids_.push_back(rmv_idx);
+      }
     } else {
       ++rmv_idx;
       ++iter;
@@ -170,8 +174,6 @@ void FrontierFinder::searchFrontiers(float max_up) {
     else
       ++iter;
   }
-
-
 
   // Search new frontier within box slightly inflated from updated box
   Vector3d search_min = update_min - Vector3d(1, 1, 0.5);
