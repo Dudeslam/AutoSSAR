@@ -49,6 +49,7 @@ public:
   void boundBox(Eigen::Vector3d& low, Eigen::Vector3d& up);
   int getOccupancy(const Eigen::Vector3d& pos);
   int getOccupancy(const Eigen::Vector3i& id);
+  int getOccupancyFromMerge(const Eigen::Vector3i& id);
   void setOccupied(const Eigen::Vector3d& pos, const int& occ = 1);
   int getInflateOccupancy(const Eigen::Vector3d& pos);
   int getInflateOccupancy(const Eigen::Vector3i& id);
@@ -202,6 +203,14 @@ inline int SDFMap::getOccupancy(const Eigen::Vector3i& id) {
   if (!isInMap(id)) return -1;
   double occ = md_->occupancy_buffer_[toAddress(id)];
   if (occ < mp_->clamp_min_log_ - 1e-3) return UNKNOWN;
+  if (occ > mp_->min_occupancy_log_) return OCCUPIED;
+  return FREE;
+}
+
+inline int SDFMap::getOccupancyFromMerge(const Eigen::Vector3i& id){
+  if (!isInMap(id)) return -1;
+  double occ = md_->occupancy_buffer_[toAddress(id)];
+  // if (occ < mp_->clamp_min_log_ - 1e-3) return UNKNOWN;
   if (occ > mp_->min_occupancy_log_) return OCCUPIED;
   return FREE;
 }

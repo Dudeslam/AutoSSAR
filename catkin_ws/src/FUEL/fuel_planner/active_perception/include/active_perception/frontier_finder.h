@@ -102,6 +102,7 @@ private:
   // Wrapper of sdf map
   int toadr(const Eigen::Vector3i& idx);
   bool knownfree(const Eigen::Vector3i& idx);
+  bool knownfreeMerge(const Eigen::Vector3i& idx);
   bool inmap(const Eigen::Vector3i& idx);
 
   // Deprecated
