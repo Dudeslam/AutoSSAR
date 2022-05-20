@@ -109,6 +109,7 @@ Eigen::Matrix4f getOverlap(pcl::PointCloud<pcl::PointXYZ> cloud_in, pcl::PointCl
 
 
     pcl::PointCloud<pcl::PointNormal> cloud_in_copy, own_cloud_copy, overlap_model, overlap_current, final_normal;
+    Eigen::Matrix4f retbuf;
     // Convert to pcl::PointNormal
     copyPointCloud(cloud_in, cloud_in_copy);
     copyPointCloud(own_cloud, own_cloud_copy);
@@ -143,9 +144,11 @@ Eigen::Matrix4f getOverlap(pcl::PointCloud<pcl::PointXYZ> cloud_in, pcl::PointCl
     icp_.align(final_normal);
 
     // convert to pcl::PointCloud<pcl::PointXYZ>
-    copyPointCloud(Final_normal, Final);
-
-    return icp_.getFinalTransformation();
+    copyPointCloud(final_normal, Final);
+    retbuf = icp_.getFinalTransformation();
+    overlap_model_copy.reset();
+    overlap_current_copy.reset();
+    return retbuf;
 }
 
 void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, pcl::PointCloud<pcl::PointXYZ>& map_out)
