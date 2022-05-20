@@ -47,11 +47,7 @@ double downsample_leafsize_, epsilon_z_, epsilon_curvature_, epsilon_transformat
 bool downsample_pointcloud_before_, downsample_pointcloud_after_, filter_outliers_, curvature_check_;
 int scan_index_;
 pcl::KdTreeFLANN<pcl::PointNormal> kdtree_;
-
-// Buffers for alignment
-pcl::PointCloud<pcl::PointNormal>::Ptr overlap_model_copy = NULL;
-pcl::PointCloud<pcl::PointNormal>::Ptr overlap_current_copy = NULL;
-
+pcl::PointCloud<pcl::PointXYZ> Final;
 
 void init(){
     //initialize parameters
@@ -107,17 +103,17 @@ bool pclUnique (pcl::PointNormal i, pcl::PointNormal j)
 }
 
 
-void getOverlap(pcl::PointCloud<pcl::PointXYZ> cloud_in, pcl::PointCloud<pcl::PointXYZ> own_cloud, pcl::IterativeClosestPoint<pcl::PointNormal, pcl::PointNormal> icp_){
+Eigen::Matrix4f getOverlap(pcl::PointCloud<pcl::PointXYZ> cloud_in, pcl::PointCloud<pcl::PointXYZ> own_cloud, pcl::IterativeClosestPoint<pcl::PointNormal, pcl::PointNormal> icp_){
     std::vector<int> nn_indices (max_nn_overlap_);
     std::vector<float> nn_dists (max_nn_overlap_);
 
 
-    pcl::PointCloud<pcl::PointNormal> cloud_in_copy, own_cloud_copy, overlap_model, overlap_current;
+    pcl::PointCloud<pcl::PointNormal> cloud_in_copy, own_cloud_copy, overlap_model, overlap_current, final_normal;
     // Convert to pcl::PointNormal
     copyPointCloud(cloud_in, cloud_in_copy);
     copyPointCloud(own_cloud, own_cloud_copy);
     std::vector<pcl::PointNormal, Eigen::aligned_allocator<pcl::PointNormal> >::iterator it;
-    kdtree_.setInputCloud (boost::make_shared<pcl::PointCloud<pcl::PointNormal>> (own_cloud_copy));
+    kdtree_.setInputCloud (boost::make_shared< pcl::PointCloud < pcl::PointNormal> > (own_cloud_copy));
     for(size_t idx = 0 ; idx < cloud_in.points.size(); idx++ )
     {
       kdtree_.radiusSearch(cloud_in_copy, idx, radius_overlap_, nn_indices, nn_dists, max_nn_overlap_);
@@ -137,40 +133,41 @@ void getOverlap(pcl::PointCloud<pcl::PointXYZ> cloud_in, pcl::PointCloud<pcl::Po
     it = std::unique(overlap_model.points.begin(), overlap_model.points.end(), pclUnique);
     overlap_model.points.resize(it - overlap_model.points.begin());
 
-    overlap_model_copy = new pcl::PointCloud<pcl::PointNormal>(overlap_model);
-    overlap_current_copy = new pcl::PointCloud<pcl::PointNormal>(overlap_current);
+    // Buffers for alignment
+    pcl::PointCloud<pcl::PointNormal>::Ptr overlap_model_copy (new pcl::PointCloud<pcl::PointNormal>(overlap_model));
+    pcl::PointCloud<pcl::PointNormal>::Ptr overlap_current_copy (new pcl::PointCloud<pcl::PointNormal>(overlap_current));
 
     //set source and target for alignment
     icp_.setInputTarget(overlap_model_copy);
     icp_.setInputCloud(overlap_current_copy);
+    icp.align(final_normal);
+
+    // convert to pcl::PointCloud<pcl::PointXYZ>
+    copyPointCloud(Final_normal, Final);
+    
+    return icp.getFinalTransformation();
 }
 
 void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, pcl::PointCloud<pcl::PointXYZ>& map_out)
 {
     // Buffers for alignment
-    pcl::PointCloud<pcl::PointXYZ> Final;
-    pcl::PointCloud<pcl::PointNormal> Final_normal;
+    Eigen::Matrix4f transform;
     pcl::IterativeClosestPoint<pcl::PointNormal, pcl::PointNormal> icp;
 
 
     //Find overlap and remove excess
-    getOverlap(map_in, map_out, icp);
-    icp.align(Final_normal);
+    transform = getOverlap(map_in, map_out, icp);
+
     if(icp.hasConverged())
     {
         icp.getFitnessScore();
-
-        // convert to pcl::PointCloud<pcl::PointXYZ>
-        copyPointCloud(Final_normal, Final);
-        pcl::transformPointCloud(map_in, Final, icp.getFinalTransformation());
+        pcl::transformPointCloud(map_in, Final, transform);
         map_out += Final;
     }
     else
     {
         ROS_WARN("ICP has not converged");
     }
-    delete overlap_model_copy;
-    delete overlap_current_copy;
 }
 
 void downsample(pcl::PointCloud<pcl::PointXYZ>& cloud_in, pcl::PointCloud<pcl::PointXYZ>& cloud_out)
@@ -185,11 +182,9 @@ void downsample(pcl::PointCloud<pcl::PointXYZ>& cloud_in, pcl::PointCloud<pcl::P
 //Callbacks
 void getGlobalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
 {
-    pcl::PointCloud<pcl::PointXYZ> cloudMap;
-    pcl::fromROSMsg(*msg, cloudMap);
-    if(cloudMap.size() == 0) return;
-
     if(!finishState){
+            pcl::PointCloud<pcl::PointXYZ> cloudMap;
+            pcl::fromROSMsg(*msg, cloudMap);
             std::vector<int> indices;
             pcl::removeNaNFromPointCloud(cloudMap, cloudMap, indices);
             if(cloudMap.size() != last_point_cloud_size_){
