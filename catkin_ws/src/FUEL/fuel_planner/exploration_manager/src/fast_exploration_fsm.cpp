@@ -402,7 +402,7 @@ void FastExplorationFSM::mergeCallback(const std_msgs::StringConstPtr& msg) {
     return;
 
   if (msg->data == "MergeMapComplete") {
-      if(ros::Time::now() - lastMergeTime_ > ros::Duration(2))
+      if(ros::Time::now() - lastMergeTime_ > ros::Duration(1))
       {
         mergeMap_=true;
         lastMergeTime_ = ros::Time::now();

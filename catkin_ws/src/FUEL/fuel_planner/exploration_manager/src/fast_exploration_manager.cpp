@@ -152,14 +152,16 @@ int FastExplorationManager::planExploreMotion(
 
     // ORIGINAL************************
     // Search frontiers and group them into clusters
+    // ROS_WARN("size of frontier: %d before search", ed_->frontiers_);
     frontier_finder_->searchFrontiers(max_up);
-
+    // ROS_WARN("size of frontier: %d after search", ed_->frontiers_);
     double frontier_time = (ros::Time::now() - t1).toSec();
     t1 = ros::Time::now();
 
     // Find viewpoints (x,y,z,yaw) for all frontier clusters and get visible ones' info
     frontier_finder_->computeFrontiersToVisit();
     frontier_finder_->getFrontiers(ed_->frontiers_);
+      // ROS_WARN("size of frontier: %d after get and compute", ed_->frontiers_);
     frontier_finder_->getFrontierBoxes(ed_->frontier_boxes_);
     frontier_finder_->getDormantFrontiers(ed_->dead_frontiers_);
 
