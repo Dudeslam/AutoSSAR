@@ -123,6 +123,9 @@ void FrontierFinder::searchFrontiers() {
 void FrontierFinder::searchFrontiers(float max_up) {
   ros::Time t1 = ros::Time::now();
   tmp_frontiers_.clear();
+  auto temp = frontiers_.back();
+  frontiers_.clear();
+  frontiers_.push_back(temp);
 
   // Bounding box of updated region
   Vector3d update_min, update_max;
@@ -139,7 +142,7 @@ void FrontierFinder::searchFrontiers(float max_up) {
     }
   }
 
-  // Removed changed frontiers in updated map
+    // Removed changed frontiers in updated map
   auto resetFlag = [&](list<Frontier>::iterator& iter, list<Frontier>& frontiers) {
     Eigen::Vector3i idx;
     for (auto cell : iter->cells_) {
@@ -148,6 +151,16 @@ void FrontierFinder::searchFrontiers(float max_up) {
     }
     iter = frontiers.erase(iter);
   };
+
+  // // Removed changed frontiers in updated map
+  // auto resetFlag = [&](list<Frontier>::iterator& iter, list<Frontier>& frontiers) {
+  //   Eigen::Vector3i idx;
+  //   for (auto cell : iter->cells_) {
+  //     edt_env_->sdf_map_->posToIndex(cell, idx);
+  //     frontier_flag_[toadr(idx)] = 0;
+  //   }
+  //   iter = frontiers.erase(iter);
+  // };
 
   std::cout << "Before remove: " << frontiers_.size() << std::endl;
 
