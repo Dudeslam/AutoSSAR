@@ -73,12 +73,17 @@ void FrontierFinder::searchFrontiers() {
 
   removed_ids_.clear();
   int rmv_idx = 0;
+
   for (auto iter = frontiers_.begin(); iter != frontiers_.end();) {
+    Eigen::Vector3i idx;
+    edt_env_->sdf_map_->posToIndex(iter->cells_[0], idx);
     if (haveOverlap(iter->box_min_, iter->box_max_, update_min, update_max) &&
         isFrontierChanged(*iter)) {
       resetFlag(iter, frontiers_);
       removed_ids_.push_back(rmv_idx);
-    } else {
+    }
+    
+    else {
       ++rmv_idx;
       ++iter;
     }
@@ -110,7 +115,7 @@ void FrontierFinder::searchFrontiers() {
       for (int z = min_id(2); z <= max_id(2); ++z) {
         // Scanning the updated region to find seeds of frontiers
         Eigen::Vector3i cur(x, y, z);
-        if (frontier_flag_[toadr(cur)] == 0 && knownfree(cur) && isNeighborUnknown(cur)) {
+        if (frontier_flag_[toadr(cur)] == 0 && knownfree(cur) && isNeighborUnknown(cur) && !getOccupancyMerge(cur)==SDFMap::OCCUPIED) {
           // Expand from the seed cell to find a complete frontier cluster
           expandFrontier(cur);
         }
@@ -154,7 +159,7 @@ void FrontierFinder::searchFrontiers(float max_up) {
       resetFlag(iter, frontiers_);
       removed_ids_.push_back(rmv_idx);
     }
-    else if(edt_env_->sdf_map_->isInMap(idx) && knownfreeMerge(idx) && (edt_env_->sdf_map_->getoccupancyMerge(idx)==SDFMap::FREE)){
+    else if(edt_env_->sdf_map_->getOccupancyMerge(idx)==SDFMap::FREE){
       resetFlag(iter, frontiers_);
       // resetFlag(iter, tmp_frontiers_);
       removed_ids_.push_back(rmv_idx);
@@ -195,21 +200,11 @@ void FrontierFinder::searchFrontiers(float max_up) {
       for (int z = min_id(2); z <= max_id(2); ++z) {
         // Scanning the updated region to find seeds of frontiers
         Eigen::Vector3i cur(x, y, z);
-        if (frontier_flag_[toadr(cur)] == 0 && knownfree(cur) && isNeighborUnknown(cur)) {
+        if (frontier_flag_[toadr(cur)] == 0 && knownfree(cur) && isNeighborUnknown(cur) && !getOccupancyMerge(cur)==SDFMap::OCCUPIED) {
           // Expand from the seed cell to find a complete frontier cluster
           expandFrontier(cur);
         }
       }
-  //     //if new frontiers in explored map, remove from tmp_frontiers_
-  // for (auto iter = tmp_frontiers_.begin(); iter != tmp_frontiers_.end();) {
-  //   Eigen::Vector3i idx;
-  //   edt_env_->sdf_map_->posToIndex(iter->cells_[0], idx);
-  //   if (edt_env_->sdf_map_->isInMap(idx) && knownfree(idx) && !isNeighborUnknown(idx) && isFrontierCovered()) {
-  //     iter = tmp_frontiers_.erase(iter);
-  //   } else {
-  //     ++iter;
-  //   }
-  // }
 
   splitLargeFrontiers(tmp_frontiers_);
 
