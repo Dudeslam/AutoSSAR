@@ -353,6 +353,8 @@ void SDFMap::OverWriteMap(const pcl::PointCloud<pcl::PointXYZ>& points, const in
   // clearMap();
   Eigen::Vector3d pt_w, tmp;
   Eigen::Vector3i idx;
+  Eigen::Vector3d update_min = camera_pos;
+  Eigen::Vector3d update_max = camera_pos;
   int vox_adr;
   double length;
   for (int i = 0; i < point_num; ++i) {
@@ -395,7 +397,13 @@ void SDFMap::OverWriteMap(const pcl::PointCloud<pcl::PointXYZ>& points, const in
     while (caster_->nextId(idx))
       setCacheOccupancy(toAddress(idx), 0);
   }
-
+  
+  Eigen::Vector3d bound_inf(mp_->local_bound_inflate_, mp_->local_bound_inflate_, 0);
+  posToIndex(update_max + bound_inf, md_->local_bound_max_);
+  posToIndex(update_min - bound_inf, md_->local_bound_min_);
+  boundIndex(md_->local_bound_min_);
+  boundIndex(md_->local_bound_max_);
+  mr_->local_updated_ = true;
   
 
   while (!md_->cache_voxel_.empty()) {
