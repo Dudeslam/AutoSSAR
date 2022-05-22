@@ -115,7 +115,7 @@ void FrontierFinder::searchFrontiers() {
       for (int z = min_id(2); z <= max_id(2); ++z) {
         // Scanning the updated region to find seeds of frontiers
         Eigen::Vector3i cur(x, y, z);
-        if (frontier_flag_[toadr(cur)] == 0 && knownfree(cur) && isNeighborUnknown(cur) && !getOccupancyMerge(cur)==SDFMap::OCCUPIED) {
+        if (frontier_flag_[toadr(cur)] == 0 && knownfree(cur) && isNeighborUnknown(cur) && !edt_env_->sdf_map_->getOccupancyMerge(cur)==SDFMap::OCCUPIED) {
           // Expand from the seed cell to find a complete frontier cluster
           expandFrontier(cur);
         }
@@ -200,7 +200,7 @@ void FrontierFinder::searchFrontiers(float max_up) {
       for (int z = min_id(2); z <= max_id(2); ++z) {
         // Scanning the updated region to find seeds of frontiers
         Eigen::Vector3i cur(x, y, z);
-        if (frontier_flag_[toadr(cur)] == 0 && knownfree(cur) && isNeighborUnknown(cur) && !getOccupancyMerge(cur)==SDFMap::OCCUPIED) {
+        if (frontier_flag_[toadr(cur)] == 0 && knownfree(cur) && isNeighborUnknown(cur) && !edt_env_->sdf_map_->getOccupancyMerge(cur)==SDFMap::OCCUPIED) {
           // Expand from the seed cell to find a complete frontier cluster
           expandFrontier(cur);
         }
