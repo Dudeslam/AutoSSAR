@@ -381,8 +381,8 @@ void SDFMap::OverWriteMap(const pcl::PointCloud<pcl::PointXYZ>& points, const in
     vox_adr = toAddress(idx);
     setCacheOccupancy(vox_adr, tmp_flag);
     for (int k = 0; k < 3; ++k) {
-      md_->update_min_[k] = 1;
-      md_->update_max_[k] = 300;
+      update_min[k] = min(update_min[k], pt_w[k]);
+      update_max[k] = max(update_max[k], pt_w[k]);
     }
     // Raycasting between camera center and point
     if (md_->flag_rayend_[vox_adr] == md_->raycast_num_)
@@ -395,6 +395,8 @@ void SDFMap::OverWriteMap(const pcl::PointCloud<pcl::PointXYZ>& points, const in
     while (caster_->nextId(idx))
       setCacheOccupancy(toAddress(idx), 0);
   }
+
+  
 
   while (!md_->cache_voxel_.empty()) {
     int adr = md_->cache_voxel_.front();

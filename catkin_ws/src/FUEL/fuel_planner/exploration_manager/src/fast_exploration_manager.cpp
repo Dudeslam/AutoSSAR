@@ -153,7 +153,7 @@ int FastExplorationManager::planExploreMotion(
     // ORIGINAL************************
     // Search frontiers and group them into clusters
     // ROS_WARN("size of frontier: %d before search", ed_->frontiers_);
-    frontier_finder_->searchFrontiers(max_up);
+    frontier_finder_->RemoveFrontiersMerge(max_up);
     // ROS_WARN("size of frontier: %d after search", ed_->frontiers_);
     double frontier_time = (ros::Time::now() - t1).toSec();
     t1 = ros::Time::now();

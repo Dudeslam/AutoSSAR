@@ -56,7 +56,7 @@ public:
   ~FrontierFinder();
 
   void searchFrontiers();
-  void searchFrontiers(float max);
+  void RemoveFrontiersMerge(float max);
   void computeFrontiersToVisit();
 
   void getFrontiers(vector<vector<Vector3d>>& clusters);

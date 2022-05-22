@@ -125,7 +125,7 @@ void FrontierFinder::searchFrontiers() {
   // EDIT ROS_WARN_THROTTLE(5.0, "Frontier t: %lf", (ros::Time::now() - t1).toSec());
 }
 
-void FrontierFinder::searchFrontiers(float max_up) {
+void FrontierFinder::RemoveFrontiersMerge(float max_up) {
   ros::Time t1 = ros::Time::now();
 
 
@@ -182,31 +182,31 @@ void FrontierFinder::searchFrontiers(float max_up) {
       ++iter;
   }
 
-  // Search new frontier within box slightly inflated from updated box
-  Vector3d search_min = update_min - Vector3d(1, 1, 0.5);
-  Vector3d search_max = update_max + Vector3d(25, 25, 0.5);
-  Vector3d box_min, box_max;
-  edt_env_->sdf_map_->getBox(box_min, box_max);
-  for (int k = 0; k < 3; ++k) {
-    search_min[k] = max(search_min[k], box_min[k]);
-    search_max[k] = min(search_max[k], box_max[k]);
-  }
-  Eigen::Vector3i min_id, max_id;
-  edt_env_->sdf_map_->posToIndex(search_min, min_id);
-  edt_env_->sdf_map_->posToIndex(search_max, max_id);
+  // // Search new frontier within box slightly inflated from updated box
+  // Vector3d search_min = update_min - Vector3d(1, 1, 0.5);
+  // Vector3d search_max = update_max + Vector3d(25, 25, 0.5);
+  // Vector3d box_min, box_max;
+  // edt_env_->sdf_map_->getBox(box_min, box_max);
+  // for (int k = 0; k < 3; ++k) {
+  //   search_min[k] = max(search_min[k], box_min[k]);
+  //   search_max[k] = min(search_max[k], box_max[k]);
+  // }
+  // Eigen::Vector3i min_id, max_id;
+  // edt_env_->sdf_map_->posToIndex(search_min, min_id);
+  // edt_env_->sdf_map_->posToIndex(search_max, max_id);
 
-  for (int x = min_id(0); x <= max_id(0); ++x)
-    for (int y = min_id(1); y <= max_id(1); ++y)
-      for (int z = min_id(2); z <= max_id(2); ++z) {
-        // Scanning the updated region to find seeds of frontiers
-        Eigen::Vector3i cur(x, y, z);
-        if (frontier_flag_[toadr(cur)] == 0 && knownfree(cur) && isNeighborUnknown(cur) && !edt_env_->sdf_map_->getOccupancyMerge(cur)==SDFMap::OCCUPIED) {
-          // Expand from the seed cell to find a complete frontier cluster
-          expandFrontier(cur);
-        }
-      }
+  // for (int x = min_id(0); x <= max_id(0); ++x)
+  //   for (int y = min_id(1); y <= max_id(1); ++y)
+  //     for (int z = min_id(2); z <= max_id(2); ++z) {
+  //       // Scanning the updated region to find seeds of frontiers
+  //       Eigen::Vector3i cur(x, y, z);
+  //       if (frontier_flag_[toadr(cur)] == 0 && knownfree(cur) && isNeighborUnknown(cur) && !edt_env_->sdf_map_->getOccupancyMerge(cur)==SDFMap::OCCUPIED) {
+  //         // Expand from the seed cell to find a complete frontier cluster
+  //         expandFrontier(cur);
+  //       }
+  //     }
 
-  splitLargeFrontiers(tmp_frontiers_);
+  // splitLargeFrontiers(tmp_frontiers_);
 
   // EDIT ROS_WARN_THROTTLE(5.0, "Frontier t: %lf", (ros::Time::now() - t1).toSec());
 }
