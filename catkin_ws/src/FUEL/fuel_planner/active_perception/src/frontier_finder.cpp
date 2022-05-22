@@ -154,11 +154,12 @@ void FrontierFinder::searchFrontiers(float max_up) {
       resetFlag(iter, frontiers_);
       removed_ids_.push_back(rmv_idx);
     }
-    else if(edt_env_->sdf_map_->isInMap(idx) || knownfreeMerge(idx)){
+    else if(edt_env_->sdf_map_->isInMap(idx) && knownfreeMerge(idx) && (edt_env_->sdf_map_->getoccupancyMerge(idx)==SDFMap::FREE)){
       resetFlag(iter, frontiers_);
+      // resetFlag(iter, tmp_frontiers_);
       removed_ids_.push_back(rmv_idx);
       }
-    } else {
+    else {
       ++rmv_idx;
       ++iter;
     }
@@ -972,7 +973,7 @@ inline bool FrontierFinder::knownfree(const Eigen::Vector3i& idx) {
 }
 
 inline bool FrontierFinder::knownfreeMerge(const Eigen::Vector3i& idx) {
-  return edt_env_->sdf_map_->getOccupancyFromMerge(idx) == SDFMap::FREE;
+  return edt_env_->sdf_map_->getOccupancyMerge(idx) == SDFMap::FREE;
 }
 
 inline bool FrontierFinder::inmap(const Eigen::Vector3i& idx) {

@@ -126,7 +126,7 @@ void MapROS::mergeMapCallback(const sensor_msgs::PointCloud2ConstPtr& cloud) {
   pcl::fromROSMsg(*cloud, cloudMap);
 
 
-    map_->OverWriteMap(cloudMap, cloudMap.size(), camera_pos_);
+  map_->OverWriteMap(cloudMap, cloudMap.size(), camera_pos_);
 
 
   //Using regular method

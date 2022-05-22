@@ -49,7 +49,8 @@ public:
   void boundBox(Eigen::Vector3d& low, Eigen::Vector3d& up);
   int getOccupancy(const Eigen::Vector3d& pos);
   int getOccupancy(const Eigen::Vector3i& id);
-  int getOccupancyFromMerge(const Eigen::Vector3i& id);
+  int getOccupancyMerge(const Eigen::Vector3d& pos);
+  int getOccupancyMerge(const Eigen::Vector3i& id);
   void setOccupied(const Eigen::Vector3d& pos, const int& occ = 1);
   int getInflateOccupancy(const Eigen::Vector3d& pos);
   int getInflateOccupancy(const Eigen::Vector3i& id);
@@ -65,14 +66,12 @@ public:
   void getUpdatedBox(Eigen::Vector3d& bmin, Eigen::Vector3d& bmax, bool reset = false);
   double getResolution();
   int getVoxelNum();
-  MapData getMap();
 
 
 private:
   void clearAndInflateLocalMap();
   void inflatePoint(const Eigen::Vector3i& pt, int step, vector<Eigen::Vector3i>& pts);
   void setCacheOccupancy(const int& adr, const int& occ);
-  void setCacheOccupancyNoUpdate(const int& adr, const int& occ);
   Eigen::Vector3d closetPointInMap(const Eigen::Vector3d& pt, const Eigen::Vector3d& camera_pt);
   template <typename F_get_val, typename F_set_val>
   void fillESDF(F_get_val f_get_val, F_set_val f_set_val, int start, int end, int dim);
@@ -207,7 +206,13 @@ inline int SDFMap::getOccupancy(const Eigen::Vector3i& id) {
   return FREE;
 }
 
-inline int SDFMap::getOccupancyFromMerge(const Eigen::Vector3i& id){
+inline int SDFMap::getOccupancy(const Eigen::Vector3d& pos) {
+  Eigen::Vector3i id;
+  posToIndex(pos, id);
+  return getOccupancy(id);
+}
+
+inline int SDFMap::getOccupancyMerge(const Eigen::Vector3i& id) {
   if (!isInMap(id)) return -1;
   double occ = md_->occupancy_buffer_[toAddress(id)];
   // if (occ < mp_->clamp_min_log_ - 1e-3) return UNKNOWN;
@@ -215,10 +220,10 @@ inline int SDFMap::getOccupancyFromMerge(const Eigen::Vector3i& id){
   return FREE;
 }
 
-inline int SDFMap::getOccupancy(const Eigen::Vector3d& pos) {
+inline int SDFMap::getOccupancyMerge(const Eigen::Vector3d& pos) {
   Eigen::Vector3i id;
   posToIndex(pos, id);
-  return getOccupancy(id);
+  return getOccupancyMerge(id);
 }
 
 inline void SDFMap::setOccupied(const Eigen::Vector3d& pos, const int& occ) {
