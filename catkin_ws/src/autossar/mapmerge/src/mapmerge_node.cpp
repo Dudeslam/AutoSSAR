@@ -30,19 +30,21 @@
 
 
 pcl::PointCloud<pcl::PointXYZ> ownGlobalMap_;
-//pcl::PointCloud<pcl::PointXYZ> otherGlobalMap_;
 
 pcl::PointCloud<pcl::PointXYZ> other0GlobalMap_;
 pcl::PointCloud<pcl::PointXYZ> other1GlobalMap_;
+pcl::PointCloud<pcl::PointXYZ> other2GlobalMap_;
 sensor_msgs::PointCloud2 Global_Publish;
 
 std::string selfUAV;
 std::string otherUAV0 = "nan";
 std::string otherUAV1 = "nan";
+std::string otherUAV2 = "nan";
 
 //placeholder for inRange flag, to be set
 bool otherUAV0InRange_ = false;
 bool otherUAV1InRange_ = false;
+bool otherUAV2InRange_ = false;
 
 //functions here
 bool concatePCL(pcl::PointCloud<pcl::PointXYZ> cloud1, pcl::PointCloud<pcl::PointXYZ> cloud2, pcl::PointCloud<pcl::PointXYZ>& cloud_out)
@@ -65,6 +67,9 @@ bool concatePCL(pcl::PointCloud<pcl::PointXYZ> cloud1, pcl::PointCloud<pcl::Poin
 
 void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, pcl::PointCloud<pcl::PointXYZ>& map_out)
 {
+    if(map_out.size() <= 0){return;}
+    //ROS_WARN("mergeMaps called");
+
     pcl::PointCloud<pcl::PointXYZ>::Ptr map_in_ptr(new pcl::PointCloud<pcl::PointXYZ>(map_in));
     pcl::PointCloud<pcl::PointXYZ>::Ptr map_out_ptr(new pcl::PointCloud<pcl::PointXYZ>(map_out));
     pcl::PointCloud<pcl::PointXYZ> Final;
@@ -102,14 +107,15 @@ void downsample(pcl::PointCloud<pcl::PointXYZ>& cloud_in, pcl::PointCloud<pcl::P
 
 
 //Callbacks
-// void getOtherGlobalCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
-//     pcl::PointCloud<pcl::PointXYZ> cloudMap;
-//     pcl::fromROSMsg(*msg, cloudMap);
-//     std::vector<int> indices;
-//     pcl::removeNaNFromPointCloud(cloudMap, cloudMap, indices);
-//     otherGlobalMap_ = cloudMap;
-//     downsample(otherGlobalMap_, otherGlobalMap_);
-// }
+void getOwnGlobalCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
+{
+    pcl::PointCloud<pcl::PointXYZ> cloudMap;
+    pcl::fromROSMsg(*msg, cloudMap);
+    std::vector<int> indices;
+    pcl::removeNaNFromPointCloud(cloudMap, cloudMap, indices);
+    ownGlobalMap_ = cloudMap;
+    downsample(ownGlobalMap_, ownGlobalMap_);
+}
 
 void getOtherUAV0GlobalCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
     pcl::PointCloud<pcl::PointXYZ> cloudMap;
@@ -129,15 +135,15 @@ void getOtherUAV1GlobalCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
     downsample(other1GlobalMap_, other1GlobalMap_);
 }
 
-void getOwnGlobalCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
-{
+void getOtherUAV2GlobalCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
     pcl::PointCloud<pcl::PointXYZ> cloudMap;
     pcl::fromROSMsg(*msg, cloudMap);
     std::vector<int> indices;
     pcl::removeNaNFromPointCloud(cloudMap, cloudMap, indices);
-    ownGlobalMap_ = cloudMap;
-    downsample(ownGlobalMap_, ownGlobalMap_);
+    other2GlobalMap_ = cloudMap;
+    downsample(other2GlobalMap_, other2GlobalMap_);
 }
+
 
 void getWithinRangeCallback(const nav_msgs::Odometry::ConstPtr& msg){
     if((*msg).child_frame_id == ""){return;}
@@ -148,6 +154,10 @@ void getWithinRangeCallback(const nav_msgs::Odometry::ConstPtr& msg){
 
     if( (*msg).child_frame_id == otherUAV1 ){
         otherUAV1InRange_ = true;
+    }
+
+    if( (*msg).child_frame_id == otherUAV2 ){
+        otherUAV2InRange_ = true;
     }
 
 }
@@ -164,24 +174,29 @@ int main (int argc, char* argv[]){
     selfUAV = nh.getNamespace().c_str();
     nh.getParam(selfUAV+"/mapmerge/otherUAV0", otherUAV0);
     nh.getParam(selfUAV+"/mapmerge/otherUAV1", otherUAV1);
+    nh.getParam(selfUAV+"/mapmerge/otherUAV2", otherUAV2);
   
     std::cout << "*************************************************************" << std::endl;
     std::cout << "MapMerge Node" << std::endl;
     std::cout << selfUAV << std::endl;
     std::cout << otherUAV0 << std::endl;
     std::cout << otherUAV1 << std::endl;
+    std::cout << otherUAV2 << std::endl;
     std::cout << "*************************************************************" << std::endl;
 
 	ROS_WARN("Trying to subscribe");
     ros::Subscriber map_global_own = nh.subscribe(selfUAV+"/sdf_map/occupancy_all", 10, getOwnGlobalCallback);
-    ros::Subscriber map_global_uav1 = nh.subscribe(otherUAV0+"/map_Global", 10, getOtherUAV0GlobalCallback);
-    ros::Subscriber map_global_uav2 = nh.subscribe(otherUAV1+"/map_Global", 10, getOtherUAV1GlobalCallback);
+    ros::Subscriber map_global_other0 = nh.subscribe(otherUAV0+"/map_Global", 10, getOtherUAV0GlobalCallback);
+    ros::Subscriber map_global_other1 = nh.subscribe(otherUAV1+"/map_Global", 10, getOtherUAV1GlobalCallback);
+    ros::Subscriber map_global_other2 = nh.subscribe(otherUAV1+"/map_Global", 10, getOtherUAV2GlobalCallback);
 
     ros::Subscriber within_range = nh.subscribe(selfUAV+"/within_range", 10, getWithinRangeCallback);
 
     ros::Publisher map_pub_own_global = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/map_Global", 10);
+    ros::Publisher map_pub_own_global_debug = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/debug_map_Global", 10);
     ros::Publisher map_pub_other0_debug = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/debugOther0Map", 10);
     ros::Publisher map_pub_other1_debug = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/debugOther1Map", 10);
+    ros::Publisher map_pub_other2_debug = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/debugOther2Map", 10);
     ros::Publisher pubSize = nh.advertise<std_msgs::Float64>(selfUAV+"/mapSize", 10);
 
     ros::Rate loop_rate(20);
@@ -191,12 +206,20 @@ int main (int argc, char* argv[]){
     while(ros::ok()) {
 
         //ROS_INFO_STREAM_THROTTLE(1.0, "" << selfUAV << " map size: " << ownGlobalMap_.size() << " points: " << ownGlobalMap_.points.size() );
+        //ROS_INFO_STREAM_THROTTLE(1.0, "" << selfUAV << " selfUAV map size: " << ownGlobalMap_.size() << "\totherUAV0: " << other0GlobalMap_.size() << "\totherUAV1: " << other1GlobalMap_.size() << "\totherUAV2: " << other2GlobalMap_.size() );
+        
         std_msgs::Float64 mapSize;
         mapSize.data = ownGlobalMap_.size();
         pubSize.publish( mapSize );
 
+        // Publish own
+        pcl::toROSMsg(ownGlobalMap_, Global_Publish);
+        map_pub_own_global_debug.publish(Global_Publish);
+
 
         if(otherUAV0InRange_){
+            ROS_INFO_STREAM_THROTTLE(1.0, "" << selfUAV << " 0)New map from: " << otherUAV0 );
+
             // Publish own
             pcl::toROSMsg(ownGlobalMap_, Global_Publish);
             map_pub_own_global.publish(Global_Publish);
@@ -214,6 +237,8 @@ int main (int argc, char* argv[]){
 
 
         if(otherUAV1InRange_){
+            ROS_INFO_STREAM_THROTTLE(1.0, "" << selfUAV << " 1)New map from: " << otherUAV1 );
+
             // Publish own
             pcl::toROSMsg(ownGlobalMap_, Global_Publish);
             map_pub_own_global.publish(Global_Publish);
@@ -225,6 +250,24 @@ int main (int argc, char* argv[]){
             // Publish debug
             pcl::toROSMsg(other1GlobalMap_, Global_Publish);
             map_pub_other1_debug.publish(Global_Publish);
+        }
+
+
+
+        if(otherUAV2InRange_){
+            ROS_INFO_STREAM_THROTTLE(1.0, "" << selfUAV << " 2)New map from: " << otherUAV2 );
+
+            // Publish own
+            pcl::toROSMsg(ownGlobalMap_, Global_Publish);
+            map_pub_own_global.publish(Global_Publish);
+            // Merge
+            mergeMaps(ownGlobalMap_, other2GlobalMap_);
+            // Reset flag
+            otherUAV2InRange_ = false;
+
+            // Publish debug
+            pcl::toROSMsg(other2GlobalMap_, Global_Publish);
+            map_pub_other2_debug.publish(Global_Publish);
         }
 
 

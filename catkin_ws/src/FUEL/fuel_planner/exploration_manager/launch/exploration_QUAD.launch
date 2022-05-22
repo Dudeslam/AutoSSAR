@@ -23,8 +23,8 @@
   <arg name="ns2_init_y" value="-1.0"/>
   <arg name="ns2_init_z" value="1.0"/> 
 
-  <arg name="ns3_init_x" value="0.0"/>
-  <arg name="ns3_init_y" value="-2.0"/>
+  <arg name="ns3_init_x" value="1.0"/>
+  <arg name="ns3_init_y" value="0.0"/>
   <arg name="ns3_init_z" value="1.0"/> 
 
 
@@ -370,7 +370,7 @@
 
 
   <!-- use simulator (for swarm)-->
-  <include file="$(find exploration_manager)/launch/simulator_TRIPLE.xml">
+  <include file="$(find exploration_manager)/launch/simulator_QUAD.xml">
     <arg name="ns0" value="$(arg ns0)"/>
     <arg name="ns1" value="$(arg ns1)"/>
     <arg name="ns2" value="$(arg ns2)"/>

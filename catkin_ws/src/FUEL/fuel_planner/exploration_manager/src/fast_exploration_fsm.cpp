@@ -63,7 +63,7 @@ void FastExplorationFSM::truncateCallback(const nav_msgs::Odometry::ConstPtr& ms
     TRUNCATE_flag = false;
   }
 
-  ROS_WARN_STREAM_THROTTLE(1.0, "FastExplorationFSM:" << selfUAV <<"\tCMD: " << (*msg).child_frame_id << "\tFLAG: " << TRUNCATE_flag);
+  ROS_WARN_STREAM_THROTTLE(1.0, "FastExplorationFSM:\t" << selfUAV << "\tCMD: " << (*msg).child_frame_id << "\tFLAG: " << TRUNCATE_flag);
 }
 // EDIT end*******************************************************
 

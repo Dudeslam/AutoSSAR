@@ -71,6 +71,7 @@ private:
     bool batteryEmptyFlag_;
     bool nearUAVFlag_;
     bool atRelayPointFlag_;
+    bool atBaseStationFlag_;
     bool timerExpiredFlag_;
     bool timerRunningFlag_;
     

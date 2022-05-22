@@ -98,7 +98,6 @@ void FastExplorationManager::initialize(ros::NodeHandle& nh) {
 
 // EDIT*******************************************
 void FastExplorationManager::truncateCallback(const nav_msgs::Odometry::ConstPtr& msg) {
-  ROS_WARN_STREAM_THROTTLE(1.0, "FastExplorationManager:" << selfUAV <<"\tx: [" <<(*msg).pose.pose.position.x<<"], \ty: ["<<(*msg).pose.pose.position.y<<"], \tz: ["<<(*msg).pose.pose.position.z<<"] CMD: " << (*msg).child_frame_id );
 
   if((*msg).child_frame_id == "GOTO"){
     TRUNCATE_flag = true;
@@ -108,6 +107,9 @@ void FastExplorationManager::truncateCallback(const nav_msgs::Odometry::ConstPtr
   } else {
     TRUNCATE_flag = false;
   }
+
+  //ROS_WARN_STREAM_THROTTLE(1.0, "FastExplorationManager:\t" << selfUAV << "\tCMD: " << (*msg).child_frame_id << "\tFLAG: " << TRUNCATE_flag );
+  ROS_WARN_STREAM_THROTTLE(1.0, "FastExplorationManager:\t" << selfUAV << "\tCMD: " << (*msg).child_frame_id << "\tFLAG: " << TRUNCATE_flag << "\tx: [" <<(*msg).pose.pose.position.x<<"], y: ["<<(*msg).pose.pose.position.y<<"], z: ["<<(*msg).pose.pose.position.z<<"]" );
 }
 // EDIT end*******************************************************
 

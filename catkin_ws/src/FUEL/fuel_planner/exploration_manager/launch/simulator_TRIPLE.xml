@@ -18,12 +18,14 @@
       <arg name="map_size_x_"/>
       <arg name="map_size_y_"/>
       <arg name="map_size_z_"/>
+
       <arg name="box_min_x"/>
       <arg name="box_min_y"/>
       <arg name="box_min_z"/>
       <arg name="box_max_x"/>
       <arg name="box_max_y"/>
       <arg name="box_max_z"/>
+      
       <arg name="c_num"/>
       <arg name="p_num"/>
       <arg name="obj_num" value="1" />
