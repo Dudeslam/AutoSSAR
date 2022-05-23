@@ -160,7 +160,7 @@
     <arg name="depth_topic" value="/$(arg ns1)/pcl_render_node/depth"/>
     <arg name="cloud_topic" value="/$(arg ns1)/pcl_render_node/cloud"/>
 
-    <arg name="mapmerge_topic" value="/$(arg ns0)/MergedMap"/>
+    <arg name="mapmerge_topic" value="/$(arg ns1)/MergedMap"/>
 
     <!-- intrinsic params of the depth camera -->
     <arg name="cx" value="321.04638671875"/>
@@ -240,7 +240,7 @@
     <arg name="depth_topic" value="/$(arg ns2)/pcl_render_node/depth"/>
     <arg name="cloud_topic" value="/$(arg ns2)/pcl_render_node/cloud"/>
 
-    <arg name="mapmerge_topic" value="/$(arg ns0)/MergedMap"/>
+    <arg name="mapmerge_topic" value="/$(arg ns2)/MergedMap"/>
 
     <!-- intrinsic params of the depth camera -->
     <arg name="cx" value="321.04638671875"/>
@@ -320,7 +320,7 @@
     <arg name="depth_topic" value="/$(arg ns3)/pcl_render_node/depth"/>
     <arg name="cloud_topic" value="/$(arg ns3)/pcl_render_node/cloud"/>
 
-    <arg name="mapmerge_topic" value="/$(arg ns0)/MergedMap"/>
+    <arg name="mapmerge_topic" value="/$(arg ns3)/MergedMap"/>
 
     <!-- intrinsic params of the depth camera -->
     <arg name="cx" value="321.04638671875"/>
