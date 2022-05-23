@@ -268,7 +268,7 @@ int main (int argc, char* argv[]){
     ROS_WARN("Have subscribed");
 
     ros::Publisher other_pub = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/MergedMap", 10);
-    ros::Publisher own_publish = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/pcl_render_node/cloud", 10);
+    ros::Publisher own_publish = nh.advertise<sensor_msgs::PointCloud2>(selfUAV+"/ownMerge", 10);
 
     // Timer to avoid constant merging
     ros::Timer merge_timer = nh.createTimer(ros::Duration(2), mergeTimerCallback);

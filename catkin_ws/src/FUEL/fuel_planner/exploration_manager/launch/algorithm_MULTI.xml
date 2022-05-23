@@ -36,7 +36,7 @@
     <remap from ="/map_ros/pose"   to = "$(arg sensor_pose_topic)"/> 
     <remap from ="/map_ros/depth" to = "$(arg depth_topic)"/>
     <remap from ="/map_ros/cloud" to="$(arg cloud_topic)"/>
-    <remap from ="/MergedMap" to = "$(arg mapMerge_topic)"/>
+    <remap from ="/ownMerge" to = "$(arg mapMerge_topic)"/>
 
     <!-- for multi drone system -->
     <remap from ="/waypoint_generator/waypoints" to="/$(arg drone_index)/waypoint_generator/waypoints" />

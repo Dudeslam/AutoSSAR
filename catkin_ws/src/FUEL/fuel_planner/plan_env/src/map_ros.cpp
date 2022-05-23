@@ -67,7 +67,7 @@ void MapROS::init() {
   esdf_pub_ = node_.advertise<sensor_msgs::PointCloud2>("/sdf_map/esdf", 10);
   update_range_pub_ = node_.advertise<visualization_msgs::Marker>("/sdf_map/update_range", 10);
   depth_pub_ = node_.advertise<sensor_msgs::PointCloud2>("/sdf_map/depth_cloud", 10);
-  mergeMap_sub_ = node_.subscribe("/MergedMap", 10, &MapROS::mergeMapCallback, this);
+  mergeMap_sub_ = node_.subscribe("/ownMerge", 10, &MapROS::mergeMapCallback, this);
   mergeCompl_pub_ = node_.advertise<std_msgs::String>("/MergeComplete", 10);
 
   depth_sub_.reset(new message_filters::Subscriber<sensor_msgs::Image>(node_, "/map_ros/depth", 50));
