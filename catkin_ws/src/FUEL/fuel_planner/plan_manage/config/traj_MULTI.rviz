@@ -14,7 +14,7 @@ Panels:
         - /Simulation1/robot21
         - /Simulation1/robot31
         - /PointCloud21/Autocompute Value Bounds1
-        - /Debug UAV11
+        - /Debug UAV01
         - /Debug UAV11/UAV1_own_global1/Autocompute Value Bounds1
         - /Debug UAV11/UAV1_debugSharedFromOther01/Autocompute Value Bounds1
         - /Debug UAV11/UAV1_debug_own_global1/Autocompute Value Bounds1
@@ -449,7 +449,7 @@ Visualization Manager:
           Use Fixed Frame: true
           Use rainbow: true
           Value: true
-      Enabled: false
+      Enabled: true
       Name: Debug UAV0
     - Class: rviz/Group
       Displays:
@@ -518,7 +518,7 @@ Visualization Manager:
           Axis: Z
           Channel Name: intensity
           Class: rviz/PointCloud2
-          Color: 150; 116; 116
+          Color: 150; 116; 150
           Color Transformer: FlatColor
           Decay Time: 0
           Enabled: true
@@ -537,7 +537,7 @@ Visualization Manager:
           Use Fixed Frame: true
           Use rainbow: true
           Value: true
-      Enabled: true
+      Enabled: false
       Name: Debug UAV1
   Enabled: true
   Global Options:
@@ -638,6 +638,6 @@ Window Geometry:
     collapsed: false
   Width: 1379
   X: 296
-  Y: 0
+  Y: 27
   depth:
     collapsed: false

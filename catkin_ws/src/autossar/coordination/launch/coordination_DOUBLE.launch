@@ -45,11 +45,11 @@
 
 <!-- Start coordination algorithm -->
     <node pkg="coordination" name="coordination" type="coordination" output="screen" ns="$(arg ns0)">
-        <param name="maxBattery" value="26"/>
+        <param name="maxBattery" value="16"/>
     </node>
 
     <node pkg="coordination" name="coordination" type="coordination" output="screen" ns="$(arg ns1)">
-        <param name="maxBattery" value="26"/>
+        <param name="maxBattery" value="16"/>
     </node>
 
 

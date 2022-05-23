@@ -81,19 +81,16 @@ void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, pcl::PointCloud<pcl::Poin
     if(map_out.size() <= 0){return;}
     ROS_INFO_STREAM_THROTTLE(1.0, "" << selfUAV << " Mapmerge called");
 
-
-
     pcl::PointCloud<pcl::PointXYZ>::Ptr map_in_ptr(new pcl::PointCloud<pcl::PointXYZ>(map_in));
     pcl::PointCloud<pcl::PointXYZ>::Ptr map_out_ptr(new pcl::PointCloud<pcl::PointXYZ>(map_out));
     pcl::PointCloud<pcl::PointXYZ> Final;
-    ROS_INFO_STREAM_THROTTLE(1.0, "" << selfUAV << " merge sizes: " << map_in.size() <<" "<< map_out.size() <<" "<< Final.size() );
     //pcl::fromROSMsg(map_out, *map_out_ptr_tmp);
     //Remove NAN points
     std::vector<int> indices;
     //pcl::removeNaNFromPointCloud(*map_in_ptr, *map_in_ptr, indices);
     pcl::IterativeClosestPoint<pcl::PointXYZ, pcl::PointXYZ> icp;
     // ROS_WARN("Set input cloud");
-    icp.setInputSource(map_in_ptr);
+    icp.setInputSource(*map_in_ptr);
     icp.setInputTarget(map_out_ptr);
     icp.align(Final);
     if(icp.hasConverged())
@@ -102,8 +99,6 @@ void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, pcl::PointCloud<pcl::Poin
         icp.getFitnessScore();
         pcl::transformPointCloud(*map_in_ptr, Final, icp.getFinalTransformation());
         concatePCL(Final, *map_out_ptr, map_out);
-        ROS_INFO_STREAM_THROTTLE(1.0, "" << selfUAV << " merge sizes: " << map_in.size() <<" "<< map_out.size() <<" "<< Final.size() );
-
     }
     else
     {

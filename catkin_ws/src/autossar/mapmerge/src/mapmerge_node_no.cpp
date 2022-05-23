@@ -30,6 +30,7 @@
 
 
 pcl::PointCloud<pcl::PointXYZ> ownGlobalMap_;
+pcl::PointCloud<pcl::PointXYZ> globalMap_;
 
 pcl::PointCloud<pcl::PointXYZ> other0GlobalMap_;
 pcl::PointCloud<pcl::PointXYZ> other1GlobalMap_;
@@ -76,17 +77,14 @@ bool concatePCL(pcl::PointCloud<pcl::PointXYZ> cloud1, pcl::PointCloud<pcl::Poin
 
 }
 
-void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, pcl::PointCloud<pcl::PointXYZ>& map_out)
+void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in)
 {
-    if(map_out.size() <= 0){return;}
-    ROS_INFO_STREAM_THROTTLE(1.0, "" << selfUAV << " Mapmerge called");
-
-
+    //if(map_out.size() <= 0){return;}
+    //ROS_INFO_STREAM_THROTTLE(1.0, "" << selfUAV << " Mapmerge called");
 
     pcl::PointCloud<pcl::PointXYZ>::Ptr map_in_ptr(new pcl::PointCloud<pcl::PointXYZ>(map_in));
-    pcl::PointCloud<pcl::PointXYZ>::Ptr map_out_ptr(new pcl::PointCloud<pcl::PointXYZ>(map_out));
-    pcl::PointCloud<pcl::PointXYZ> Final;
-    ROS_INFO_STREAM_THROTTLE(1.0, "" << selfUAV << " merge sizes: " << map_in.size() <<" "<< map_out.size() <<" "<< Final.size() );
+    pcl::PointCloud<pcl::PointXYZ>::Ptr map_out_ptr(new pcl::PointCloud<pcl::PointXYZ>(globalMap_));
+    pcl::PointCloud<pcl::PointXYZ> final;
     //pcl::fromROSMsg(map_out, *map_out_ptr_tmp);
     //Remove NAN points
     std::vector<int> indices;
@@ -95,15 +93,13 @@ void mergeMaps(pcl::PointCloud<pcl::PointXYZ>& map_in, pcl::PointCloud<pcl::Poin
     // ROS_WARN("Set input cloud");
     icp.setInputSource(map_in_ptr);
     icp.setInputTarget(map_out_ptr);
-    icp.align(Final);
+    icp.align(final);
     if(icp.hasConverged())
     {
         // ROS_WARN("ICP has converged");
         icp.getFitnessScore();
-        pcl::transformPointCloud(*map_in_ptr, Final, icp.getFinalTransformation());
-        concatePCL(Final, *map_out_ptr, map_out);
-        ROS_INFO_STREAM_THROTTLE(1.0, "" << selfUAV << " merge sizes: " << map_in.size() <<" "<< map_out.size() <<" "<< Final.size() );
-
+        pcl::transformPointCloud(*map_in_ptr, final, icp.getFinalTransformation());
+        concatePCL(final, *map_out_ptr, globalMap_);
     }
     else
     {
@@ -216,11 +212,12 @@ int main (int argc, char* argv[]){
         //ROS_INFO_STREAM_THROTTLE(1.0, "" << selfUAV << " selfUAV map size: " << ownGlobalMap_.size() << "\totherUAV0: " << other0GlobalMap_.size() << "\totherUAV1: " << other1GlobalMap_.size() << "\totherUAV2: " << other2GlobalMap_.size() );
         
         std_msgs::Float64 mapSize;
-        mapSize.data = ownGlobalMap_.size();
+        mapSize.data = globalMap_.size();
         pubSize.publish( mapSize );
 
         // Publish own
-        pcl::toROSMsg(ownGlobalMap_, Global_Publish);
+        mergeMaps(ownGlobalMap_);
+        pcl::toROSMsg(globalMap_, Global_Publish);
         map_pub_own_global_debug.publish(Global_Publish);
 
 
@@ -228,10 +225,10 @@ int main (int argc, char* argv[]){
             ROS_INFO_STREAM_THROTTLE(1.0, "" << selfUAV << " 0)New map from: " << otherUAV0 );
 
             // Publish own
-            pcl::toROSMsg(ownGlobalMap_, Global_Publish);
+            pcl::toROSMsg(globalMap_, Global_Publish);
             map_pub_own_global.publish(Global_Publish);
             // Merge
-            mergeMaps(ownGlobalMap_, other0GlobalMap_);
+            mergeMaps(other0GlobalMap_);
             // Reset flag
             otherUAV0InRange_ = false;
 
@@ -247,10 +244,10 @@ int main (int argc, char* argv[]){
             ROS_INFO_STREAM_THROTTLE(1.0, "" << selfUAV << " 1)New map from: " << otherUAV1 );
 
             // Publish own
-            pcl::toROSMsg(ownGlobalMap_, Global_Publish);
+            pcl::toROSMsg(globalMap_, Global_Publish);
             map_pub_own_global.publish(Global_Publish);
             // Merge
-            mergeMaps(ownGlobalMap_, other1GlobalMap_);
+            mergeMaps(other1GlobalMap_);
             // Reset flag
             otherUAV1InRange_ = false;
 
@@ -265,10 +262,10 @@ int main (int argc, char* argv[]){
             ROS_INFO_STREAM_THROTTLE(1.0, "" << selfUAV << " 2)New map from: " << otherUAV2 );
 
             // Publish own
-            pcl::toROSMsg(ownGlobalMap_, Global_Publish);
+            pcl::toROSMsg(globalMap_, Global_Publish);
             map_pub_own_global.publish(Global_Publish);
             // Merge
-            mergeMaps(ownGlobalMap_, other2GlobalMap_);
+            mergeMaps(other2GlobalMap_);
             // Reset flag
             otherUAV2InRange_ = false;
 
