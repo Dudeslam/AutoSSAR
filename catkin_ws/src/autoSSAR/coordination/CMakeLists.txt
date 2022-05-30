@@ -13,8 +13,6 @@ find_package(PCL 1.7 REQUIRED)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   PCL
-  octomap_msgs
-  octomap_ros
   roscpp
   std_msgs
   PCL
@@ -125,7 +123,6 @@ catkin_package(
 include_directories(
 # include
   include
-  ${OCTOMAP_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
   ${PCL_INCLUDE_DIRS}
   # src

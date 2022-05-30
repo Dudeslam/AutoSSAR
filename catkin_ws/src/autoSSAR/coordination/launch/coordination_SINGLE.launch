@@ -8,17 +8,9 @@
 
 
 
-<!-- Start mapmerge utils -->
-    <node pkg="mapmerge" name="mapmerge" type="mapmerge" output="screen" ns="$(arg ns0)">
-        <param name="otherUAV0" value="nan"/>
-        <param name="otherUAV1" value="nan"/>
-        <param name="otherUAV2" value="nan"/>
-    </node>
-
-
 <!-- Start coordination algorithm -->
     <node pkg="coordination" name="coordination" type="coordination" output="screen" ns="$(arg ns0)">
-        <param name="maxBattery" value="269999"/>
+        <param name="maxBattery" value="26"/>
     </node>
 
 

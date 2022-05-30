@@ -225,7 +225,7 @@ void coordinationAlgorithm::triggerTimer(const ros::TimerEvent& e){
   timerExpiredFlag_ = true;
   timeoutTimer_.stop(); // not sure if nessesary
   timerRunningFlag_ = false;
-  std::cout << selfUAV_.name << " triggerTimer timerExpiredFlag_: " << timerExpiredFlag_ << std::endl;
+  std::cout << "triggerTimer timerExpiredFlag_: " << timerExpiredFlag_ << std::endl;
 }
 
 void coordinationAlgorithm::transitState(COORD_STATE new_state, std::string pos_call) {

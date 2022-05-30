@@ -353,8 +353,6 @@ void SDFMap::OverWriteMap(const pcl::PointCloud<pcl::PointXYZ>& points, const in
   // clearMap();
   Eigen::Vector3d pt_w, tmp;
   Eigen::Vector3i idx;
-  Eigen::Vector3d update_min = camera_pos;
-  Eigen::Vector3d update_max = camera_pos;
   int vox_adr;
   double length;
   for (int i = 0; i < point_num; ++i) {
@@ -366,13 +364,13 @@ void SDFMap::OverWriteMap(const pcl::PointCloud<pcl::PointXYZ>& points, const in
       // Find closest point in map and set free
       pt_w = closetPointInMap(pt_w, camera_pos);
       length = (pt_w - camera_pos).norm();
-      if (length > mp_->max_ray_length_)
+      if (length > 9999)
         pt_w = (pt_w - camera_pos) / length * mp_->max_ray_length_ + camera_pos;
       if (pt_w[2] < 0.2) continue;
       tmp_flag = 0;
     } else {
       length = (pt_w - camera_pos).norm();
-      if (length > 100) {
+      if (length > 9999) {
         pt_w = (pt_w - camera_pos) / length * mp_->max_ray_length_ + camera_pos;
         if (pt_w[2] < 0.2) continue;
         tmp_flag = 0;
@@ -383,28 +381,20 @@ void SDFMap::OverWriteMap(const pcl::PointCloud<pcl::PointXYZ>& points, const in
     vox_adr = toAddress(idx);
     setCacheOccupancy(vox_adr, tmp_flag);
     for (int k = 0; k < 3; ++k) {
-      update_min[k] = min(update_min[k], pt_w[k]);
-      update_max[k] = max(update_max[k], pt_w[k]);
+      md_->update_min_[k] = 1;
+      md_->update_max_[k] = 9999;
     }
-    // Raycasting between camera center and point
-    if (md_->flag_rayend_[vox_adr] == md_->raycast_num_)
-      continue;
-    else
-      md_->flag_rayend_[vox_adr] = md_->raycast_num_;
+    // // Raycasting between camera center and point
+    // if (md_->flag_rayend_[vox_adr] == md_->raycast_num_)
+    //   continue;
+    // else
+    //   md_->flag_rayend_[vox_adr] = md_->raycast_num_;
 
-    caster_->input(pt_w, camera_pos);
-    caster_->nextId(idx);
-    while (caster_->nextId(idx))
-      setCacheOccupancy(toAddress(idx), 0);
+    // caster_->input(pt_w, camera_pos);
+    // caster_->nextId(idx);
+    // while (caster_->nextId(idx))
+    //   setCacheOccupancy(toAddress(idx), 0);
   }
-  
-  Eigen::Vector3d bound_inf(mp_->local_bound_inflate_, mp_->local_bound_inflate_, 0);
-  posToIndex(update_max + bound_inf, md_->local_bound_max_);
-  posToIndex(update_min - bound_inf, md_->local_bound_min_);
-  boundIndex(md_->local_bound_min_);
-  boundIndex(md_->local_bound_max_);
-  mr_->local_updated_ = true;
-  
 
   while (!md_->cache_voxel_.empty()) {
     int adr = md_->cache_voxel_.front();

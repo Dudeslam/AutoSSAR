@@ -88,8 +88,7 @@ int main(int argc, char **argv){
             std::string s(ss.str());
             
             // Print distance
-            //std::cout << "Distance traversed by " << selfUAV << ": " << s << std::endl;
-            ROS_INFO_STREAM_THROTTLE(1.0, "" << selfUAV << " distance: " << path_length );
+            std::cout << "Distance traversed by " << selfUAV << ": " << s << std::endl;
 
             // Publish traversed distance
             std_msgs::String msg;

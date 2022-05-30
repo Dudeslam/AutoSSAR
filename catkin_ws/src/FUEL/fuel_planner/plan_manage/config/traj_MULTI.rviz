@@ -21,7 +21,9 @@ Panels:
         - /PointCloud21/Autocompute Value Bounds1
 <<<<<<< HEAD:catkin_ws/src/FUEL/fuel_planner/plan_manage/config/traj_MULTI.rviz
         - /Debug UAV01
-        - /Debug UAV11
+        - /Debug UAV11/UAV1_own_global1/Autocompute Value Bounds1
+        - /Debug UAV11/UAV1_debugSharedFromOther01/Autocompute Value Bounds1
+        - /Debug UAV11/UAV1_debug_own_global1/Autocompute Value Bounds1
       Splitter Ratio: 0.5181347131729126
     Tree Height: 310
 =======
@@ -449,14 +451,42 @@ Visualization Manager:
           Invert Rainbow: false
           Max Color: 0; 0; 0
           Min Color: 0; 0; 0
-          Name: own_globalMap_pcd
+          Name: UAV0_own_global
           Position Transformer: XYZ
           Queue Size: 10
           Selectable: true
           Size (Pixels): 15
           Size (m): 0.125
           Style: Flat Squares
-          Topic: /UAV0/MergedMap
+          Topic: /UAV0/map_Global
+          Unreliable: false
+          Use Fixed Frame: true
+          Use rainbow: true
+          Value: false
+        - Alpha: 1
+          Autocompute Intensity Bounds: true
+          Autocompute Value Bounds:
+            Max Value: 1.25
+            Min Value: -2
+            Value: false
+          Axis: Z
+          Channel Name: intensity
+          Class: rviz/PointCloud2
+          Color: 116; 150; 116
+          Color Transformer: FlatColor
+          Decay Time: 0
+          Enabled: false
+          Invert Rainbow: false
+          Max Color: 0; 0; 0
+          Min Color: 0; 0; 0
+          Name: UAV0_debugSharedFromOther0
+          Position Transformer: XYZ
+          Queue Size: 10
+          Selectable: true
+          Size (Pixels): 15
+          Size (m): 0.125
+          Style: Flat Squares
+          Topic: /UAV0/debugOther0Map
           Unreliable: false
           Use Fixed Frame: true
           Use rainbow: true
@@ -477,14 +507,14 @@ Visualization Manager:
           Invert Rainbow: false
           Max Color: 0; 0; 0
           Min Color: 0; 0; 0
-          Name: occupancy_all
+          Name: UAV0_debug_own_global
           Position Transformer: XYZ
           Queue Size: 10
           Selectable: true
           Size (Pixels): 15
           Size (m): 0.125
           Style: Flat Squares
-          Topic: /UAV0/sdf_map/occupancy_all
+          Topic: /UAV0/debug_map_Global
           Unreliable: false
           Use Fixed Frame: true
           Use rainbow: true
@@ -502,25 +532,25 @@ Visualization Manager:
           Axis: Z
           Channel Name: intensity
           Class: rviz/PointCloud2
-          Color: 150; 116; 150
+          Color: 150; 116; 116
           Color Transformer: FlatColor
           Decay Time: 0
-          Enabled: true
+          Enabled: false
           Invert Rainbow: false
           Max Color: 0; 0; 0
           Min Color: 0; 0; 0
-          Name: occupancy_all
+          Name: UAV1_own_global
           Position Transformer: XYZ
           Queue Size: 10
           Selectable: true
           Size (Pixels): 15
           Size (m): 0.125
           Style: Flat Squares
-          Topic: /UAV1/sdf_map/occupancy_all
+          Topic: /UAV1/map_Global
           Unreliable: false
           Use Fixed Frame: true
           Use rainbow: true
-          Value: true
+          Value: false
         - Alpha: 1
           Autocompute Intensity Bounds: true
           Autocompute Value Bounds:
@@ -530,26 +560,54 @@ Visualization Manager:
           Axis: Z
           Channel Name: intensity
           Class: rviz/PointCloud2
-          Color: 150; 116; 116
+          Color: 116; 150; 116
           Color Transformer: FlatColor
           Decay Time: 0
           Enabled: false
           Invert Rainbow: false
           Max Color: 0; 0; 0
           Min Color: 0; 0; 0
-          Name: own_globalMap_pcd
+          Name: UAV1_debugSharedFromOther0
           Position Transformer: XYZ
           Queue Size: 10
           Selectable: true
           Size (Pixels): 15
           Size (m): 0.125
           Style: Flat Squares
-          Topic: /UAV1/MergedMap
+          Topic: /UAV1/debugOther0Map
           Unreliable: false
           Use Fixed Frame: true
           Use rainbow: true
           Value: false
-      Enabled: true
+        - Alpha: 1
+          Autocompute Intensity Bounds: true
+          Autocompute Value Bounds:
+            Max Value: 1.25
+            Min Value: -2
+            Value: false
+          Axis: Z
+          Channel Name: intensity
+          Class: rviz/PointCloud2
+          Color: 150; 116; 150
+          Color Transformer: FlatColor
+          Decay Time: 0
+          Enabled: true
+          Invert Rainbow: false
+          Max Color: 0; 0; 0
+          Min Color: 0; 0; 0
+          Name: UAV1_debug_own_global
+          Position Transformer: XYZ
+          Queue Size: 10
+          Selectable: true
+          Size (Pixels): 15
+          Size (m): 0.125
+          Style: Flat Squares
+          Topic: /UAV1/debug_map_Global
+          Unreliable: false
+          Use Fixed Frame: true
+          Use rainbow: true
+          Value: true
+      Enabled: false
       Name: Debug UAV1
   Enabled: true
   Global Options:
@@ -593,7 +651,7 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.2297970056533813
+      Pitch: 1.2347970008850098
       Target Frame: <Fixed Frame>
       Value: ThirdPersonFollower (rviz)
       Yaw: 3.1195876598358154
@@ -657,11 +715,15 @@ Window Geometry:
 <<<<<<< HEAD:catkin_ws/src/FUEL/fuel_planner/plan_manage/config/traj_MULTI.rviz
   Width: 1379
   X: 296
+<<<<<<< HEAD
   Y: 0
 =======
   Width: 1218
   X: 373
   Y: 113
 >>>>>>> main:catkin_ws/src/FUEL/fuel_planner/plan_manage/config/traj_myMulti.rviz
+=======
+  Y: 27
+>>>>>>> parent of e01bd2d (SETUP for office double trung - test)
   depth:
     collapsed: false

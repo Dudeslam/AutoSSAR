@@ -27,7 +27,7 @@
   <arg name="box_max_z" value=" 2.0"/> -->
 
   <!--  Costume maps -->
-  <arg name="map_choice" value="office"/>
+  <arg name="map_choice" value="maze"/>
 
   <arg name="box_min_x" value="-4.0"/>
   <arg name="box_min_y" value="-18.0"/>
@@ -72,7 +72,7 @@
     <arg name="depth_topic" value="/$(arg ns0)/pcl_render_node/depth"/>
     <arg name="cloud_topic" value="/$(arg ns0)/pcl_render_node/cloud"/>
 
-    <arg name="mapmerge_topic" value="/$(arg ns1)/MergedMap"/>
+    <arg name="mapmerge_topic" value="/$(arg ns0)/MergedMap"/>
     
 
     <!-- intrinsic params of the depth camera -->

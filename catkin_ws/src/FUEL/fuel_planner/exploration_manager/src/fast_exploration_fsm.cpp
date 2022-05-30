@@ -40,8 +40,6 @@ void FastExplorationFSM::init(ros::NodeHandle& nh) {
 
   trigger_sub_ = nh.subscribe("/waypoint_generator/waypoints", 1, &FastExplorationFSM::triggerCallback, this);
   odom_sub_ = nh.subscribe("/odom_world", 1, &FastExplorationFSM::odometryCallback, this);
-  merge_sub_ = nh.subscribe("/MergeComplete", 1, &FastExplorationFSM::mergeCallback, this);
-
 
   replan_pub_ = nh.advertise<std_msgs::Empty>("/planning/replan", 10);
   new_pub_ = nh.advertise<std_msgs::Empty>("/planning/new", 10);
@@ -200,17 +198,9 @@ void FastExplorationFSM::FSMCallback(const ros::TimerEvent& e) {
 
 int FastExplorationFSM::callExplorationPlanner() {
   ros::Time time_r = ros::Time::now() + ros::Duration(fp_->replan_time_);
-  int res;
-  if(mergeMap_){
-    // expl_manager_->ed_->clear();
-    res = expl_manager_->planExploreMotion(fd_->start_pt_, fd_->start_vel_, fd_->start_acc_,
-                                             fd_->start_yaw_, 50);
-    mergeMap_ = false;
-  }
-  else{
-    res = expl_manager_->planExploreMotion(fd_->start_pt_, fd_->start_vel_, fd_->start_acc_,
+
+  int res = expl_manager_->planExploreMotion(fd_->start_pt_, fd_->start_vel_, fd_->start_acc_,
                                              fd_->start_yaw_);
-  }
   classic_ = false;
 
   // int res = expl_manager_->classicFrontier(fd_->start_pt_, fd_->start_yaw_[0]);
@@ -378,21 +368,6 @@ void FastExplorationFSM::frontierCallback(const ros::TimerEvent& e) {
   //   astar_time = (ros::Time::now() - t1).toSec();
   //   ROS_WARN("Average astar time: %lf", astar_time);
   // }
-}
-void FastExplorationFSM::mergeCallback(const std_msgs::StringConstPtr& msg) {
-  if(!fd_->trigger_)
-    return;
-
-  if (msg->data == "MergeMapComplete") {
-      if(ros::Time::now() - lastMergeTime_ > ros::Duration(1))
-      {
-        mergeMap_=true;
-        lastMergeTime_ = ros::Time::now();
-      }
-      transitState(PLAN_TRAJ, "MergeMapCompleteCallback");
-
-  }
-
 }
 
 void FastExplorationFSM::triggerCallback(const nav_msgs::PathConstPtr& msg) {
