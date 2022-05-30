@@ -185,6 +185,7 @@ void downsample(pcl::PointCloud<pcl::PointXYZ>& cloud_in, pcl::PointCloud<pcl::P
 //Callbacks
 void getGlobalMapCallback(const sensor_msgs::PointCloud2::ConstPtr& msg)
 {
+    ROS_WARN("Received Global Map");
     if(!finishState){
             pcl::PointCloud<pcl::PointXYZ> cloudMap;
             pcl::fromROSMsg(*msg, cloudMap);

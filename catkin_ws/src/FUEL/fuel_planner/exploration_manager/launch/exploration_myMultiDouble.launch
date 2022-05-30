@@ -64,6 +64,7 @@
     <arg name="depth_topic" value="/$(arg ns0)/pcl_render_node/depth"/>
     <arg name="cloud_topic" value="/$(arg ns0)/pcl_render_node/cloud"/>
     <arg name="mapMerge_topic" value="/$(arg ns0)/ownMerge"/>
+    <arg name="MergeComplete_topic" value="/$(arg ns0)/MergeComplete"/>
     
 
     <!-- intrinsic params of the depth camera -->
@@ -141,6 +142,7 @@
     <arg name="depth_topic" value="/$(arg ns1)/pcl_render_node/depth"/>
     <arg name="cloud_topic" value="/$(arg ns1)/pcl_render_node/cloud"/>
     <arg name="mapMerge_topic" value="/$(arg ns1)/ownMerge"/>
+    <arg name="MergeComplete_topic" value="/$(arg ns1)/MergeComplete"/>
 
     <!-- intrinsic params of the depth camera -->
     <arg name="cx" value="321.04638671875"/>
