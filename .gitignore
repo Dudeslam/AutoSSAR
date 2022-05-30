@@ -4,3 +4,4 @@
 /catkin_ws/src/.vscode/*
 /catkin_ws/src/FUEL/.vscode/*
 catkin_ws/src/FUEL/fuel_planner/utils/lkh_tsp_solver/resource/single.*
+/.venv
