@@ -12,7 +12,7 @@ Run the following to install dependencies:
 To run the algorithm:
 First change directory to the catkin workspace
 
-> cd ~\(your_directory_placement)\catkin_ws
+> cd ~\\(your_directory_placement)\catkin_ws
 
 
 next make the program running:
