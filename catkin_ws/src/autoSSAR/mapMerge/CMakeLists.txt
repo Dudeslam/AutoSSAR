@@ -3,15 +3,14 @@ project(mapmerge)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
-set(CMAKE_BUILD_TYPE "Release")
-set(CMAKE_CXX_FLAGS "-std=c++11")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Wall")
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   PCL
+  octomap_msgs
+  octomap_ros
   roscpp
   std_msgs
   geometry_msgs
@@ -108,9 +107,9 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
- INCLUDE_DIRS include
- LIBRARIES ${PROJECT_NAME}
- CATKIN_DEPENDS roscpp std_msgs
+#  INCLUDE_DIRS include
+#  LIBRARIES mapmerge
+#  CATKIN_DEPENDS PCL octomap_msgs octomap_ros roscpp std_msgs
 #  DEPENDS system_lib
 )
 
@@ -121,8 +120,9 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-  include
-  ${PROJECT_SOURCE_DIR}/include
+# include
+  # include
+  ${OCTOMAP_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
   ${PCL_INCLUDE_DIRS}
   # src
@@ -130,7 +130,7 @@ include_directories(
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/coverage.cpp
+#   src/${PROJECT_NAME}/mapmerge.cpp
 # )
 
 ## Add cmake target dependencies of the library
@@ -141,9 +141,10 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(mapmerge 
+add_executable(
+  mapmerge 
   src/mapmerge_node.cpp 
-  src/coverage.cpp
+  # src/mapmerge.cpp
   
   )
 
@@ -159,8 +160,9 @@ add_executable(mapmerge
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(
-  ${PROJECT_NAME}
+  mapmerge
   ${catkin_LIBRARIES}
+  ${OCTOMAP_LIBRARIES}
   ${PCL_LIBRARIES}
   # mapmerge_node
 )

@@ -14,14 +14,34 @@
         <!-- <param name="otherUAV1" value="/$(arg ns2)"/> -->
     </node>
 
+<<<<<<< HEAD:catkin_ws/src/autossar/coordination/launch/coordination.launch
     <node pkg="within_range" name="within_range" type="within_range" ns="$(arg ns1)">
         <param name="maxRange" value="3"/>
+=======
+    <node pkg="mapmerge" name="mapmerge" type="mapmerge" output="screen" ns="$(arg ns0)">
+        <param name="otherUAV0" value="/$(arg ns1)"/>
+        <param name="otherUAV1" value="/$(arg ns2)"/>
+	</node>
+
+    <node pkg="within_range" name="within_range" type="within_range" output="screen" ns="$(arg ns1)">
+    <!--node pkg="within_range" name="within_range" type="within_range" ns="$(arg ns1)"-->
+>>>>>>> main:catkin_ws/src/autoSSAR/coordination/launch/coordination.launch
         <param name="otherUAV0" value="/$(arg ns0)"/>
         <!-- <param name="otherUAV1" value="/$(arg ns2)"/> -->
     </node>
 
+<<<<<<< HEAD:catkin_ws/src/autossar/coordination/launch/coordination.launch
     <!-- <node pkg="within_range" name="within_range" type="within_range" ns="$(arg ns2)">
         <param name="maxRange" value="3"/>
+=======
+    <node pkg="mapmerge" name="mapmerge" type="mapmerge" output="screen" ns="$(arg ns1)">
+        <param name="otherUAV0" value="/$(arg ns0)"/>
+        <param name="otherUAV1" value="/$(arg ns2)"/>
+	</node>
+
+    <node pkg="within_range" name="within_range" type="within_range" output="screen" ns="$(arg ns2)">
+    <!--node pkg="within_range" name="within_range" type="within_range" ns="$(arg ns2)"-->
+>>>>>>> main:catkin_ws/src/autoSSAR/coordination/launch/coordination.launch
         <param name="otherUAV0" value="/$(arg ns0)"/>
         <param name="otherUAV1" value="/$(arg ns1)"/>
     </node> -->
@@ -48,10 +68,17 @@
         <!-- <param name="otherUAV1" value="/$(arg ns2)"/> -->
     </node>
 
+<<<<<<< HEAD:catkin_ws/src/autossar/coordination/launch/coordination.launch
     <!-- <node pkg="mapmerge" name="mapmerge" type="mapmerge" ns="$(arg ns2)">
         <param name="otherUAV0" value="/$(arg ns0)"/>
         <param name="otherUAV1" value="/$(arg ns1)"/>
     </node> -->
+=======
+    <node pkg="mapmerge" name="mapmerge" type="mapmerge" output="screen" ns="$(arg ns2)">
+        <param name="otherUAV0" value="/$(arg ns0)"/>
+        <param name="otherUAV1" value="/$(arg ns1)"/>
+    </node>
+>>>>>>> main:catkin_ws/src/autoSSAR/coordination/launch/coordination.launch
 
 <!-- Start coordination algorithm -->
     <node pkg="coordination" name="coordination" type="coordination" output="screen" ns="$(arg ns0)">
