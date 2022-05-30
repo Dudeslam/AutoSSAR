@@ -2,15 +2,47 @@
 #define _COORDINATION_ALGORITHM_
 
 #include <ros/ros.h>
+#include "nav_msgs/Odometry.h"
 #include <nav_msgs/Path.h>
 #include <std_msgs/Empty.h>
+#include "std_msgs/String.h"
+#include "std_msgs/Float64.h"
+#include <iostream>
 #include <string>
 #include <pcl_ros/point_cloud.h>
 #include <pcl/point_types.h>
+#include <algorithm>    // std::swap
 
 
+enum COORD_STATE { EXPLORE, MEET, SACRIFICE, RELAY, FINISH, DEAD, DONE};
 
-enum COORD_STATE { EXPLORE, MEET, SACRIFICE, RELAY, FINISH };
+struct UAVdata {
+    std::string name;
+    std::string role;
+    nav_msgs::Odometry relayPoint;
+    //std::vector<nav_msgs::Odometry> odom_record;    // array for all positions
+    int id;
+    //bool inRange;
+
+
+    const inline UAVdata& operator=(const UAVdata& other){
+        name=other.name;
+        role=other.role;
+        relayPoint=other.relayPoint;
+        id=other.id;
+        return *this;
+    }
+
+    const inline bool operator==(const UAVdata& other) const {
+        return (name==other.name);
+    }
+
+    const inline bool operator!=(const UAVdata& other) const {
+        return (name!=other.name);
+    }
+};
+
+
 
 class coordinationAlgorithm {
 private:
@@ -21,33 +53,53 @@ private:
     pcl::PointCloud<pcl::PointXYZ> sharedPointCloud_;
     
     // Internal state var
-    COORD_STATE state_;
-    std::string selfUAV_;
-
+    UAVdata selfUAV_, nearUAV_, pairedUAV_;
 
     // ROS utils
-    ros::NodeHandle node_;
     //ros::Timer exec_timer_, safety_timer_, vis_timer_, frontier_timer_;
-    ros::Subscriber within_range_, battery_;
-    //ros::Publisher replan_pub_, new_pub_, bspline_pub_;
+    ros::Subscriber within_range_sub_, battery_sub_, odom_sub_;
+    ros::Publisher cmd_pub_;
+
+
+    COORD_STATE state_;
+    double batteryCapasity_;
+    double distTraversed_;
+    double rangeLeft_;
+    double DEBUG_VAR;
+
+    bool batteryHalfFlag_;
+    bool batteryEmptyFlag_;
+    bool nearUAVFlag_;
+    bool atRelayPointFlag_;
+    bool atBaseStationFlag_;
+    bool timerExpiredFlag_;
+    bool timerRunningFlag_;
+    
+    nav_msgs::Odometry baseStationOdom_;
+    nav_msgs::Odometry currentOdom_;
+
+    ros::Timer run_timer_, timeoutTimer_; // Timer for triggering
+    std::vector<std::string> coord_state_str_ = { "EXPLORE", "MEET", "SACRIFICE", "RELAY", "FINISH", "DEAD", "DONE" };
 
     // Util callbacks
     //void timerCallback(const ros::TimerEvent& e);
-    void batteryCallback(const nav_msgs::PathConstPtr& msg);
-    void withinRangeCallback(const nav_msgs::PathConstPtr& msg);
+    //void batteryCallback(const std_msgs::String& msg);
+    void batteryCallback(const std_msgs::Float64& msg);
+    void withinRangeCallback(const nav_msgs::Odometry::ConstPtr& msg);
+    void odometryCallback(const nav_msgs::Odometry::ConstPtr& msg);
 
-    // helper functions
-    //int callExplorationPlanner();
+    // helper functions     (new state, whoCalled)
+    void triggerTimer(const ros::TimerEvent& e);
     void transitState(COORD_STATE new_state, std::string pos_call);
-
+    void evaluateRoles(void);
 
 public:
     coordinationAlgorithm(/* args */) {
     }
     ~coordinationAlgorithm() {
     }
-
     void init(ros::NodeHandle& nh);
+    void runCoordinationAlgorithm(const ros::TimerEvent& e);
 
 };
 

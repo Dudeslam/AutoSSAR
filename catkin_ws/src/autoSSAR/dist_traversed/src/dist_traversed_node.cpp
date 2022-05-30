@@ -1,6 +1,7 @@
 #include "ros/ros.h"
 #include "nav_msgs/Odometry.h"
 #include "std_msgs/String.h"
+#include "std_msgs/Float64.h"
 #include <iostream>
 #include <string>
 
@@ -53,7 +54,8 @@ int main(int argc, char **argv){
     selfUAV = nh.getNamespace().c_str();
 
     ros::Subscriber sub = nh.subscribe(selfUAV+"/state_ukf/odom", 100, getOdomCallback);
-    ros::Publisher pub = nh.advertise<std_msgs::String>("dist_traversed", 100);
+    //ros::Publisher pub = nh.advertise<std_msgs::String>("dist_traversed", 100);
+    ros::Publisher pub = nh.advertise<std_msgs::Float64>("dist_traversed", 100);
 
     // For nice printin
     std::cout << std::setfill ('0') << std::setw (6);
@@ -86,12 +88,20 @@ int main(int argc, char **argv){
             std::string s(ss.str());
             
             // Print distance
-            std::cout << "Distance traversed by " << selfUAV << ": " << s << std::endl;
+            //std::cout << "Distance traversed by " << selfUAV << ": " << s << std::endl;
+            ROS_INFO_STREAM_THROTTLE(1.0, "" << selfUAV << " distance: " << path_length );
 
             // Publish traversed distance
             std_msgs::String msg;
-            msg.data = ("Distance traversed by " + selfUAV + ": " + s);
-            pub.publish(msg);
+            // msg.data = ("Distance traversed by " + selfUAV + ": " + s);
+            msg.data = s;
+            //pub.publish(msg);
+
+
+
+            std_msgs::Float64 tmp;
+            tmp.data = path_length;
+            pub.publish(tmp);
         }
 
         ros::spinOnce();

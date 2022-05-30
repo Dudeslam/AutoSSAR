@@ -56,6 +56,7 @@ public:
   ~FrontierFinder();
 
   void searchFrontiers();
+  void RemoveFrontiersMerge(float max);
   void computeFrontiersToVisit();
 
   void getFrontiers(vector<vector<Vector3d>>& clusters);
@@ -101,6 +102,7 @@ private:
   // Wrapper of sdf map
   int toadr(const Eigen::Vector3i& idx);
   bool knownfree(const Eigen::Vector3i& idx);
+  bool knownfreeMerge(const Eigen::Vector3i& idx);
   bool inmap(const Eigen::Vector3i& idx);
 
   // Deprecated

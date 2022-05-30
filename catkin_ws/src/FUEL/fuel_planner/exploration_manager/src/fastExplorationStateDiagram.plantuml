@@ -1,0 +1,40 @@
+@startuml
+skinparam monochrome true
+hide circle
+skinparam classAttributeIconSize 0
+
+
+state FastExplorationFSM {
+
+    INIT : waits for odometry
+    WAIT_TRIGGER : do nothing
+    PLAN_TRAJ : update trajectory
+    PUB_TRAJ : publish trajectory
+    EXEC_TRAJ : update exploration progress
+    FINISH : no more frontiers
+    PAUSE_PLANNING : pause planning
+
+
+    [*] --> INIT
+    note on link
+    This entire state machine
+    runs in FSMCallback()
+    end note
+    INIT --> WAIT_TRIGGER : odometry online
+    WAIT_TRIGGER --> WAIT_TRIGGER
+    WAIT_TRIGGER --> PLAN_TRAJ : safetyCallback called
+    PLAN_TRAJ --> PUB_TRAJ : frontiers found
+    PLAN_TRAJ --> FINISH : no more frontiers
+    PLAN_TRAJ --> PAUSE_PLANNING
+    PAUSE_PLANNING --> PLAN_TRAJ
+    PUB_TRAJ --> EXEC_TRAJ
+    PUB_TRAJ --> PAUSE_PLANNING
+    EXEC_TRAJ --> WAIT_TRIGGER
+    EXEC_TRAJ --> PAUSE_PLANNING
+    PAUSE_PLANNING <-[hidden]- WAIT_TRIGGER
+    PAUSE_PLANNING <-[hidden]- INIT
+    FINISH --> [*]
+}
+
+@enduml
+

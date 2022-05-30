@@ -5,6 +5,8 @@
 nav_msgs::Odometry odomSelf;
 nav_msgs::Odometry odomOtherUAV0;
 nav_msgs::Odometry odomOtherUAV1;
+nav_msgs::Odometry odomOtherUAV2;
+int maxRange;
 
 /**
  * Callback function executes when new topic data comes.
@@ -32,6 +34,12 @@ void getOdomCallback2(const nav_msgs::Odometry::ConstPtr& msg){
   // std::cout << "Position-> x: [" <<odomOtherUAV1.pose.pose.position.x<<"], \ty: ["<<odomOtherUAV1.pose.pose.position.y<<"], \tz: ["<<odomOtherUAV1.pose.pose.position.z<<"]" << std::endl;
 }
 
+void getOdomCallback3(const nav_msgs::Odometry::ConstPtr& msg){
+  odomOtherUAV2 = *msg;
+  // std::cout << "Seq: " << msg->header.seq << std::endl;
+  // std::cout << "Position-> x: [" <<odomOtherUAV2.pose.pose.position.x<<"], \ty: ["<<odomOtherUAV2.pose.pose.position.y<<"], \tz: ["<<odomOtherUAV2.pose.pose.position.z<<"]" << std::endl;
+}
+
 
 
 // Utility funcion
@@ -50,7 +58,7 @@ long double dist(nav_msgs::Odometry first, nav_msgs::Odometry second){
 
 bool within_range(nav_msgs::Odometry first, nav_msgs::Odometry second){
   // If an UAV isn't included dist=0, so to avoid publishing in this case it's removed.
-  if(dist(first, second) > 2 || dist(first, second) == 0) return false;
+  if(dist(first, second) > maxRange || dist(first, second) == 0) return false;
   return true;
 }
 
@@ -65,15 +73,22 @@ int main(int argc, char **argv)
   std::string selfUAV;
   std::string otherUAV0 = "nan";
   std::string otherUAV1 = "nan";
+  std::string otherUAV2 = "nan";
   
   selfUAV = nh.getNamespace().c_str();
   nh.getParam(selfUAV+"/within_range/otherUAV0", otherUAV0);
   nh.getParam(selfUAV+"/within_range/otherUAV1", otherUAV1);
+  nh.getParam(selfUAV+"/within_range/otherUAV2", otherUAV2);
+  nh.getParam(selfUAV+"/within_range/maxRange", maxRange);
 
   std::cout << "*************************************************************" << std::endl;
+  std::cout << "Within Range Node" << std::endl;
+  std::cout << "maxRange: ";
+  std::cout << maxRange << std::endl;
   std::cout << selfUAV << std::endl;
   std::cout << otherUAV0 << std::endl;
   std::cout << otherUAV1 << std::endl;
+  std::cout << otherUAV2 << std::endl;
   std::cout << "*************************************************************" << std::endl;
 
 
@@ -81,7 +96,8 @@ int main(int argc, char **argv)
   ros::Subscriber sub0 = nh.subscribe(selfUAV+"/state_ukf/odom", 100, getOdomCallback0);
   ros::Subscriber sub1 = nh.subscribe(otherUAV0+"/state_ukf/odom", 100, getOdomCallback1);
   ros::Subscriber sub2 = nh.subscribe(otherUAV1+"/state_ukf/odom", 100, getOdomCallback2);
-  ros::Publisher pub = nh.advertise<std_msgs::String>("within_range", 100);
+  ros::Subscriber sub3 = nh.subscribe(otherUAV2+"/state_ukf/odom", 100, getOdomCallback3);
+  ros::Publisher pub = nh.advertise<nav_msgs::Odometry>("within_range", 100);
 
   // For nice printin
   std::cout << std::setfill ('0') << std::setw (6);
@@ -89,7 +105,6 @@ int main(int argc, char **argv)
 
   // Set rate
   ros::Rate r(10); // 10 hz
-
 
 
 
@@ -106,23 +121,30 @@ int main(int argc, char **argv)
     // std::cout << "Dist to " << otherUAV1 << ": " << dist(odomSelf, odomOtherUAV1) << " " << within_range(odomSelf, odomOtherUAV1) << std::endl;
     // std::cout << std::endl;
 
-    if(within_range(odomSelf, odomOtherUAV0)){
+    if(within_range(odomSelf, odomOtherUAV0) && otherUAV0!="nan"){
       std::cout << selfUAV << std::endl;
       std::cout << "Dist to " << otherUAV0 << ": " << dist(odomSelf, odomOtherUAV0) << " " << within_range(odomSelf, odomOtherUAV0) << std::endl;
 
-      std_msgs::String msg;
-      msg.data = otherUAV0;
-      pub.publish(msg);
+      odomOtherUAV0.child_frame_id = otherUAV0;
+      pub.publish(odomOtherUAV0);
     }
 
     
-    if(within_range(odomSelf, odomOtherUAV1)){
+    if(within_range(odomSelf, odomOtherUAV1) && otherUAV1!="nan"){
       std::cout << selfUAV << std::endl;
       std::cout << "Dist to " << otherUAV1 << ": " << dist(odomSelf, odomOtherUAV1) << " " << within_range(odomSelf, odomOtherUAV1) << std::endl;
 
-      std_msgs::String msg;
-      msg.data = otherUAV1;
-      pub.publish(msg);
+      odomOtherUAV1.child_frame_id = otherUAV1;
+      pub.publish(odomOtherUAV1);
+    }
+
+    
+    if(within_range(odomSelf, odomOtherUAV2) && otherUAV2!="nan"){
+      std::cout << selfUAV << std::endl;
+      std::cout << "Dist to " << otherUAV2 << ": " << dist(odomSelf, odomOtherUAV2) << " " << within_range(odomSelf, odomOtherUAV2) << std::endl;
+
+      odomOtherUAV2.child_frame_id = otherUAV2;
+      pub.publish(odomOtherUAV2);
     }
 
     ros::spinOnce();

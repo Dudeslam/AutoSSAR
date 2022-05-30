@@ -1,0 +1,105 @@
+<launch>
+
+      <!-- enable costume namespaces -->
+    <arg name="ns0" default="UAV0"/>
+    <arg name="ns1" default="UAV1"/>
+    <arg name="ns2" default="UAV2"/>
+    <arg name="ns3" default="UAV3"/>
+
+
+
+<!-- Start range utils -->
+    <node pkg="within_range" name="within_range" type="within_range" ns="$(arg ns0)">
+        <param name="maxRange" value="3"/>
+        <param name="otherUAV0" value="/$(arg ns1)"/>
+        <param name="otherUAV1" value="/$(arg ns2)"/>
+        <param name="otherUAV2" value="/$(arg ns3)"/>
+    </node>
+
+    <node pkg="within_range" name="within_range" type="within_range" ns="$(arg ns1)">
+        <param name="maxRange" value="3"/>
+        <param name="otherUAV0" value="/$(arg ns0)"/>
+        <param name="otherUAV1" value="/$(arg ns2)"/>
+        <param name="otherUAV2" value="/$(arg ns3)"/>
+    </node>
+
+    <node pkg="within_range" name="within_range" type="within_range" ns="$(arg ns2)">
+        <param name="maxRange" value="3"/>
+        <param name="otherUAV0" value="/$(arg ns1)"/>
+        <param name="otherUAV1" value="/$(arg ns0)"/>
+        <param name="otherUAV2" value="/$(arg ns3)"/>
+    </node>
+
+    <node pkg="within_range" name="within_range" type="within_range" ns="$(arg ns3)">
+        <param name="maxRange" value="3"/>
+        <param name="otherUAV0" value="/$(arg ns1)"/>
+        <param name="otherUAV1" value="/$(arg ns2)"/>
+        <param name="otherUAV2" value="/$(arg ns0)"/>
+    </node>
+
+
+<!-- Start traversal utils -->
+    <!-- <node pkg="dist_traversed" name="dist_traversed" type="dist_traversed" output="screen" ns="$(arg ns0)"/> -->
+    <!-- <node pkg="dist_traversed" name="dist_traversed" type="dist_traversed" output="screen" ns="$(arg ns1)"/> -->
+    <!-- <node pkg="dist_traversed" name="dist_traversed" type="dist_traversed" output="screen" ns="$(arg ns2)"/> -->
+    <node pkg="dist_traversed" name="dist_traversed" type="dist_traversed" ns="$(arg ns0)"/>
+    <node pkg="dist_traversed" name="dist_traversed" type="dist_traversed" ns="$(arg ns1)"/>
+    <node pkg="dist_traversed" name="dist_traversed" type="dist_traversed" ns="$(arg ns2)"/>
+    <node pkg="dist_traversed" name="dist_traversed" type="dist_traversed" ns="$(arg ns3)"/>
+
+
+<!-- Start mapmerge utils -->
+    <!-- <node pkg="mapmerge" name="mapmerge" type="mapmerge" ns="$(arg ns0)"> -->
+    <node pkg="mapmerge" name="mapmerge" type="mapmerge" output="screen" ns="$(arg ns0)">
+        <param name="otherUAV0" value="/$(arg ns1)"/>
+        <param name="otherUAV1" value="/$(arg ns2)"/>
+        <param name="otherUAV2" value="/$(arg ns3)"/>
+    </node>
+
+    <node pkg="mapmerge" name="mapmerge" type="mapmerge" ns="$(arg ns1)">
+        <param name="otherUAV0" value="/$(arg ns0)"/>
+        <param name="otherUAV1" value="/$(arg ns2)"/>
+        <param name="otherUAV2" value="/$(arg ns3)"/>
+    </node>
+
+    <node pkg="mapmerge" name="mapmerge" type="mapmerge" ns="$(arg ns2)">
+        <param name="otherUAV0" value="/$(arg ns1)"/>
+        <param name="otherUAV1" value="/$(arg ns0)"/>
+        <param name="otherUAV2" value="/$(arg ns3)"/>
+    </node>
+
+    <node pkg="mapmerge" name="mapmerge" type="mapmerge" ns="$(arg ns3)">
+        <param name="otherUAV0" value="/$(arg ns1)"/>
+        <param name="otherUAV1" value="/$(arg ns2)"/>
+        <param name="otherUAV2" value="/$(arg ns0)"/>
+    </node>
+
+<!-- Start coordination algorithm -->
+    <node pkg="coordination" name="coordination" type="coordination" output="screen" ns="$(arg ns0)">
+        <param name="maxBattery" value="26"/>
+    </node>
+
+    <node pkg="coordination" name="coordination" type="coordination" output="screen" ns="$(arg ns1)">
+        <param name="maxBattery" value="26"/>
+    </node>
+
+    <node pkg="coordination" name="coordination" type="coordination" output="screen" ns="$(arg ns2)">
+        <param name="maxBattery" value="26"/> 
+    </node>
+
+    <node pkg="coordination" name="coordination" type="coordination" output="screen" ns="$(arg ns3)">
+        <param name="maxBattery" value="26"/> 
+    </node>
+
+
+    <!-- <node pkg="rosbag" type="record" name="time_size_dist" args="record -O /UAV0/mapSize /UAV0/dist_traversed"/> -->
+    <node pkg="rosbag" type="record" name="time_size_dist_$(arg ns0)"
+    args="-O /home/malle/AutoSSAR/catkin_ws/bagfiles/time_size_dist_$(arg ns0) $(arg ns0)/mapSize $(arg ns0)/dist_traversed $(arg ns0)/within_range"/>
+    <node pkg="rosbag" type="record" name="time_size_dist_$(arg ns1)"
+    args="-O /home/malle/AutoSSAR/catkin_ws/bagfiles/time_size_dist_$(arg ns1) $(arg ns1)/mapSize $(arg ns1)/dist_traversed $(arg ns1)/within_range"/>
+    <node pkg="rosbag" type="record" name="time_size_dist_$(arg ns2)"
+    args="-O /home/malle/AutoSSAR/catkin_ws/bagfiles/time_size_dist_$(arg ns2) $(arg ns2)/mapSize $(arg ns2)/dist_traversed $(arg ns2)/within_range"/>
+    <node pkg="rosbag" type="record" name="time_size_dist_$(arg ns3)"
+    args="-O /home/malle/AutoSSAR/catkin_ws/bagfiles/time_size_dist_$(arg ns3) $(arg ns3)/mapSize $(arg ns3)/dist_traversed $(arg ns3)/within_range"/>
+
+</launch>

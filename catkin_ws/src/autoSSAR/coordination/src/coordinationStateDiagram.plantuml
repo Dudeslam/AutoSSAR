@@ -1,0 +1,34 @@
+@startuml
+skinparam monochrome true
+hide circle
+skinparam classAttributeIconSize 0
+
+' HIDDEN lines are just to make the placement of boxex nice
+
+state CoordinationAlgorithm {
+
+    EXPLORE : Explore environment
+    SACRIFICE : Explore within range of relay point
+    MEET : Exchange map data
+    RELAY : Explore within range of base station
+
+
+    [*] --> EXPLORE
+    EXPLORE --> MEET : when other UAV is within range
+    MEET --> SACRIFICE : highest ID UAV
+    MEET --> RELAY : lowest ID UAV
+    SACRIFICE --> EXPLORE : no UAV is at relay point
+    EXPLORE -[hidden]-> SACRIFICE
+    EXPLORE -[hidden]-> RELAY
+
+    RELAY --> [*] : base station reached
+    SACRIFICE --> [*] : battery empty
+    EXPLORE -[hidden]-> [*] : battery empty
+    note right
+    All states can end by battery empty.
+    But in the ideal run it's only from SACRIFICE.
+    end note
+}
+
+@enduml
+

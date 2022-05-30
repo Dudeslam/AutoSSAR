@@ -6,6 +6,7 @@
 #include <ros/ros.h>
 #include <nav_msgs/Path.h>
 #include <std_msgs/Empty.h>
+#include <std_msgs/String.h>
 #include <nav_msgs/Odometry.h>
 #include <visualization_msgs/Marker.h>
 
@@ -26,10 +27,11 @@ namespace fast_planner {
 class FastPlannerManager;
 class FastExplorationManager;
 class PlanningVisualization;
+class LocalExploreFSM;
 struct FSMParam;
 struct FSMData;
 
-enum EXPL_STATE { INIT, WAIT_TRIGGER, PLAN_TRAJ, PUB_TRAJ, EXEC_TRAJ, FINISH };
+enum EXPL_STATE { INIT, WAIT_TRIGGER, PLAN_TRAJ, PUB_TRAJ, EXEC_TRAJ, FINISH, PAUSE_PLANNING}; // EDIT added state
 
 class FastExplorationFSM {
 private:
@@ -47,9 +49,9 @@ private:
   /* ROS utils */
   ros::NodeHandle node_;
   ros::Timer exec_timer_, safety_timer_, vis_timer_, frontier_timer_;
-  ros::Subscriber trigger_sub_, odom_sub_;
+  ros::Subscriber trigger_sub_, odom_sub_, merge_sub_;
   ros::Publisher replan_pub_, new_pub_, bspline_pub_;
-
+  ros::Time lastMergeTime_ = ros::Time::now();
   /* helper functions */
   int callExplorationPlanner();
   void transitState(EXPL_STATE new_state, string pos_call);
@@ -60,9 +62,17 @@ private:
   void frontierCallback(const ros::TimerEvent& e);
   void triggerCallback(const nav_msgs::PathConstPtr& msg);
   void odometryCallback(const nav_msgs::OdometryConstPtr& msg);
+  void mergeCallback(const std_msgs::StringConstPtr& msg);
   void visualize();
   void clearVisMarker();
 
+  // EDIT*************************************
+  std::string selfUAV;
+  ros::Subscriber TRUNCATE_sub_;
+  void truncateCallback(const nav_msgs::Odometry::ConstPtr& msg);
+  bool TRUNCATE_flag;
+  bool mergeMap_ = false;
+  // EDIT end*********************************
 public:
   FastExplorationFSM(/* args */) {
   }

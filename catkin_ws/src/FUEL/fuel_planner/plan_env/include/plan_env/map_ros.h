@@ -36,6 +36,7 @@ private:
   void cloudPoseCallback(const sensor_msgs::PointCloud2ConstPtr& msg,
                          const geometry_msgs::PoseStampedConstPtr& pose);
   void updateESDFCallback(const ros::TimerEvent& /*event*/);
+  void mergeMapCallback(const sensor_msgs::PointCloud2ConstPtr& msg);
   void visCallback(const ros::TimerEvent& /*event*/);
 
   void publishMapAll();
@@ -56,6 +57,9 @@ private:
                                                           geometry_msgs::PoseStamped>
       SyncPolicyCloudPose;
   typedef shared_ptr<message_filters::Synchronizer<SyncPolicyCloudPose>> SynchronizerCloudPose;
+  
+  // typedef shared_ptr<message_filters::Synchronizer<SyncPolicyCloudPose>> SynchronizerMergeM
+
 
   ros::NodeHandle node_;
   shared_ptr<message_filters::Subscriber<sensor_msgs::Image>> depth_sub_;
@@ -64,8 +68,9 @@ private:
   SynchronizerImagePose sync_image_pose_;
   SynchronizerCloudPose sync_cloud_pose_;
 
+  ros::Subscriber  mergeMap_sub_;
   ros::Publisher map_local_pub_, map_local_inflate_pub_, esdf_pub_, map_all_pub_, unknown_pub_,
-      update_range_pub_, depth_pub_;
+      update_range_pub_, depth_pub_, mergeCompl_pub_;
   ros::Timer esdf_timer_, vis_timer_;
 
   // params, depth projection
@@ -80,7 +85,7 @@ private:
   double visualization_truncate_height_, visualization_truncate_low_;
   bool show_esdf_time_, show_occ_time_;
   bool show_all_map_;
-
+  ros::Time lastMergeTime_;
   // data
   // flags of map state
   bool local_updated_, esdf_need_update_;
