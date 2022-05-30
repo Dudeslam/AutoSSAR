@@ -2,7 +2,8 @@
   <arg name="map_size_x_"/>
   <arg name="map_size_y_"/>
   <arg name="map_size_z_"/>
-
+  <!-- <env name="ROSCONSOLE_FORMAT" value="[${severity}] [${time}] [${node}]: ${message}"/> -->
+  
   <arg name="box_min_x" default="-10.0"/>
   <arg name="box_min_y" default="-15.0"/>
   <arg name="box_min_z" default=" 0.0"/>

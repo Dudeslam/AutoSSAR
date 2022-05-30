@@ -125,14 +125,8 @@ int main(int argc, char **argv)
       std::cout << selfUAV << std::endl;
       std::cout << "Dist to " << otherUAV0 << ": " << dist(odomSelf, odomOtherUAV0) << " " << within_range(odomSelf, odomOtherUAV0) << std::endl;
 
-<<<<<<< HEAD:catkin_ws/src/autossar/within_range/src/within_range_node.cpp
       odomOtherUAV0.child_frame_id = otherUAV0;
       pub.publish(odomOtherUAV0);
-=======
-      std_msgs::String msg;
-      msg.data = otherUAV0;
-      pub.publish(msg);
->>>>>>> main:catkin_ws/src/autoSSAR/within_range/src/within_range_node.cpp
     }
 
     
@@ -140,7 +134,6 @@ int main(int argc, char **argv)
       std::cout << selfUAV << std::endl;
       std::cout << "Dist to " << otherUAV1 << ": " << dist(odomSelf, odomOtherUAV1) << " " << within_range(odomSelf, odomOtherUAV1) << std::endl;
 
-<<<<<<< HEAD:catkin_ws/src/autossar/within_range/src/within_range_node.cpp
       odomOtherUAV1.child_frame_id = otherUAV1;
       pub.publish(odomOtherUAV1);
     }
@@ -152,11 +145,6 @@ int main(int argc, char **argv)
 
       odomOtherUAV2.child_frame_id = otherUAV2;
       pub.publish(odomOtherUAV2);
-=======
-      std_msgs::String msg;
-      msg.data = otherUAV1;
-      pub.publish(msg);
->>>>>>> main:catkin_ws/src/autoSSAR/within_range/src/within_range_node.cpp
     }
 
     ros::spinOnce();
